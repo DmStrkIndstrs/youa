@@ -228,7 +228,8 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
 .guest::before { content: ""; position: absolute; top: -.62em; left: 50%; width: 1em; height: 1em; margin-left: -.5em; border: 3px solid var(--ink); border-radius: 50%; background: var(--birch-lo); }
 .guest .disc { width: 4.8em; height: 4.8em; border-width: 3px; }
 .g-who { min-width: 0; display: grid; gap: .25em; }
-.g-name { font-size: 3.5em; line-height: 1; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.g-name { display: block; min-width: 0; overflow: hidden; font-size: 3.5em; line-height: 1.08; letter-spacing: -.02em; white-space: nowrap; }
+.g-name.wrap { white-space: normal; overflow-wrap: anywhere; }
 .g-hello { font-size: 1.45em; }
 .g-roles { grid-column: 1 / -1; font-size: 1.08em; color: var(--ink-soft); }
 .swap {
@@ -1212,6 +1213,7 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
     }
     layoutGlass();
     fitNames($('cubbies'));
+    fitGuestName();
   }
   function layoutGlass() {
     const W = glass.clientWidth, H = glass.clientHeight;
@@ -1439,6 +1441,16 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
     $('g-name').textContent = name(i);
     guest.setAttribute('aria-label', `${name(i)} 손님 차례`);
   }
+  // The whole name must always show: shrink it to fit the tag, and only as a last resort let it wrap.
+  function fitGuestName() {
+    const n = $('g-name');
+    if (!slot.classList.contains('seated')) return;
+    n.style.fontSize = '';
+    n.classList.remove('wrap');
+    let size = 3.5;
+    while (n.scrollWidth > n.clientWidth + 1 && size > 1.7) { size -= 0.15; n.style.fontSize = size.toFixed(2) + 'em'; }
+    if (n.scrollWidth > n.clientWidth + 1) n.classList.add('wrap');
+  }
   async function seatGuest(i) {
     run.phase = 'reveal';
     st.turn = i; run.paid = false; run.tries = 0;
@@ -1447,6 +1459,7 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
     guest.classList.remove('in');
     slot.classList.add('seated');
     refresh();
+    fitGuestName();
     const cub = cubbyEl(i);
     const from = cub.querySelector('.tag').getBoundingClientRect();
     const to = guest.getBoundingClientRect();

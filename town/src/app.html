@@ -407,6 +407,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     block() { tone(440 + Math.random() * 200, 0.08, { type: 'triangle', vol: 0.14 }); },
     cart() { tone(1046, 0.08, { type: 'triangle', vol: 0.12 }); tone(1397, 0.12, { type: 'triangle', vol: 0.1, at: 0.07 }); },
     pay() { [1760, 1760].forEach((f, i) => tone(f, 0.07, { type: 'square', vol: 0.05, at: i * 0.12 })); [523, 659, 784].forEach((f, i) => tone(f, 0.16, { type: 'triangle', vol: 0.12, at: 0.3 + i * 0.1 })); },
+    snip() { tone(2200, 0.05, { type: 'square', vol: 0.05, to: 900 }); tone(2200, 0.05, { type: 'square', vol: 0.05, at: 0.16, to: 900 }); },
     hello() { [784, 988].forEach((f, i) => tone(f, 0.14, { type: 'triangle', vol: 0.1, at: i * 0.1 })); },
   };
 
@@ -531,6 +532,9 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       case 'grape': return [[38, 34], [56, 34], [30, 52], [48, 52], [66, 52], [40, 70], [58, 70], [49, 86]].map(([x, y]) => C(x, y, 11, '#9B6BD6', 3)).join('') + P('M48 24 Q50 12 58 10', 'none', 4);
       case 'melon': return P('M10 46 A40 40 0 0 0 90 46 Z', '#86CF6E') + P('M18 46 A32 32 0 0 0 82 46 Z', '#FF6B6B', 0) + `<path d="M10 46H90" stroke="${INK}" stroke-width="4"/>` + [[36, 60], [50, 66], [64, 60], [44, 54], [58, 54]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="2.6" ry="4" fill="${INK}"/>`).join('');
       case 'egg': return `<ellipse cx="38" cy="58" rx="20" ry="26" fill="#FFF8EA" ${S(4)}/><ellipse cx="64" cy="62" rx="20" ry="26" fill="#FFF1D6" ${S(4)}/>`;
+      case 'berry': return P('M50 92 Q14 64 18 38 Q22 22 50 26 Q78 22 82 38 Q86 64 50 92Z', '#F0544F') + [[36, 44], [50, 40], [64, 44], [42, 60], [58, 60], [50, 76]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="2.4" ry="3.4" fill="#FFE38A"/>`).join('') + P('M30 28 Q40 12 50 26 Q60 12 70 28 Q60 34 50 30 Q40 34 30 28Z', '#5DB85A', 3);
+      case 'orange': return C(50, 58, 32, '#FF9A2E') + `<circle cx="50" cy="58" r="32" fill="url(#crayon)"/>` + P('M50 28 Q56 14 70 16 Q64 30 50 28Z', '#5DB85A', 3) + C(50, 28, 3, '#7A4B2E', 0) + `<ellipse cx="38" cy="48" rx="6" ry="9" fill="#fff" opacity=".4"/>`;
+      case 'peach': return C(50, 58, 32, '#FFB3A7') + P('M50 28 Q40 58 50 88', 'none', 3) + P('M50 28 Q62 12 76 20 Q66 32 50 28Z', '#5DB85A', 3) + `<ellipse cx="36" cy="50" rx="7" ry="10" fill="#fff" opacity=".45"/>`;
       case 'pencil': return `<g transform="rotate(-35 50 50)">${P('M14 40 H74 L92 50 L74 60 H14Z', '#FFC83D')}${P('M74 40 L92 50 L74 60Z', '#F5DDB3', 3)}${P('M86 47 L92 50 L86 53Z', INK, 0)}${Rp(6, 40, 12, 20, '#FF94B8', 3, 3)}</g>`;
       case 'note': return R(22, 14, 58, 76, '#74C4F2', 6) + Rp(32, 30, 38, 12, '#fff', 3, 0) + [26, 42, 58, 74].map((y) => `<circle cx="22" cy="${y}" r="5" fill="#fff" ${S(2.5)}/>`).join('');
       case 'balloon': return P('M50 66 Q50 82 46 96', 'none', 3) + `<ellipse cx="50" cy="38" rx="26" ry="30" fill="#EF4F7A" ${S(4)}/>` + P('M46 66 L54 66 L50 72Z', '#EF4F7A', 3) + `<ellipse cx="40" cy="28" rx="6" ry="10" fill="#fff" opacity=".45"/>`;
@@ -578,7 +582,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     hansung: (w, h) => apt(w, h, { id: 'hansung', name: '한성', body: '#BBA3F5', win: '#E8F7FF', floors: 6, cols: 3, seed: 1, trim: '#FFC83D' }),
     gold: (w, h) => apt(w, h, { id: 'gold', name: '골드클래스', body: '#F6C744', win: '#4A5A8C', floors: 4, cols: 3, seed: 3, crown: true, trim: '#fff' }),
     kangsin: (w, h) => apt(w, h, { id: 'kangsin', name: '강신프로그레그', body: '#8FD0F2', win: '#FFFFFF', floors: 8, cols: 3, seed: 2, balcony: true, trim: '#FF94B8' }),
-    onette: (w, h) => apt(w, h, { id: 'onette', name: '오네뜨', body: '#fff', stripes: ['#F0544F', '#FF8A3D', '#FFD84D', '#86CF6E', '#74C4F2', '#6C7FE0', '#BBA3F5'], win: '#FFFFFF', floors: 8, cols: 3, seed: 4, trim: '#fff' }),
+    onette: (w, h) => apt(w, h, { id: 'onette', name: '오네뜨', body: '#fff', stripes: ['#F0544F', '#FF8A3D', '#FFD84D', '#86CF6E', '#74C4F2', '#6C7FE0', '#BBA3F5'], win: '#FFFFFF', floors: 6, cols: 3, seed: 4, trim: '#fff' }),
     hospital(w, h) {
       let s = R(0, 46, w, h - 46, '#FFF8EC', 6);
       s += Rp(w / 2 - 32, 0, 64, 56, '#fff', 10, 4) + `<rect x="${w / 2 - 8}" y="10" width="16" height="36" rx="2" fill="#E8434B"/><rect x="${w / 2 - 18}" y="20" width="36" height="16" rx="2" fill="#E8434B"/>`;
@@ -624,7 +628,8 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       // striped awning
       const n = 6, aw = w / n;
       for (let i = 0; i < n; i++) s += `<path d="M${i * aw} 78 H${(i + 1) * aw} V96 A${aw / 2} ${aw / 2.4} 0 0 1 ${i * aw} 96Z" fill="${i % 2 ? '#fff' : '#EF4F7A'}" ${S(3)}/>`;
-      s += Rp(12, 112, 92, h - 124, '#FFF6E0', 6, 3) + ITEM_AT('apple', 16, 118, 36) + ITEM_AT('banana', 54, 120, 38) + ITEM_AT('carrot', 18, 148, 34) + ITEM_AT('grape', 58, 146, 36);
+      const mw = w - 80;
+      s += Rp(12, 112, mw, h - 124, '#FFF6E0', 6, 3) + ITEM_AT('apple', 16, 118, mw * .4) + ITEM_AT('banana', 14 + mw * .46, 120, mw * .42) + ITEM_AT('carrot', 18, 148, mw * .38) + ITEM_AT('grape', 14 + mw * .5, 146, mw * .4);
       s += Rp(w - 56, 116, 44, h - 116, '#CDEFFF', 4, 3);
       return s;
     },
@@ -633,9 +638,37 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       s += P(`M-10 98 L${w / 2} 4 L${w + 10} 98Z`, '#74C4F2');
       s += C(w / 2, 62, 20, '#FFE07A', 3) + [0, 45, 90, 135, 180, 225, 270, 315].map((a) => { const r = a * Math.PI / 180; return `<path d="M${w / 2 + Math.cos(r) * 25} ${62 + Math.sin(r) * 25}L${w / 2 + Math.cos(r) * 31} ${62 + Math.sin(r) * 31}" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>`; }).join('');
       s += R(0, 92, w, h - 92, '#86CF6E', 6);
-      s += Rp(14, 102, w - 28, 42, '#fff', 8, 3) + T(w / 2, 134, 28, '문정유치원', '#2E8A3A');
-      ['#FF94B8', '#FFC83D', '#74C4F2', '#BBA3F5'].forEach((c, i) => { s += C(30 + i * 52, 172, 15, c, 3); });
+      s += Rp(14, 102, w - 28, 42, '#fff', 8, 3) + T(w / 2, 134, Math.min(28, (w - 34) / 5), '문정유치원', '#2E8A3A');
+      ['#FF94B8', '#FFC83D', '#74C4F2', '#BBA3F5'].forEach((c, i) => { s += C(w * (i + .5) / 4, 172, Math.min(15, w / 11), c, 3); });
       s += P(`M${w / 2 - 26} ${h} V${h - 30} A26 26 0 0 1 ${w / 2 + 26} ${h - 30} V${h}Z`, '#FF8A5C', 3);
+      return s;
+    },
+    fruit(w, h) {
+      let s = R(0, 50, w, h - 50, '#FFF3D0', 6);
+      s += Rp(-6, 0, w + 12, 54, '#fff', 10, 4) + T(w / 2, 38, Math.min(30, (w - 4) / 4), '과일가게', '#3E9A3A');
+      const n = 5, aw = w / n;
+      for (let i = 0; i < n; i++) s += `<path d="M${i * aw} 58 H${(i + 1) * aw} V78 A${aw / 2} ${aw / 2.4} 0 0 1 ${i * aw} 78Z" fill="${i % 2 ? '#fff' : '#5DB85A'}" ${S(3)}/>`;
+      s += win(14, 100, w - 28, 46, '#DFF1FF', 3);
+      // fruit crates out front
+      const cw = (w - 20) / 3;
+      [['apple', '#C98E5A'], ['orange', '#D9A673'], ['grape', '#C98E5A']].forEach(([k, c], i) => {
+        const x = 10 + i * cw;
+        s += ITEM_AT(k, x + 2, h - 74, cw * .52) + ITEM_AT(k, x + cw * .42, h - 78, cw * .52) + Rp(x, h - 44, cw - 4, 44, c, 4, 3) + `<path d="M${x + 4} ${h - 30}h${cw - 12}M${x + 4} ${h - 16}h${cw - 12}" stroke="${INK}" stroke-width="2" opacity=".35"/>`;
+      });
+      return s;
+    },
+    salon(w, h) {
+      let s = R(0, 50, w, h - 50, '#F7C6DA', 6);
+      s += Rp(-6, 0, w + 12, 54, '#fff', 10, 4) + T(w / 2, 39, 32, '미용실', '#B8285A');
+      // barber pole
+      s += `<clipPath id="pole-clip"><rect x="12" y="70" width="26" height="96" rx="12"/></clipPath><rect x="12" y="70" width="26" height="96" rx="12" fill="#fff"/>` +
+        `<g clip-path="url(#pole-clip)">${[0, 1, 2, 3, 4, 5].map((i) => `<path d="M0 ${60 + i * 24} L60 ${30 + i * 24} L60 ${40 + i * 24} L0 ${70 + i * 24}Z" fill="${i % 2 ? '#3B6FCB' : '#E8434B'}"/>`).join('')}</g>` +
+        `<rect x="12" y="70" width="26" height="96" rx="12" fill="none" ${S(3)}/>` + C(25, 64, 8, '#FFC83D', 3);
+      // window with a mirror and a chair
+      s += Rp(48, 68, w - 60, 96, '#E8F7FF', 8, 3) + `<ellipse cx="${(48 + w - 12) / 2}" cy="100" rx="26" ry="22" fill="#fff" ${S(2.6)}/>` +
+        Rp((48 + w - 12) / 2 - 18, 124, 36, 24, '#BBA3F5', 6, 2.6) + `<path d="M${(48 + w - 12) / 2} 148v12" stroke="${INK}" stroke-width="3"/>`;
+      // scissors on the door
+      s += Rp(w / 2 - 26, h - 50, 52, 50, '#FFE0EC', 4, 3) + `<g transform="translate(${w / 2} ${h - 28}) scale(.7)">${C(-10, 10, 7, 'none', 3)}${C(10, 10, 7, 'none', 3)}<path d="M-6 4 L12 -18 M6 4 L-12 -18" stroke="${INK}" stroke-width="3.4" stroke-linecap="round"/></g>`;
       return s;
     },
     claw(w, h) {
@@ -677,9 +710,10 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   };
 
   const BUILDINGS = [
-    { id: 'hansung', name: '한성아파트', x: 30, y: 60, w: 170, h: 276, rot: -1.5, pin: '#FFC83D' },
-    { id: 'mart', name: '마트', x: 232, y: 150, w: 168, h: 186, rot: 1.2, pin: '#74C4F2' },
-    { id: 'kinder', name: '문정유치원', x: 432, y: 112, w: 210, h: 222, rot: -1, pin: '#EF4F7A' },
+    { id: 'hansung', name: '한성아파트', x: 16, y: 60, w: 138, h: 276, rot: -1.5, pin: '#FFC83D' },
+    { id: 'onette', name: '오네뜨아파트', x: 164, y: 40, w: 124, h: 296, rot: 1.2, pin: '#74C4F2' },
+    { id: 'mart', name: '마트', x: 298, y: 150, w: 160, h: 186, rot: 1.2, pin: '#74C4F2' },
+    { id: 'kinder', name: '문정유치원', x: 470, y: 112, w: 172, h: 222, rot: -1, pin: '#EF4F7A' },
     { id: 'hospital', name: '병원', x: 700, y: 92, w: 160, h: 220, rot: 1.5, pin: '#86CF6E' },
     { id: 'fire', name: '소방서', x: 905, y: 68, w: 220, h: 206, rot: -1.2, pin: '#FFC83D', pinX: 33 },
     { id: 'gold', name: '골드클래스 아파트', x: 1212, y: 36, w: 176, h: 202, rot: 1, pin: '#EF4F7A', pinY: 4 },
@@ -688,7 +722,8 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     { id: 'claw', name: '인형뽑기 가게', x: 498, y: 462, w: 300, h: 324, rot: -.6, pin: '#FFC83D' },
     { id: 'library', name: '도서관', x: 852, y: 446, w: 268, h: 340, rot: 1, pin: '#EF4F7A' },
     { id: 'kangsin', name: '강신프로그레그 아파트', x: 1238, y: 356, w: 170, h: 430, rot: -1, pin: '#86CF6E' },
-    { id: 'onette', name: '오네뜨아파트', x: 1428, y: 324, w: 158, h: 462, rot: 1.2, pin: '#FFC83D' },
+    { id: 'salon', name: '미용실', x: 1428, y: 330, w: 158, h: 200, rot: 1.2, pin: '#FFC83D' },
+    { id: 'fruit', name: '과일가게', x: 1428, y: 566, w: 158, h: 220, rot: -1, pin: '#EF4F7A' },
   ];
   const byId = Object.fromEntries(BUILDINGS.map((b) => [b.id, b]));
 
@@ -1008,7 +1043,39 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
         teacher: { say: ['새들1반 친구들, 오늘도 즐겁게 놀아요!', '친구와 사이좋게 지내요.'], sfx: 'hello' },
       },
     },
+    salon: {
+      wall: '#FCE4EE',
+      draw() {
+        let s = wallFloor('#FCE4EE', '#F3E6EC');
+        // barber pole on the wall
+        const pole = `<clipPath id="room-pole"><rect x="90" y="150" width="70" height="320" rx="35"/></clipPath><rect x="90" y="150" width="70" height="320" rx="35" fill="#fff"/>` +
+          `<g clip-path="url(#room-pole)">${Array.from({ length: 12 }, (_, i) => `<path d="M60 ${120 + i * 60} L200 ${40 + i * 60} L200 ${70 + i * 60} L60 ${150 + i * 60}Z" fill="${i % 2 ? '#3B6FCB' : '#E8434B'}"/>`).join('')}</g>`;
+        s += thing('pole', '미용실 표시등', pole + `<rect x="90" y="150" width="70" height="320" rx="35" fill="none" ${S(5)}/>` + C(125, 136, 22, '#FFC83D', 5) + C(125, 484, 22, '#FFC83D', 5) + glowRect(80, 108, 90, 404));
+        // mirror, chair and the customer
+        s += Rp(480, 90, 440, 380, '#F7C6DA', 30, 6) + `<ellipse cx="700" cy="280" rx="190" ry="165" fill="#E8F7FF" ${S(5)}/><path d="M580 180 L640 130 M600 230 L700 140" stroke="#fff" stroke-width="12" stroke-linecap="round" opacity=".8"/>`;
+        s += Rp(560, 600, 280, 40, '#BBA3F5', 16, 5) + Rp(690, 640, 20, 70, '#8E95A4', 4, 4) + Rp(620, 700, 160, 16, '#8E95A4', 8, 4);
+        s += thing('cust', '손님', Rp(580, 420, 240, 190, '#BBA3F5', 24, 5) + `<rect x="580" y="420" width="240" height="190" rx="24" fill="url(#crayon)"/>` + `<g id="cust">${doll('bear', 590, 360, 220)}</g>` + glowRect(570, 340, 260, 280));
+        // hairdresser with the tools
+        s += thing('stylist', '미용사', doll('kitty', 960, 330, 240, `<path d="M34 74 H66 L64 102 H36 Z" fill="#fff" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/>`) + glowRect(950, 320, 260, 290));
+        s += Rp(1250, 470, 300, 30, '#D6AE72', 6, 5) + Rp(1270, 500, 260, 210, '#F7E2BB', 8, 5);
+        s += thing('scissors', '가위', `<g transform="translate(1300 420) rotate(-20)">${C(-22, 22, 16, '#FF94B8', 5)}${C(22, 22, 16, '#FF94B8', 5)}<path d="M-12 10 L30 -46 M12 10 L-30 -46" stroke="${INK}" stroke-width="8" stroke-linecap="round"/></g>` + glowRect(1250, 350, 110, 120));
+        s += thing('dryer', '드라이기', Rp(1380, 380, 120, 60, '#74C4F2', 30, 5) + Rp(1400, 430, 34, 60, '#74C4F2', 10, 5) + C(1380, 410, 22, '#fff', 5) +
+          `<g class="spray">${Array.from({ length: 8 }, (_, i) => `<circle cx="1360" cy="${400 + (i % 3) * 10}" r="${6 + (i % 2) * 3}" fill="#fff" stroke="#9ED8F5" stroke-width="3" style="--i:${i};--dx:${-180 - i * 20}px;--dy:${(i % 3 - 1) * 30}px"/>`).join('')}</g>` + glowRect(1350, 370, 160, 130));
+        s += thing('shampoo', '샴푸', Rp(1440, 300, 70, 90, '#86CF6E', 16, 5) + Rp(1458, 270, 34, 30, '#fff', 6, 4) +
+          `<g class="spray">${Array.from({ length: 9 }, (_, i) => `<circle cx="${1460 + (i % 3) * 14}" cy="280" r="${8 + (i % 3) * 4}" fill="#fff" stroke="#BBA3F5" stroke-width="3" style="--i:${i};--dx:${(i % 3 - 1) * 40}px;--dy:${-120 - i * 16}px"/>`).join('')}</g>` + glowRect(1430, 260, 90, 140));
+        return s;
+      },
+      things: {
+        pole: { say: ['빙글빙글! 미용실 표시등이에요.'], sfx: 'pop' },
+        cust: { say: ['어떤 머리가 좋을까요?'], sfx: 'hello', act: 'style' },
+        stylist: { say: ['어서 오세요! 어떤 머리를 해 줄까요?', '머리를 감고, 자르고, 말려요.'], sfx: 'hello' },
+        scissors: { sfx: 'snip', act: 'style' },
+        dryer: { say: ['위잉~ 따뜻한 바람으로 머리를 말려요.'], sfx: 'water', act: 'water' },
+        shampoo: { say: ['보글보글! 거품으로 머리를 감아요.'], sfx: 'pop', act: 'water' },
+      },
+    },
     mart: { wall: '#FFF0DC', shop: { items: ['apple', 'banana', 'carrot', 'milk', 'bread', 'grape', 'melon', 'egg'], names: ['사과', '바나나', '당근', '우유', '빵', '포도', '수박', '달걀'], clerk: 'purin', money: false } },
+    fruit: { wall: '#EEF7DF', shop: { items: ['apple', 'banana', 'grape', 'melon', 'berry', 'orange'], names: ['사과', '바나나', '포도', '수박', '딸기', '귤'], clerk: 'keroppi', money: false, crates: true } },
     daiso: { wall: '#FDE8E8', shop: { items: ['pencil', 'note', 'balloon', 'pin', 'cup', 'ball'], names: ['연필', '공책', '풍선', '머리핀', '컵', '공'], clerk: 'pochacco', money: true } },
     hansung: { wall: '#CDEAFB', apt: { body: '#BBA3F5', curtain: '#FFD8E6', trim: '#FFC83D', seed: 0 } },
     gold: { wall: '#CDEAFB', apt: { body: '#F6C744', curtain: '#E5DBFD', trim: '#fff', seed: 3, crown: true } },
@@ -1016,6 +1083,13 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     onette: { wall: '#CDEAFB', apt: { body: '#fff', curtain: '#fff', trim: '#fff', seed: 6, stripes: ['#F0544F', '#FF8A3D', '#FFD84D', '#86CF6E', '#74C4F2', '#6C7FE0', '#BBA3F5'] } },
   };
 
+  const STYLES = [
+    ['', '처음 모습이에요. 이제 멋을 내 볼까요?'],
+    [`<g transform="translate(70 14) rotate(18)"><path d="M0 0 L-16 -10 L-16 10Z M0 0 L16 -10 L16 10Z" fill="#FF94B8" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/><circle r="5" fill="#EF4F7A" stroke="${INK}" stroke-width="2.2"/></g>`, '싹둑싹둑! 리본을 달았어요.'],
+    [[22, 32, 44, 56, 68, 78].map((x, i) => `<circle cx="${x}" cy="${20 - Math.sin((x - 22) / 56 * Math.PI) * 8}" r="6.5" fill="${['#FF94B8', '#FFC83D', '#74C4F2', '#86CF6E', '#BBA3F5', '#FF8A5C'][i]}" stroke="${INK}" stroke-width="2"/>`).join(''), '꽃 머리띠 완성! 예뻐요.'],
+    [`<path d="M30 18 L32 -4 L42 8 L50 -8 L58 8 L68 -4 L70 18Z" fill="#FFC83D" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/><circle cx="50" cy="8" r="3" fill="#EF4F7A"/>`, '반짝반짝 왕관을 썼어요!'],
+    [[28, 42, 58, 72].map((x, i) => `<rect x="${x - 6}" y="${8 + (i % 2) * 4}" width="12" height="18" rx="6" fill="${i % 2 ? '#74C4F2' : '#FF94B8'}" stroke="${INK}" stroke-width="2"/>`).join(''), '뽀글뽀글 파마하는 중이에요!'],
+  ];
   function artSVG(i) {
     const arts = [
       `<path d="M1310 460 L1380 380 L1430 430 L1480 350 L1540 460Z" fill="#86CF6E"/>${C(1500, 320, 26, '#FFC83D', 0)}`,
@@ -1027,6 +1101,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
 
   function shopRoom(b, o) {
     let s = wallFloor(ROOMS[b.id].wall, '#E9E2D2');
+    if (o.crates) return s + crateStand(o) + cartAndCounter(o);
     s += Rp(60, 150, 880, 560, '#fff', 14, 6);
     [370, 560].forEach((y) => { s += Rp(76, y, 848, 18, '#D6AE72', 4, 4); });
     const per = Math.ceil(o.items.length / 2);
@@ -1036,6 +1111,26 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       s += thing('i' + i, o.names[i], ITEM_AT(k, x, y, 140) +
         (o.money ? Rp(x + 30, y + 150, 84, 30, '#FFE07A', 6, 3) + T(x + 72, y + 173, 22, '1000원') : '') + glowRect(x - 6, y - 6, 152, o.money ? 192 : 156));
     });
+    return s + cartAndCounter(o);
+  }
+  // a fruit stand: wooden crates heaped with fruit, on a stepped stall under a striped awning
+  function crateStand(o) {
+    let s = '';
+    const n = 7, aw = 900 / n;
+    for (let i = 0; i < n; i++) s += `<path d="M${50 + i * aw} 70 H${50 + (i + 1) * aw} V120 A${aw / 2} ${aw / 3} 0 0 1 ${50 + i * aw} 120Z" fill="${i % 2 ? '#fff' : '#5DB85A'}" ${S(5)}/>`;
+    s += Rp(40, 50, 920, 30, '#3E9A3A', 8, 5) + T(500, 230, 64, '싱싱한 과일', '#3E9A3A');
+    s += Rp(70, 470, 860, 30, '#B9805A', 6, 5) + Rp(50, 700, 900, 24, '#B9805A', 6, 5) + `<path d="M100 500V700M900 500V700" stroke="#9A6A3A" stroke-width="14"/>`;
+    o.items.forEach((k, i) => {
+      const row = Math.floor(i / 3), col = i % 3;
+      const x = 110 + col * 280, y = row ? 590 : 360;
+      const heap = ITEM_AT(k, x + 10, y - 82, 100) + ITEM_AT(k, x + 110, y - 86, 100) + ITEM_AT(k, x + 60, y - 120, 100);
+      s += thing('i' + i, o.names[i], heap + Rp(x, y, 230, 100, '#D9A673', 8, 5) + `<rect x="${x}" y="${y}" width="230" height="100" rx="8" fill="url(#crayon)"/>` +
+        `<path d="M${x + 8} ${y + 34}h214M${x + 8} ${y + 66}h214" stroke="${INK}" stroke-width="3" opacity=".3"/>` + Rp(x + 70, y + 30, 90, 40, '#fff', 6, 3) + T(x + 115, y + 61, 28, o.names[i]) + glowRect(x - 6, y - 130, 242, 240));
+    });
+    return s;
+  }
+  function cartAndCounter(o) {
+    let s = '';
     // cart / basket with a big count
     s += thing('cart', o.money ? '바구니' : '장바구니',
       (o.money
@@ -1190,6 +1285,12 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
         break;
       }
       case 'art': state.art++; $('art').innerHTML = artSVG(state.art); break;
+      case 'style': {
+        state.hair = ((state.hair || 0) + 1) % STYLES.length;
+        $('cust').innerHTML = doll('bear', 590, 360, 220, STYLES[state.hair][0]);
+        say(STYLES[state.hair][1], el);
+        return;
+      }
     }
     if (t.say) say(nextLine(k, t.say), el);
   }
