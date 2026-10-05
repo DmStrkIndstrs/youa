@@ -1,0 +1,714 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-05T13:56:36+00:00",
+  "title": "Design System: 인형뽑기 가게 (새들1반)",
+  "extensions": {
+    "colorMeta": {
+      "plum-ink": {
+        "role": "neutral",
+        "displayName": "Plum Ink",
+        "canonical": "#34264A",
+        "tonalRamp": [
+          "oklch(15% 0.012 301)",
+          "oklch(26% 0.025 301)",
+          "oklch(37% 0.038 301)",
+          "oklch(48% 0.051 301)",
+          "oklch(60% 0.065 301)",
+          "oklch(72% 0.051 301)",
+          "oklch(84% 0.037 301)",
+          "oklch(95% 0.024 301)"
+        ]
+      },
+      "plum-ink-soft": {
+        "role": "neutral",
+        "displayName": "Soft Plum",
+        "canonical": "#5B4D6E",
+        "tonalRamp": [
+          "oklch(15% 0.011 304)",
+          "oklch(26% 0.022 304)",
+          "oklch(37% 0.033 304)",
+          "oklch(48% 0.044 304)",
+          "oklch(60% 0.056 304)",
+          "oklch(72% 0.044 304)",
+          "oklch(84% 0.032 304)",
+          "oklch(95% 0.021 304)"
+        ]
+      },
+      "mint-wall": {
+        "role": "neutral",
+        "displayName": "Mint Wall",
+        "canonical": "#E3EFE7",
+        "tonalRamp": [
+          "oklch(15% 0.003 157)",
+          "oklch(26% 0.006 157)",
+          "oklch(37% 0.010 157)",
+          "oklch(48% 0.013 157)",
+          "oklch(60% 0.017 157)",
+          "oklch(72% 0.013 157)",
+          "oklch(84% 0.009 157)",
+          "oklch(95% 0.006 157)"
+        ]
+      },
+      "birch": {
+        "role": "neutral",
+        "displayName": "Birch Face",
+        "canonical": "#EFD09C",
+        "tonalRamp": [
+          "oklch(15% 0.014 80)",
+          "oklch(26% 0.029 80)",
+          "oklch(37% 0.044 80)",
+          "oklch(48% 0.059 80)",
+          "oklch(60% 0.076 80)",
+          "oklch(72% 0.059 80)",
+          "oklch(84% 0.043 80)",
+          "oklch(95% 0.028 80)"
+        ]
+      },
+      "birch-hi": {
+        "role": "neutral",
+        "displayName": "Birch Highlight",
+        "canonical": "#F7E2BB",
+        "tonalRamp": [
+          "oklch(15% 0.011 83)",
+          "oklch(26% 0.022 83)",
+          "oklch(37% 0.033 83)",
+          "oklch(48% 0.044 83)",
+          "oklch(60% 0.056 83)",
+          "oklch(72% 0.044 83)",
+          "oklch(84% 0.032 83)",
+          "oklch(95% 0.021 83)"
+        ]
+      },
+      "birch-lo": {
+        "role": "neutral",
+        "displayName": "Birch Shade",
+        "canonical": "#D6AE72",
+        "tonalRamp": [
+          "oklch(15% 0.017 77)",
+          "oklch(26% 0.035 77)",
+          "oklch(37% 0.053 77)",
+          "oklch(48% 0.071 77)",
+          "oklch(60% 0.090 77)",
+          "oklch(72% 0.071 77)",
+          "oklch(84% 0.051 77)",
+          "oklch(95% 0.033 77)"
+        ]
+      },
+      "ply-dark": {
+        "role": "neutral",
+        "displayName": "Dark Ply Lamination",
+        "canonical": "#B98A51",
+        "tonalRamp": [
+          "oklch(15% 0.018 70)",
+          "oklch(26% 0.036 70)",
+          "oklch(37% 0.055 70)",
+          "oklch(48% 0.074 70)",
+          "oklch(60% 0.094 70)",
+          "oklch(72% 0.074 70)",
+          "oklch(84% 0.053 70)",
+          "oklch(95% 0.035 70)"
+        ]
+      },
+      "ply-light": {
+        "role": "neutral",
+        "displayName": "Light Ply Lamination",
+        "canonical": "#F5DDB3",
+        "tonalRamp": [
+          "oklch(15% 0.012 82)",
+          "oklch(26% 0.024 82)",
+          "oklch(37% 0.036 82)",
+          "oklch(48% 0.048 82)",
+          "oklch(60% 0.061 82)",
+          "oklch(72% 0.048 82)",
+          "oklch(84% 0.035 82)",
+          "oklch(95% 0.023 82)"
+        ]
+      },
+      "strawberry": {
+        "role": "primary",
+        "displayName": "Strawberry",
+        "canonical": "#EF4F7A",
+        "tonalRamp": [
+          "oklch(15% 0.030 8)",
+          "oklch(26% 0.062 8)",
+          "oklch(37% 0.094 8)",
+          "oklch(48% 0.125 8)",
+          "oklch(60% 0.160 8)",
+          "oklch(72% 0.125 8)",
+          "oklch(84% 0.091 8)",
+          "oklch(95% 0.059 8)"
+        ]
+      },
+      "strawberry-deep": {
+        "role": "primary",
+        "displayName": "Deep Strawberry",
+        "canonical": "#B8285A",
+        "tonalRamp": [
+          "oklch(15% 0.030 6)",
+          "oklch(26% 0.062 6)",
+          "oklch(37% 0.094 6)",
+          "oklch(48% 0.125 6)",
+          "oklch(60% 0.160 6)",
+          "oklch(72% 0.125 6)",
+          "oklch(84% 0.091 6)",
+          "oklch(95% 0.059 6)"
+        ]
+      },
+      "bin-sunflower": {
+        "role": "secondary",
+        "displayName": "Sunflower Bin",
+        "canonical": "#FFC83D",
+        "tonalRamp": [
+          "oklch(15% 0.030 86)",
+          "oklch(26% 0.061 86)",
+          "oklch(37% 0.093 86)",
+          "oklch(48% 0.124 86)",
+          "oklch(60% 0.158 86)",
+          "oklch(72% 0.124 86)",
+          "oklch(84% 0.090 86)",
+          "oklch(95% 0.059 86)"
+        ]
+      },
+      "bin-sky": {
+        "role": "secondary",
+        "displayName": "Sky Bin",
+        "canonical": "#74C4F2",
+        "tonalRamp": [
+          "oklch(15% 0.019 235)",
+          "oklch(26% 0.040 235)",
+          "oklch(37% 0.060 235)",
+          "oklch(48% 0.080 235)",
+          "oklch(60% 0.102 235)",
+          "oklch(72% 0.080 235)",
+          "oklch(84% 0.058 235)",
+          "oklch(95% 0.038 235)"
+        ]
+      },
+      "bin-pink": {
+        "role": "secondary",
+        "displayName": "Pink Bin",
+        "canonical": "#FF94B8",
+        "tonalRamp": [
+          "oklch(15% 0.025 359)",
+          "oklch(26% 0.052 359)",
+          "oklch(37% 0.079 359)",
+          "oklch(48% 0.105 359)",
+          "oklch(60% 0.134 359)",
+          "oklch(72% 0.105 359)",
+          "oklch(84% 0.076 359)",
+          "oklch(95% 0.050 359)"
+        ]
+      },
+      "bin-leaf": {
+        "role": "secondary",
+        "displayName": "Leaf Bin",
+        "canonical": "#86CF6E",
+        "tonalRamp": [
+          "oklch(15% 0.028 138)",
+          "oklch(26% 0.058 138)",
+          "oklch(37% 0.088 138)",
+          "oklch(48% 0.117 138)",
+          "oklch(60% 0.149 138)",
+          "oklch(72% 0.117 138)",
+          "oklch(84% 0.085 138)",
+          "oklch(95% 0.055 138)"
+        ]
+      },
+      "bin-lilac": {
+        "role": "secondary",
+        "displayName": "Lilac Bin",
+        "canonical": "#BBA3F5",
+        "tonalRamp": [
+          "oklch(15% 0.022 297)",
+          "oklch(26% 0.046 297)",
+          "oklch(37% 0.069 297)",
+          "oklch(48% 0.092 297)",
+          "oklch(60% 0.118 297)",
+          "oklch(72% 0.092 297)",
+          "oklch(84% 0.067 297)",
+          "oklch(95% 0.043 297)"
+        ]
+      },
+      "bin-tomato": {
+        "role": "secondary",
+        "displayName": "Tomato Bin",
+        "canonical": "#FF8A5C",
+        "tonalRamp": [
+          "oklch(15% 0.029 42)",
+          "oklch(26% 0.060 42)",
+          "oklch(37% 0.091 42)",
+          "oklch(48% 0.121 42)",
+          "oklch(60% 0.155 42)",
+          "oklch(72% 0.121 42)",
+          "oklch(84% 0.088 42)",
+          "oklch(95% 0.057 42)"
+        ]
+      },
+      "back-sunflower": {
+        "role": "secondary",
+        "displayName": "Sunflower Cubby Back",
+        "canonical": "#FFE6A3",
+        "tonalRamp": [
+          "oklch(15% 0.017 90)",
+          "oklch(26% 0.034 90)",
+          "oklch(37% 0.052 90)",
+          "oklch(48% 0.070 90)",
+          "oklch(60% 0.089 90)",
+          "oklch(72% 0.070 90)",
+          "oklch(84% 0.050 90)",
+          "oklch(95% 0.033 90)"
+        ]
+      },
+      "back-sky": {
+        "role": "secondary",
+        "displayName": "Sky Cubby Back",
+        "canonical": "#CDEAFB",
+        "tonalRamp": [
+          "oklch(15% 0.007 234)",
+          "oklch(26% 0.015 234)",
+          "oklch(37% 0.022 234)",
+          "oklch(48% 0.030 234)",
+          "oklch(60% 0.038 234)",
+          "oklch(72% 0.030 234)",
+          "oklch(84% 0.022 234)",
+          "oklch(95% 0.014 234)"
+        ]
+      },
+      "back-pink": {
+        "role": "secondary",
+        "displayName": "Pink Cubby Back",
+        "canonical": "#FFD8E6",
+        "tonalRamp": [
+          "oklch(15% 0.009 354)",
+          "oklch(26% 0.018 354)",
+          "oklch(37% 0.027 354)",
+          "oklch(48% 0.037 354)",
+          "oklch(60% 0.047 354)",
+          "oklch(72% 0.037 354)",
+          "oklch(84% 0.027 354)",
+          "oklch(95% 0.017 354)"
+        ]
+      },
+      "back-leaf": {
+        "role": "secondary",
+        "displayName": "Leaf Cubby Back",
+        "canonical": "#D9F1CE",
+        "tonalRamp": [
+          "oklch(15% 0.010 136)",
+          "oklch(26% 0.021 136)",
+          "oklch(37% 0.031 136)",
+          "oklch(48% 0.042 136)",
+          "oklch(60% 0.053 136)",
+          "oklch(72% 0.042 136)",
+          "oklch(84% 0.030 136)",
+          "oklch(95% 0.020 136)"
+        ]
+      },
+      "back-lilac": {
+        "role": "secondary",
+        "displayName": "Lilac Cubby Back",
+        "canonical": "#E5DBFD",
+        "tonalRamp": [
+          "oklch(15% 0.009 299)",
+          "oklch(26% 0.018 299)",
+          "oklch(37% 0.028 299)",
+          "oklch(48% 0.037 299)",
+          "oklch(60% 0.047 299)",
+          "oklch(72% 0.037 299)",
+          "oklch(84% 0.027 299)",
+          "oklch(95% 0.017 299)"
+        ]
+      },
+      "back-tomato": {
+        "role": "secondary",
+        "displayName": "Tomato Cubby Back",
+        "canonical": "#FFDBCB",
+        "tonalRamp": [
+          "oklch(15% 0.009 45)",
+          "oklch(26% 0.018 45)",
+          "oklch(37% 0.027 45)",
+          "oklch(48% 0.036 45)",
+          "oklch(60% 0.046 45)",
+          "oklch(72% 0.036 45)",
+          "oklch(84% 0.026 45)",
+          "oklch(95% 0.017 45)"
+        ]
+      },
+      "bay-sky": {
+        "role": "neutral",
+        "displayName": "Wheel Bay Back",
+        "canonical": "#D3ECFA",
+        "tonalRamp": [
+          "oklch(15% 0.006 232)",
+          "oklch(26% 0.013 232)",
+          "oklch(37% 0.019 232)",
+          "oklch(48% 0.026 232)",
+          "oklch(60% 0.033 232)",
+          "oklch(72% 0.026 232)",
+          "oklch(84% 0.018 232)",
+          "oklch(95% 0.012 232)"
+        ]
+      },
+      "bay-lilac": {
+        "role": "neutral",
+        "displayName": "Machine Bay Back",
+        "canonical": "#E8DEFF",
+        "tonalRamp": [
+          "oklch(15% 0.009 299)",
+          "oklch(26% 0.018 299)",
+          "oklch(37% 0.027 299)",
+          "oklch(48% 0.036 299)",
+          "oklch(60% 0.046 299)",
+          "oklch(72% 0.036 299)",
+          "oklch(84% 0.026 299)",
+          "oklch(95% 0.017 299)"
+        ]
+      },
+      "deck-plum": {
+        "role": "tertiary",
+        "displayName": "Machine Deck Plum",
+        "canonical": "#2E2240",
+        "tonalRamp": [
+          "oklch(15% 0.011 301)",
+          "oklch(26% 0.022 301)",
+          "oklch(37% 0.033 301)",
+          "oklch(48% 0.044 301)",
+          "oklch(60% 0.056 301)",
+          "oklch(72% 0.044 301)",
+          "oklch(84% 0.032 301)",
+          "oklch(95% 0.021 301)"
+        ]
+      },
+      "led-ground": {
+        "role": "tertiary",
+        "displayName": "LED Ground",
+        "canonical": "#1C1328",
+        "tonalRamp": [
+          "oklch(15% 0.008 303)",
+          "oklch(26% 0.016 303)",
+          "oklch(37% 0.025 303)",
+          "oklch(48% 0.033 303)",
+          "oklch(60% 0.042 303)",
+          "oklch(72% 0.033 303)",
+          "oklch(84% 0.024 303)",
+          "oklch(95% 0.016 303)"
+        ]
+      },
+      "led-amber": {
+        "role": "tertiary",
+        "displayName": "LED Amber",
+        "canonical": "#FFD76A",
+        "tonalRamp": [
+          "oklch(15% 0.026 89)",
+          "oklch(26% 0.052 89)",
+          "oklch(37% 0.079 89)",
+          "oklch(48% 0.106 89)",
+          "oklch(60% 0.135 89)",
+          "oklch(72% 0.106 89)",
+          "oklch(84% 0.077 89)",
+          "oklch(95% 0.050 89)"
+        ]
+      },
+      "led-blush": {
+        "role": "tertiary",
+        "displayName": "LED Blush",
+        "canonical": "#F7C6DA",
+        "tonalRamp": [
+          "oklch(15% 0.012 352)",
+          "oklch(26% 0.024 352)",
+          "oklch(37% 0.036 352)",
+          "oklch(48% 0.048 352)",
+          "oklch(60% 0.061 352)",
+          "oklch(72% 0.048 352)",
+          "oklch(84% 0.035 352)",
+          "oklch(95% 0.023 352)"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper White",
+        "canonical": "#FFFFFF",
+        "tonalRamp": [
+          "oklch(15% 0.000 90)",
+          "oklch(26% 0.000 90)",
+          "oklch(37% 0.000 90)",
+          "oklch(48% 0.000 90)",
+          "oklch(60% 0.000 90)",
+          "oklch(72% 0.000 90)",
+          "oklch(84% 0.000 90)",
+          "oklch(95% 0.000 90)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Sign",
+        "purpose": "The shop sign, one cut-paper tile per syllable. Bagel Fat One signage subset only."
+      },
+      "shout": {
+        "displayName": "Shout",
+        "purpose": "성공~~~! / 꽝~~! on the outcome notice; bin-coloured letters with a plum stroke."
+      },
+      "headline": {
+        "displayName": "Name",
+        "purpose": "The child's name on the outcome notice and the face-out guest tag."
+      },
+      "title": {
+        "displayName": "Bay Title",
+        "purpose": "Bay headings and settings sheet titles."
+      },
+      "led": {
+        "displayName": "LED Cue",
+        "purpose": "The machine's one-line next-step cue, balanced wrap."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Teacher settings copy and hints, max 60ch."
+      },
+      "label": {
+        "displayName": "Tag Name",
+        "purpose": "Names on cubby tags, shrunk in JS (fitNames) to fit, never wrapped."
+      }
+    },
+    "shadows": [
+      {
+        "name": "ply",
+        "value": "inset 0 0 0 1.5px #B98A51, inset 0 0 0 calc(var(--ring) * .45) #F5DDB3, inset 0 0 0 calc(var(--ring) * .45 + 1.5px) #B98A51, inset 0 0 0 var(--ring) #F7E2BB",
+        "purpose": "Layered plywood edge on the unit, the rail, the cubby header and every bay."
+      },
+      {
+        "name": "recess",
+        "value": "inset 0 calc(var(--ring) + 14px) 18px -14px rgba(52,38,74,.34), inset calc(var(--ring) + 12px) 0 16px -14px rgba(52,38,74,.2)",
+        "purpose": "Makes bays read as openings in the wood."
+      },
+      {
+        "name": "depth-1",
+        "value": "0 2px 3px rgba(52,38,74,.16), 0 8px 18px rgba(52,38,74,.14)",
+        "purpose": "Resting objects: tags, sign tiles, the plaque, knobs, flip digits, the coin."
+      },
+      {
+        "name": "depth-2",
+        "value": "0 3px 6px rgba(52,38,74,.2), 0 18px 34px rgba(52,38,74,.2)",
+        "purpose": "Lifted objects: the unit, the cabinet, the spin button, the guest tag, the notice, the settings sheet."
+      },
+      {
+        "name": "press-lip",
+        "value": "inset 0 -.16em 0 rgba(52,38,74,.4)",
+        "purpose": "Bottom lip on pill buttons; thins on :active."
+      },
+      {
+        "name": "screen-well",
+        "value": "inset 0 3px 8px rgba(0,0,0,.55)",
+        "purpose": "The LED screen and the door mouth inside the machine."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "State changes, presses, the notice entrance, the door flap."
+      },
+      {
+        "name": "ease-in-out",
+        "value": "cubic-bezier(0.77, 0, 0.175, 1)",
+        "purpose": "Loops: the hand bob and the doll wiggle."
+      },
+      {
+        "name": "press",
+        "value": "120ms",
+        "purpose": "Button and knob press feedback."
+      },
+      {
+        "name": "hand-bob",
+        "value": "900ms alternate infinite",
+        "purpose": "The single pointing cue: over the spin button when idle, over the glass when ready."
+      },
+      {
+        "name": "doll-wiggle",
+        "value": "2.4s infinite, staggered .4s/.9s",
+        "purpose": "Dolls invite a tap during the ready phase only."
+      },
+      {
+        "name": "bulb-chase",
+        "value": "480ms steps(1) infinite",
+        "purpose": "Marquee bulbs while the wheel spins and the claw plays."
+      },
+      {
+        "name": "banner-in",
+        "value": "320ms",
+        "purpose": "The outcome notice rises in."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact-landscape",
+        "value": "max-width: 1199px"
+      },
+      {
+        "name": "stacked",
+        "value": "max-width: 899px, or max-aspect-ratio: 1/1"
+      },
+      {
+        "name": "phone",
+        "value": "max-width: 600px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Spin Button",
+      "kind": "button",
+      "refersTo": "button-spin",
+      "description": "The primary action of the moment (spin the wheel, put the prize in the cubby): a strawberry pill with a press lip.",
+      "html": "<button class=\"ds-btn-spin\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 12a8 8 0 1 1-2.4-5.7\"/><path d=\"M20 4v5h-5\"/></svg>돌림판 돌리기!</button>",
+      "css": ".ds-btn-spin { display:inline-flex; align-items:center; gap:.4em; height:2.5em; padding:0 .9em; border:3.5px solid #34264A; border-radius:999px; background:linear-gradient(180deg,#CF3A69,#B8285A); color:#FFFFFF; font-family:\"Jua Local\", \"Jua\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", \"Noto Sans KR\", sans-serif; font-size:1.6rem; box-shadow:inset 0 -.16em 0 rgba(52,38,74,.4), 0 3px 6px rgba(52,38,74,.2), 0 18px 34px rgba(52,38,74,.2); cursor:pointer; transition:transform 120ms cubic-bezier(0.23,1,0.32,1), box-shadow 120ms cubic-bezier(0.23,1,0.32,1); } .ds-btn-spin svg { width:1em; height:1em; } .ds-btn-spin:hover { filter:brightness(1.07); } .ds-btn-spin:focus-visible { outline:4px solid #34264A; outline-offset:3px; } .ds-btn-spin:active { transform:translateY(3px); box-shadow:inset 0 -.06em 0 rgba(52,38,74,.4), 0 2px 3px rgba(52,38,74,.16), 0 8px 18px rgba(52,38,74,.14); }"
+    },
+    {
+      "name": "Sunflower Button",
+      "kind": "button",
+      "refersTo": "button-sun",
+      "description": "Secondary deck action (restock): a sunflower pill with a light press lip.",
+      "html": "<button class=\"ds-btn-sun\">인형 채우기</button>",
+      "css": ".ds-btn-sun { min-height:44px; padding:.25em .9em; border:3px solid #34264A; border-radius:999px; background:#FFC83D; color:#34264A; font-family:\"Jua Local\", \"Jua\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", \"Noto Sans KR\", sans-serif; font-size:1.1rem; box-shadow:inset 0 -.14em 0 rgba(52,38,74,.25); cursor:pointer; } .ds-btn-sun:hover { filter:brightness(1.05); } .ds-btn-sun:focus-visible { outline:4px solid #34264A; outline-offset:3px; } .ds-btn-sun:active { transform:translateY(2px); }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Teacher-settings actions: a paper pill with an ink outline. The warn variant arms in two steps.",
+      "html": "<div class=\"ds-row\"><button class=\"ds-btn-ghost\">닫기</button><button class=\"ds-btn-ghost ds-warn\">처음부터</button><button class=\"ds-btn-ghost ds-warn ds-armed\">한 번 더 누르면 지워요</button></div>",
+      "css": ".ds-row { display:flex; gap:10px; flex-wrap:wrap; } .ds-btn-ghost { min-height:44px; padding:4px 12px; border:2.5px solid #34264A; border-radius:999px; background:#FFFFFF; color:#34264A; font-family:\"Jua Local\", \"Jua\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", \"Noto Sans KR\", sans-serif; font-size:1.05rem; white-space:nowrap; cursor:pointer; } .ds-btn-ghost:hover { background:#FFF4DC; } .ds-btn-ghost:focus-visible { outline:4px solid #34264A; outline-offset:3px; } .ds-btn-ghost:active { transform:translateY(2px); } .ds-warn { border-color:#B8285A; color:#B8285A; } .ds-warn.ds-armed { background:#B8285A; color:#FFFFFF; }"
+    },
+    {
+      "name": "Rail Knob",
+      "kind": "button",
+      "refersTo": "knob",
+      "description": "Round birch knobs on the top rail for fullscreen and teacher settings.",
+      "html": "<button class=\"ds-knob\" aria-label=\"선생님 설정\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#34264A\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"3.3\"/><path d=\"M12 2.6v2.8M12 18.6v2.8M2.6 12h2.8M18.6 12h2.8M5.4 5.4l2 2M16.6 16.6l2 2M5.4 18.6l2-2M16.6 7.4l2-2\"/></svg></button>",
+      "css": ".ds-knob { width:56px; height:56px; padding:0; display:grid; place-items:center; border:3px solid #34264A; border-radius:50%; background:radial-gradient(circle at 34% 30%, #FDF1DA, #EFD09C 62%, #D6AE72); box-shadow:0 2px 3px rgba(52,38,74,.16), 0 8px 18px rgba(52,38,74,.14); cursor:pointer; transition:transform 120ms cubic-bezier(0.23,1,0.32,1); } .ds-knob svg { width:46%; height:46%; } .ds-knob:hover { transform:translateY(-1px); } .ds-knob:focus-visible { outline:4px solid #34264A; outline-offset:3px; } .ds-knob:active { transform:translateY(2px) scale(.97); }"
+    },
+    {
+      "name": "Name Tag",
+      "kind": "chip",
+      "refersTo": "name-tag",
+      "description": "A laminated cubby name tag: a punched hole, a bin-coloured picture-symbol disc and the fitted name. The won state adds a sunflower corner fold.",
+      "html": "<div class=\"ds-tags\"><div class=\"ds-tag\"><span class=\"ds-disc\" style=\"background:#FFC83D\"><svg viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"13\" r=\"7\" fill=\"#FF6B6B\" stroke=\"#34264A\" stroke-width=\"2\"/><path d=\"M12 6c0-2 1-3 3-3\" fill=\"none\" stroke=\"#34264A\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg></span><span>강하율</span></div><div class=\"ds-tag ds-won\"><span class=\"ds-disc\" style=\"background:#74C4F2\"><svg viewBox=\"0 0 24 24\"><path d=\"M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z\" fill=\"#FFC83D\" stroke=\"#34264A\" stroke-width=\"2\" stroke-linejoin=\"round\"/></svg></span><span>권민석</span></div></div>",
+      "css": ".ds-tags { display:flex; gap:16px; padding-top:10px; } .ds-tag { position:relative; display:flex; align-items:center; gap:.32em; padding:.26em .45em .26em .28em; background:linear-gradient(160deg,#FFFFFF 55%,#F2EFF6); border:2.5px solid #34264A; border-radius:.5em; color:#34264A; font-family:\"Jua Local\", \"Jua\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", \"Noto Sans KR\", sans-serif; font-size:1.5rem; line-height:1.1; box-shadow:0 2px 3px rgba(52,38,74,.16), 0 8px 18px rgba(52,38,74,.14); } .ds-tag::before { content:\"\"; position:absolute; top:-.3em; left:50%; width:.48em; height:.48em; margin-left:-.24em; border:2px solid #34264A; border-radius:50%; background:#D6AE72; } .ds-won::after { content:\"\"; position:absolute; top:-2.5px; right:-2.5px; width:1.05em; height:1.05em; border-top-right-radius:.5em; background:linear-gradient(225deg,#FFC83D 0 48%,#34264A 48% 54%,transparent 54%); } .ds-disc { flex:none; width:1.45em; height:1.45em; display:grid; place-items:center; border:2px solid #34264A; border-radius:50%; } .ds-disc svg { width:80%; height:80%; }"
+    },
+    {
+      "name": "Guest Tag",
+      "kind": "card",
+      "refersTo": "guest-tag",
+      "description": "The current customer's tag, promoted face-out under the wheel, with a swap pill.",
+      "html": "<div class=\"ds-guest\"><span class=\"ds-gdisc\"><svg viewBox=\"0 0 24 24\"><path d=\"M15 3a9 9 0 1 0 6 13A7 7 0 0 1 15 3z\" fill=\"#FFC83D\" stroke=\"#34264A\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/></svg></span><div><div class=\"ds-gname\">한윤재</div><div class=\"ds-ghello\">손님, 어서 오세요!</div></div><div class=\"ds-groles\">친구들은 응원단, 다 같이 응원해요!</div><button class=\"ds-swap\">다른 친구로</button></div>",
+      "css": ".ds-guest { position:relative; display:grid; grid-template-columns:auto minmax(0,1fr); align-items:center; column-gap:1em; row-gap:.5em; max-width:520px; padding:1.4em 1.2em 1em; background:linear-gradient(160deg,#FFFFFF 58%,#F2EFF6); border:3.5px solid #34264A; border-radius:.9em; box-shadow:0 3px 6px rgba(52,38,74,.2), 0 18px 34px rgba(52,38,74,.2); color:#34264A; font-family:\"Jua Local\", \"Jua\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", \"Noto Sans KR\", sans-serif; font-size:1rem; line-height:1.12; } .ds-guest::before { content:\"\"; position:absolute; top:-.62em; left:50%; width:1em; height:1em; margin-left:-.5em; border:3px solid #34264A; border-radius:50%; background:#D6AE72; } .ds-gdisc { width:4.8em; height:4.8em; display:grid; place-items:center; border:3px solid #34264A; border-radius:50%; background:#FF8A5C; } .ds-gdisc svg { width:70%; height:70%; } .ds-gname { font-size:3.5em; line-height:1; letter-spacing:-.02em; } .ds-ghello { font-size:1.45em; } .ds-groles { grid-column:1/-1; font-size:1.08em; color:#5B4D6E; } .ds-swap { position:absolute; top:.6em; right:.6em; min-height:40px; padding:.3em .7em; border:2px solid #5B4D6E; border-radius:999px; background:#FFFFFF; color:#5B4D6E; font:inherit; font-size:.9em; cursor:pointer; } .ds-swap:hover { background:#FFF4DC; } .ds-swap:focus-visible { outline:4px solid #34264A; outline-offset:3px; }"
+    },
+    {
+      "name": "Cut-Paper Sign",
+      "kind": "custom",
+      "description": "The shop sign: one hand-cut, tilted bin-colour tile per syllable, in Bagel Fat One.",
+      "html": "<div class=\"ds-sign\"><span style=\"background:#FFC83D;transform:rotate(-4deg)\">인</span><span style=\"background:#74C4F2;transform:rotate(3deg)\">형</span><span style=\"background:#FF94B8;transform:rotate(-2deg)\">뽑</span><span style=\"background:#86CF6E;transform:rotate(4deg)\">기</span></div>",
+      "css": ".ds-sign { display:flex; gap:8px; font-family:\"Bagel Local\", \"Jua Local\", \"Jua\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", sans-serif; font-size:3rem; line-height:1; color:#34264A; } .ds-sign span { display:grid; place-items:center; width:1.26em; height:1.26em; padding-bottom:.06em; border:3px solid #34264A; border-radius:.18em .3em .22em .26em / .28em .2em .32em .2em; box-shadow:0 2px 3px rgba(52,38,74,.16), 0 8px 18px rgba(52,38,74,.14); }"
+    },
+    {
+      "name": "Flip Scoreboard",
+      "kind": "custom",
+      "refersTo": "flip-digit",
+      "description": "Flip digits in the cubby header that count successful children.",
+      "html": "<div class=\"ds-score\">성공 <span class=\"ds-flip\">1</span> / 12</div>",
+      "css": ".ds-score { display:flex; align-items:center; gap:.3em; color:#34264A; font-family:\"Jua Local\", \"Jua\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", \"Noto Sans KR\", sans-serif; font-size:1.6rem; } .ds-flip { position:relative; min-width:1.05em; height:1.42em; padding:0 .12em; display:grid; place-items:center; background:#FFFFFF; border:2.5px solid #34264A; border-radius:.2em; font-size:1.3em; line-height:1; font-variant-numeric:tabular-nums; box-shadow:0 2px 3px rgba(52,38,74,.16), 0 8px 18px rgba(52,38,74,.14); } .ds-flip::after { content:\"\"; position:absolute; left:0; right:0; top:50%; height:2px; background:rgba(52,38,74,.22); }"
+    },
+    {
+      "name": "LED Cue Screen",
+      "kind": "custom",
+      "refersTo": "led-screen",
+      "description": "The machine deck's LED screen that carries the single next-step cue.",
+      "html": "<div class=\"ds-deck\"><div class=\"ds-led\"><div class=\"ds-led1\">다음 손님은 누구일까요?</div><div class=\"ds-led2\">돌림판을 돌려 주세요!</div></div></div>",
+      "css": ".ds-deck { width:380px; padding:10px; background:#2E2240; border:3px solid #34264A; border-radius:14px; font-family:\"Jua Local\", \"Jua\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", \"Noto Sans KR\", sans-serif; } .ds-led { display:flex; flex-direction:column; justify-content:center; gap:.18em; min-height:96px; padding:.25em .55em; background:#1C1328; border-radius:8px; box-shadow:inset 0 3px 8px rgba(0,0,0,.55); text-align:center; } .ds-led1 { color:#FFD76A; font-size:1.5rem; line-height:1.12; } .ds-led2 { color:#F7C6DA; font-size:1.05rem; line-height:1.18; }"
+    },
+    {
+      "name": "Settings Field",
+      "kind": "input",
+      "refersTo": "input-text",
+      "description": "Teacher-settings text input and select on paper with an ink outline.",
+      "html": "<div class=\"ds-field\"><input class=\"ds-input\" type=\"text\" value=\"강하율\" aria-label=\"이름\"><select class=\"ds-input ds-select\" aria-label=\"그림\"><option>사과</option></select></div>",
+      "css": ".ds-field { display:flex; gap:10px; } .ds-input { min-height:44px; padding:6px 10px; border:2.5px solid #34264A; border-radius:10px; background:#FFFFFF; color:#34264A; caret-color:#B8285A; font-family:\"Jua Local\", \"Jua\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", \"Noto Sans KR\", sans-serif; font-size:1.05rem; } .ds-input:focus-visible { outline:4px solid #34264A; outline-offset:3px; } .ds-select { -webkit-appearance:none; appearance:none; padding-right:34px; background:#FFFFFF url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' fill='none' stroke='%2334264A' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\") no-repeat right 10px center / 16px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Class Cubby Shop",
+    "overview": "The whole screen is one piece of classroom furniture seen front-on: a birch-plywood cubby unit with rounded corners and a visible layered ply edge, hung on a pale mint wall. Its openings are bays: the name wheel on the left, a glossy strawberry toy claw machine with a sky-blue glass in the centre, and the children's twelve cubbies on the right. Every surface is something a kindergarten room already owns: laminated white name tags with a punched hole and a picture symbol, a hand-cut paper sign with each syllable in a different bin colour, a taped paper notice, an EVA puzzle-mat floor, and a flip scoreboard.\n\nEverything is outlined in plum ink, like a picture book, and filled with flat classroom-bin colour. Depth comes from the furniture: the ply edge rings each opening, and the openings are recessed with inner shadows. Objects that sit on the furniture (tags, sign pieces, buttons, the machine) cast a soft plum shadow. Type is chunky rounded Korean, sized for a shared screen read from 2–4 m. Motion is reserved for cueing the single thing a pre-reader should do next.\n\nThe first viewport is one unit edge to edge with no page chrome. The machine's height sets its size, so the centre bay takes about 33–40% of the width, depending on the screen. On portrait or narrow screens the unit stacks into one column.",
+    "keyCharacteristics": [
+      "One birch-ply furniture unit fills the viewport; bays are recessed openings, not floating cards.",
+      "Plum-ink outlines (2–4px) on every interactive or placed object.",
+      "Six classroom-bin colours, used in a fixed rotation (sunflower, sky, pink, leaf, lilac, tomato).",
+      "Self-hosted Jua for everything and Bagel Fat One for signage only, so play works offline.",
+      "One pointing motion cue at a time; no glows."
+    ],
+    "rules": [
+      {
+        "name": "The Bin Rotation Rule",
+        "body": "Bin colours are assigned by position in the fixed sequence sunflower, sky, pink, leaf, lilac, tomato. A child's colour comes from their index, so the wheel slice, tag disc and cubby back match. Never pick bin colours ad hoc.",
+        "section": "colors"
+      },
+      {
+        "name": "The Plum Not Black Rule",
+        "body": "Outlines, text and shadow tints are plum ink (#34264A at varying alpha). Near-black appears only inside the machine (the door mouth and coin slot), where it reads as a hole.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Strawberry Rule",
+        "body": "Strawberry belongs to the machine and to the primary action of the moment. Nothing else on the furniture is red.",
+        "section": "colors"
+      },
+      {
+        "name": "The Single Weight Rule",
+        "body": "Everything is weight 400. Hierarchy comes from size, colour and the tile or tag that holds the text, never from bold.",
+        "section": "typography"
+      },
+      {
+        "name": "The Signage Face Rule",
+        "body": "Bagel Fat One is only for signage: the sign, the marquee and the shout. Its font subset only contains those glyphs, so using it for any other text silently falls back to Jua.",
+        "section": "typography"
+      },
+      {
+        "name": "The Name Fits Its Tag Rule",
+        "body": "A name never wraps or truncates with an ellipsis on a cubby tag. JS (`fitNames`) shrinks the name in 0.06em steps, down to 0.62em, until it fits.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Furniture Rule",
+        "body": "Every surface is part of the unit or sits on it. There are no free-floating cards on the wall, and no sidebars.",
+        "section": "layout"
+      },
+      {
+        "name": "The Height-Bound Machine Rule",
+        "body": "The machine's width comes from the height available to it, never from a fixed column percentage. Its internals are measured in pixels in JS, not in container units.",
+        "section": "layout"
+      },
+      {
+        "name": "The No Glow Rule",
+        "body": "Depth is wood, recess and contact shadow. Nothing glows, including the LED. Attention comes from one motion cue, not from light.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do draw every placed or tappable object with a plum-ink outline (2–4px) and a flat fill.",
+      "Do take colour per child from the fixed bin rotation, so the wheel slice, tag disc and cubby back always match.",
+      "Do make new surfaces part of the birch unit, framed with the `ply` ring and recessed when they are openings.",
+      "Do keep tap targets at 44px or more (48px for primary actions) and press them down 2–3px on `:active`.",
+      "Do run only one pointing motion cue at a time, and stop it under reduced motion.",
+      "Do size machine internals from JS-measured pixels (`--mw`, `--gw`), not container-query units.",
+      "Do fit names to their tags by shrinking them, never by wrapping or adding an ellipsis.",
+      "Do use inline SVG for every icon and symbol, stroked or outlined in plum."
+    ],
+    "donts": [
+      "Don't use glows, coloured light or neon halos. Depth comes from wood, recess and soft plum contact shadows.",
+      "Don't use pure black for text or outlines. Near-black is only for holes inside the machine.",
+      "Don't set Bagel Fat One on anything but signage. Its subset has no other glyphs.",
+      "Don't use bold weights. Jua and Bagel are single-weight (400).",
+      "Don't float cards on the wall or add sidebars outside the unit.",
+      "Don't load fonts from the network. Both faces are self-hosted subsets inlined at build time."
+    ]
+  }
+}
