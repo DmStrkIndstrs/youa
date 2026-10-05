@@ -65,6 +65,24 @@
         ],
         "createdAt": "2026-10-05T13:47:43.032Z",
         "reason": "Claude: tool only supports file scope; flagged boxes are the cubby unit's ply-edged compartments, its boards, and the laminated name tags (incl. the face-out guest tag, now the same tag anatomy with hanger) per the direction contract"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "town/src/app.html"
+        ],
+        "createdAt": "2026-10-05T14:59:38.082Z",
+        "reason": "Claude: tool only supports file scope for this rule; .room-bar has clamp(8px, 1.4vmin, 18px) vertical padding (runtime value the static scan cannot read) and its children are self-bordered buttons/plaques"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-10-05T14:59:38.909Z",
+        "reason": "Claude: tool only supports file scope for this rule; .room-bar has clamp(8px, 1.4vmin, 18px) vertical padding (runtime value the static scan cannot read) and its children are self-bordered buttons/plaques"
       }
     ]
   }

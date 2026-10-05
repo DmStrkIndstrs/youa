@@ -31,6 +31,13 @@ delegated: static single-file HTML/CSS/JS with no build step, so the teacher can
   - A miss feels playful, not sad, and always leads to a retry.
   - The teacher never loses control of whose turn it is.
 
+## Front page: 우리동네 map
+
+- The site opens on a map redrawn from the class's "우리동네최고" bulletin board (root `index.html`, built from `town/src/app.html`).
+- Its 12 places are the ones the user listed: 병원, 인형뽑기 가게, 도서관, 경찰서, 소방서, 문정유치원, 강신프로그레그 아파트, 골드클래스 아파트, 한성아파트, 오네뜨아파트, 다이소 and 마트.
+- Tapping a place opens its inside, where everything can be tapped and answers in a speech bubble. Some things count up as they are tapped: the 마트 cart counts items and the 다이소 basket adds up 1000원 prices.
+- The 인형뽑기 가게 opens the claw game. The game shows a 우리동네 button only when it was opened from the map.
+
 ## Positioning
 
 - It is built around one specific class: their names, their roles from the lesson plan, the teacher's own success and failure lines, and the characters these children asked for.

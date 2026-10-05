@@ -1,0 +1,1338 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>우리동네 최고</title>
+<meta name="description" content="새들1반 우리동네 약도: 건물을 눌러 안을 구경하고, 인형뽑기 가게에서는 인형뽑기 게임을 해요.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%2386CF6E'/%3E%3Cpath d='M20 52L50 24L80 52V84H20Z' fill='%23FFE07A' stroke='%2334264A' stroke-width='7' stroke-linejoin='round'/%3E%3Crect x='42' y='58' width='16' height='26' fill='%23FF94B8' stroke='%2334264A' stroke-width='6'/%3E%3C/svg%3E">
+<style id="font-faces">/*@@FONTS@@*/</style>
+<style>
+/* The class's "우리동네 최고" bulletin board, redrawn: a birch frame, mint
+   paper, black-paper roads and crayon-coloured paper buildings. Tapping a
+   building opens it up like a door; the claw shop hands over to the game. */
+:root {
+  color-scheme: light;
+  --ink: #34264A;
+  --ink-soft: #5B4D6E;
+  --wall: #E3EFE7;
+  --birch: #EFD09C;
+  --birch-hi: #F7E2BB;
+  --birch-lo: #D6AE72;
+  --ply-dark: #B98A51;
+  --ply-light: #F5DDB3;
+  --sun: #FFC83D;
+  --sky: #74C4F2;
+  --pink: #FF94B8;
+  --leaf: #86CF6E;
+  --lilac: #BBA3F5;
+  --tomato: #FF8A5C;
+  --berry: #EF4F7A;
+  --berry-deep: #B8285A;
+  --board: #D7ECE6;
+  --paper: #FFFFFF;
+  --font-ui: "Jua Local", "Jua", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+  --font-sign: "Bagel Local", "Jua Local", "Jua", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --gutter: clamp(6px, 1vmin, 14px);
+  --ring: clamp(6px, .8vmin, 10px);
+  --depth-1: 0 2px 3px rgba(52, 38, 74, .16), 0 8px 18px rgba(52, 38, 74, .14);
+  --depth-2: 0 3px 6px rgba(52, 38, 74, .2), 0 18px 34px rgba(52, 38, 74, .2);
+  --ply: inset 0 0 0 1.5px var(--ply-dark), inset 0 0 0 calc(var(--ring) * .45) var(--ply-light), inset 0 0 0 calc(var(--ring) * .45 + 1.5px) var(--ply-dark), inset 0 0 0 var(--ring) var(--birch-hi);
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .32' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .3 0 0 0 0 .15 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)' opacity='.16'/%3E%3C/svg%3E");
+  --fibre: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.035' numOctaves='3' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.1 -.42'/%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23f)'/%3E%3C/svg%3E");
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  padding: var(--gutter);
+  background: var(--wall);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  word-break: keep-all;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: manipulation; -webkit-user-select: none; user-select: none; }
+:focus-visible { outline: 4px solid var(--ink); outline-offset: 3px; }
+
+/* ---------- the board ---------- */
+.board {
+  height: 100%;
+  padding: var(--ring);
+  border-radius: 24px;
+  background: var(--grain), linear-gradient(180deg, var(--birch-hi) 0%, var(--birch) 60%, var(--birch-lo) 140%);
+  box-shadow: var(--ply), var(--depth-2);
+}
+.paper {
+  position: relative;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--fibre), var(--board);
+  box-shadow: inset 0 2px 10px rgba(52, 38, 74, .28);
+}
+.top { position: relative; height: clamp(70px, 14vmin, 150px); }
+.bunting { position: absolute; inset: 0 0 auto 0; height: 66%; display: flex; }
+.flag {
+  flex: 1;
+  border-radius: 0 0 50% 50% / 0 0 52% 52%;
+  background-color: var(--c);
+  background-image: radial-gradient(rgba(255, 255, 255, .8) 17%, transparent 21%);
+  background-size: 10px 10px;
+  box-shadow: 0 3px 0 rgba(52, 38, 74, .12);
+}
+.title {
+  position: absolute;
+  left: 50%;
+  top: 8%;
+  transform: translateX(-50%);
+  margin: 0;
+  display: flex;
+  gap: clamp(6px, 1.6vmin, 22px);
+  font-weight: 400;
+  font-size: clamp(1.7rem, 6.6vmin, 4.6rem);
+  line-height: 1;
+}
+.badge {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 1.3em;
+  height: 1.42em;
+  padding: .1em;
+  background: #FFE07A;
+  border: 3px solid var(--ink);
+  border-radius: .2em .2em .5em .5em / .2em .2em .42em .42em;
+  box-shadow: var(--depth-1);
+  transform: rotate(var(--t));
+}
+.badge > span {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding-bottom: .06em;
+  background: #fff;
+  border: 2px solid rgba(52, 38, 74, .35);
+  border-radius: .14em .14em .4em .4em / .14em .14em .34em .34em;
+}
+.badge svg { position: absolute; left: 50%; bottom: 100%; width: .78em; height: .78em; margin-bottom: -.2em; transform: translateX(-50%); }
+.badge.gap { margin-left: .28em; }
+.plaque {
+  position: absolute;
+  left: clamp(10px, 1.8vmin, 24px);
+  top: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: .45em;
+  padding: .32em .8em .32em .55em;
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  font-size: clamp(1rem, 2.6vmin, 1.8rem);
+  line-height: 1.1;
+  box-shadow: var(--depth-1);
+  transform: translateY(-30%) rotate(-2deg);
+  white-space: nowrap;
+}
+.plaque-hole { flex: none; width: .5em; height: .5em; border: 2px solid var(--ink); border-radius: 50%; background: var(--birch-lo); }
+.knobs { position: absolute; right: clamp(10px, 1.8vmin, 24px); top: 50%; transform: translateY(-30%); display: flex; gap: clamp(8px, 1.2vmin, 14px); }
+.knob {
+  width: clamp(44px, 5.4vmin, 60px);
+  height: clamp(44px, 5.4vmin, 60px);
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #FDF1DA, var(--birch) 62%, var(--birch-lo));
+  box-shadow: 0 3px 0 var(--ply-dark), var(--depth-1);
+  transition: transform .16s var(--ease-out);
+}
+.knob:active { transform: translateY(2px) scale(.96); }
+.knob svg { width: 56%; height: 56%; }
+.knob[aria-pressed="false"] .on, .knob[aria-pressed="true"] .off { display: none; }
+@media (max-width: 760px), (max-height: 420px) { .plaque { display: none; } }
+@media (max-width: 520px) { .title { font-size: clamp(1rem, 5.2vw, 2rem); gap: 3px; left: 36%; } }
+
+.map-wrap { position: relative; min-height: 0; overflow: hidden; }
+.map-wrap.scroll { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
+#map { display: block; width: 100%; height: 100%; }
+.t { font-family: var(--font-ui); text-anchor: middle; }
+.ts { font-family: var(--font-sign); text-anchor: middle; }
+
+/* buildings and cars lift like paper when touched */
+.bld, .car-in, .thing { cursor: pointer; transform-box: fill-box; transform-origin: 50% 100%; outline: none; }
+.bld { filter: drop-shadow(4px 7px 0 rgba(52, 38, 74, .2)); transition: transform .22s var(--ease-out); }
+@media (hover: hover) { .bld:hover { transform: translateY(-6px); } }
+.bld:active, .bld.pressed { transform: translateY(2px) scale(.97); transition-duration: .08s; }
+.focus-ring { fill: none; stroke: var(--ink); stroke-width: 5; stroke-dasharray: 14 10; opacity: 0; }
+.bld:focus-visible .focus-ring, .thing:focus-visible .focus-ring { opacity: 1; }
+.thing:focus-visible { filter: drop-shadow(0 0 0 var(--ink)) drop-shadow(0 0 6px rgba(52, 38, 74, .7)); }
+.boing { animation: boing .52s var(--ease-out); }
+@keyframes boing { 0% { transform: scale(1); } 28% { transform: scale(1.1, .9); } 58% { transform: scale(.95, 1.06); } 100% { transform: scale(1); } }
+.bulb { animation: bulb 1.1s steps(1) infinite; }
+.bulb:nth-child(2n) { animation-delay: .55s; }
+@keyframes bulb { 0% { fill: #FFF3B0; } 50% { fill: #F7A8C4; } }
+.beckon { transform-box: fill-box; transform-origin: 50% 100%; animation: beckon 2.4s var(--ease-out) infinite; }
+@keyframes beckon { 0%, 60%, 100% { transform: translateY(0); } 70% { transform: translateY(-10px); } 82% { transform: translateY(0); } 90% { transform: translateY(-4px); } }
+
+/* ---------- inside a building ---------- */
+.room {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  background: var(--room-wall, #FFF6E8);
+}
+.room.opening, .room.closing { will-change: clip-path; }
+.room-bar {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 2vmin;
+  padding: clamp(8px, 1.4vmin, 18px) clamp(12px, 2.2vmin, 28px);
+  background: var(--grain), linear-gradient(180deg, #FAE9CA, var(--birch) 95%);
+  box-shadow: var(--ply), 0 4px 12px rgba(52, 38, 74, .18);
+}
+.btn-back {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: .35em;
+  min-height: 48px;
+  padding: .22em .9em .28em .55em;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--sun);
+  font-size: clamp(1.1rem, 3vmin, 2.1rem);
+  line-height: 1;
+  box-shadow: 0 4px 0 var(--ink);
+  transition: transform .14s var(--ease-out), box-shadow .14s var(--ease-out);
+}
+.btn-back:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+.btn-back svg { width: 1.1em; height: 1.1em; }
+.room-sign {
+  margin: 0;
+  padding: .1em .7em .16em;
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  font-weight: 400;
+  font-size: clamp(1.5rem, 5vmin, 3.6rem);
+  line-height: 1.05;
+  box-shadow: var(--depth-1);
+  transform: rotate(-1.5deg);
+  white-space: nowrap;
+}
+.room-side { justify-self: end; display: flex; align-items: center; gap: clamp(8px, 1.2vmin, 14px); }
+.room-tip { font-size: clamp(1rem, 2.6vmin, 1.8rem); color: var(--ink-soft); white-space: nowrap; }
+@media (max-width: 760px) { .room-tip { display: none; } .btn-back .lbl { display: none; } .btn-back { padding: .22em .55em; } }
+.room-stage { position: relative; min-height: 0; overflow: hidden; }
+#room-svg { display: block; width: 100%; height: 100%; }
+.bubble {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  max-width: min(86vw, 720px);
+  padding: .42em .9em .5em;
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 26px;
+  font-size: clamp(1.3rem, 4vmin, 2.8rem);
+  line-height: 1.2;
+  text-align: center;
+  box-shadow: var(--depth-2);
+  pointer-events: none;
+  transform-origin: var(--ox, 50%) 100%;
+  animation: bubble-in .38s var(--ease-spring);
+}
+.bubble.below { transform-origin: var(--ox, 50%) 0; }
+.bubble::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--ox, 50%) - 14px);
+  top: 100%;
+  border: 14px solid transparent;
+  border-top: 18px solid var(--ink);
+}
+.bubble.below::after { top: auto; bottom: 100%; border-top: 14px solid transparent; border-bottom: 18px solid var(--ink); }
+@keyframes bubble-in { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: scale(1); } }
+
+/* scene effects */
+.lamp { opacity: 0; }
+.flash .lamp-a { animation: lamp .36s steps(1) infinite; }
+.flash .lamp-b { animation: lamp .36s steps(1) .18s infinite; }
+@keyframes lamp { 0% { opacity: 1; } 50% { opacity: 0; } }
+.spray circle { opacity: 0; }
+.spraying .spray circle { animation: drop .9s var(--ease-out) infinite; animation-delay: calc(var(--i) * 90ms); }
+@keyframes drop { 0% { opacity: 0; transform: translate(0, 0); } 15% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)); } }
+.swing { transform-box: fill-box; transform-origin: 50% 0; }
+.ring .swing { animation: swing .9s var(--ease-out); }
+@keyframes swing { 0% { transform: rotate(0); } 20% { transform: rotate(18deg); } 40% { transform: rotate(-14deg); } 60% { transform: rotate(9deg); } 80% { transform: rotate(-4deg); } 100% { transform: rotate(0); } }
+.pull { transform-box: fill-box; transform-origin: 50% 100%; transition: transform .3s var(--ease-spring); }
+.out .pull { transform: translateY(-34px) rotate(-6deg); }
+.glow { opacity: 0; transition: opacity .25s var(--ease-out); }
+.lit .glow { opacity: 1; }
+.resident { opacity: 0; transform-box: fill-box; transform-origin: 50% 100%; transform: translateY(26px); transition: opacity .2s var(--ease-out), transform .38s var(--ease-spring); }
+.lit .resident { opacity: 1; transform: translateY(0); }
+.curtain { transition: transform .32s var(--ease-out); transform-box: fill-box; }
+.lit .curtain.l { transform-origin: 0 50%; transform: scaleX(.28); }
+.lit .curtain.r { transform-origin: 100% 50%; transform: scaleX(.28); }
+
+@media (prefers-reduced-motion: reduce) {
+  .bulb, .beckon, .flash .lamp-a, .flash .lamp-b, .spraying .spray circle, .ring .swing, .boing, .bubble { animation: none; }
+  .flash .lamp, .spraying .spray circle { opacity: 1; }
+  .bld, .pull, .resident, .curtain, .glow { transition: none; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <radialGradient id="pl-light" cx=".34" cy=".26" r=".7"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+  <radialGradient id="pl-edge" cx=".46" cy=".42" r=".62"><stop offset=".6" stop-color="#34264A" stop-opacity="0"/><stop offset="1" stop-color="#34264A" stop-opacity=".26"/></radialGradient>
+  <pattern id="pl-fuzz" width="3.2" height="3.2" patternUnits="userSpaceOnUse"><circle cx=".8" cy=".8" r=".55" fill="#fff" opacity=".22"/><circle cx="2.4" cy="2.3" r=".5" fill="#34264A" opacity=".08"/></pattern>
+  <pattern id="crayon" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(-32)"><path d="M0 2.2h9M0 6.6h9" stroke="#fff" stroke-opacity=".2" stroke-width="2.2"/><path d="M0 4.4h9" stroke="#34264A" stroke-opacity=".05" stroke-width="1.4"/></pattern>
+  <pattern id="dots" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="2.4" fill="#fff" opacity=".75"/><circle cx="11" cy="11" r="2.4" fill="#fff" opacity=".75"/></pattern>
+  <pattern id="tiles" width="80" height="80" patternUnits="userSpaceOnUse"><path d="M0 0H80V80" fill="none" stroke="#34264A" stroke-opacity=".1" stroke-width="3"/></pattern>
+  <pattern id="planks" width="220" height="60" patternUnits="userSpaceOnUse"><path d="M0 0H220M0 30H220M60 0V30M170 30V60" fill="none" stroke="#7A4B2E" stroke-opacity=".18" stroke-width="3"/></pattern>
+</defs></svg>
+
+<div class="board">
+  <div class="paper">
+    <header class="top">
+      <div class="bunting" id="bunting" aria-hidden="true"></div>
+      <div class="plaque"><span class="plaque-hole" aria-hidden="true"></span><span>새들1반</span></div>
+      <h1 class="title" id="title" aria-label="우리동네 최고"></h1>
+      <div class="knobs">
+        <button class="knob" id="btn-sound" type="button" aria-label="소리" aria-pressed="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#34264A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="#34264A"/><path class="on" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="off" d="M16 9.5l5 5M21 9.5l-5 5"/></svg>
+        </button>
+        <button class="knob" id="btn-full" type="button" aria-label="크게 보기">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#34264A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+        </button>
+      </div>
+    </header>
+    <main class="map-wrap" id="map-wrap">
+      <svg id="map" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" role="group" aria-label="우리동네 약도">
+        <g id="roads" aria-hidden="true"></g>
+        <g id="decor"></g>
+        <g id="blds"></g>
+        <g id="cars"></g>
+      </svg>
+    </main>
+  </div>
+</div>
+
+<section class="room" id="room" hidden role="dialog" aria-modal="true" aria-labelledby="room-title">
+  <div class="room-bar">
+    <button class="btn-back" id="btn-back" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#34264A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11.5L12 4l8.5 7.5M6 10v9.5h4.5v-5h3v5H18V10"/></svg>
+      <span class="lbl">우리동네로</span>
+    </button>
+    <h2 class="room-sign" id="room-title"></h2>
+    <div class="room-side"><span class="room-tip">무엇이든 눌러 보세요!</span></div>
+  </div>
+  <div class="room-stage" id="room-stage">
+    <svg id="room-svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="bubble" id="bubble" hidden></div>
+  </div>
+</section>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const INK = '#34264A';
+  const DARK = '#2E2733';
+  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const CLAW_URL = 'claw-machine/index.html?from=town';
+
+  /* ---------- saved settings ---------- */
+  const KEY = 'town-v1';
+  const st = { soundOn: true };
+  try { Object.assign(st, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { /* private mode */ }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { /* ignore */ } };
+
+  /* ---------- sound ---------- */
+  let ac = null;
+  function audio() {
+    if (!st.soundOn) return null;
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      if (ac.state === 'suspended') ac.resume();
+    } catch (e) { return null; }
+    return ac;
+  }
+  function tone(freq, dur, { type = 'sine', vol = 0.12, at = 0, to = null } = {}) {
+    const a = audio(); if (!a) return;
+    const t = a.currentTime + at;
+    const o = a.createOscillator(), g = a.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    if (to) o.frequency.exponentialRampToValueAtTime(to, t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.05);
+  }
+  const sfx = {
+    tap() { tone(880, 0.07, { vol: 0.08 }); },
+    pop() { tone(660, 0.1, { type: 'triangle', vol: 0.14, to: 990 }); },
+    door() { tone(523, 0.14, { type: 'triangle', vol: 0.12 }); tone(784, 0.22, { type: 'triangle', vol: 0.12, at: 0.12 }); },
+    back() { tone(784, 0.12, { type: 'triangle', vol: 0.1 }); tone(523, 0.2, { type: 'triangle', vol: 0.1, at: 0.1 }); },
+    honk() { tone(392, 0.16, { type: 'square', vol: 0.06 }); tone(392, 0.2, { type: 'square', vol: 0.06, at: 0.22 }); },
+    siren() { for (let i = 0; i < 4; i++) { tone(660, 0.3, { type: 'triangle', vol: 0.1, at: i * 0.6 }); tone(880, 0.3, { type: 'triangle', vol: 0.1, at: i * 0.6 + 0.3 }); } },
+    heart() { [0, 0.22, 0.8, 1.02].forEach((at) => tone(70, 0.16, { type: 'sine', vol: 0.4, at, to: 50 })); },
+    beep() { tone(1800, 0.08, { type: 'square', vol: 0.05 }); tone(1800, 0.14, { type: 'square', vol: 0.05, at: 0.14 }); },
+    bell() { [0, 0.3, 0.6].forEach((at) => { tone(1568, 0.5, { type: 'triangle', vol: 0.12, at }); tone(2093, 0.4, { vol: 0.05, at }); }); },
+    water() { for (let i = 0; i < 8; i++) tone(300 + Math.random() * 500, 0.18, { type: 'sawtooth', vol: 0.025, at: i * 0.12, to: 120 }); },
+    radio() { for (let i = 0; i < 6; i++) tone(200 + Math.random() * 1200, 0.06, { type: 'square', vol: 0.03, at: i * 0.05 }); },
+    stamp() { tone(140, 0.16, { type: 'square', vol: 0.12, to: 60 }); },
+    page() { tone(2400, 0.05, { type: 'sine', vol: 0.04, to: 1200 }); tone(2000, 0.06, { type: 'sine', vol: 0.04, at: 0.07, to: 900 }); },
+    ding() { tone(659, 0.35, { type: 'triangle', vol: 0.13 }); tone(523, 0.5, { type: 'triangle', vol: 0.13, at: 0.32 }); },
+    tick() { tone(1500, 0.035, { type: 'square', vol: 0.05 }); tone(1100, 0.035, { type: 'square', vol: 0.05, at: 0.4 }); },
+    on() { tone(988, 0.12, { type: 'triangle', vol: 0.11 }); tone(1319, 0.18, { type: 'triangle', vol: 0.1, at: 0.08 }); },
+    off() { tone(659, 0.15, { type: 'triangle', vol: 0.09, to: 440 }); },
+    slide() { tone(1200, 0.7, { vol: 0.08, to: 300 }); },
+    crash() { [523, 440, 349, 262, 196].forEach((f, i) => tone(f, 0.14, { type: 'square', vol: 0.05, at: i * 0.07 })); },
+    block() { tone(440 + Math.random() * 200, 0.08, { type: 'triangle', vol: 0.14 }); },
+    cart() { tone(1046, 0.08, { type: 'triangle', vol: 0.12 }); tone(1397, 0.12, { type: 'triangle', vol: 0.1, at: 0.07 }); },
+    pay() { [1760, 1760].forEach((f, i) => tone(f, 0.07, { type: 'square', vol: 0.05, at: i * 0.12 })); [523, 659, 784].forEach((f, i) => tone(f, 0.16, { type: 'triangle', vol: 0.12, at: 0.3 + i * 0.1 })); },
+    hello() { [784, 988].forEach((f, i) => tone(f, 0.14, { type: 'triangle', vol: 0.1, at: i * 0.1 })); },
+  };
+
+  /* ---------- words ---------- */
+  function hasFinal(word) {
+    const c = String(word).trim().slice(-1).charCodeAt(0);
+    return c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 !== 0;
+  }
+  const josa = (w, withF, without) => w + (hasFinal(w) ? withF : without);
+  const NATIVE = ['', '한', '두', '세', '네', '다섯', '여섯', '일곱', '여덟', '아홉', '열'];
+  const count = (n) => NATIVE[n] || String(n);
+
+  /* ---------- drawing helpers ---------- */
+  const S = (w = 4) => `stroke="${INK}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"`;
+  // crayon texture laid over a filled shape: same geometry, stroke removed
+  const tex = (m) => m.replace(/ fill="[^"]*"/, '').replace(/ stroke(-width|-linejoin|-linecap)?="[^"]*"/g, '').replace('/>', ' fill="url(#crayon)"/>');
+  const R = (x, y, w, h, fill, rx = 8, sw = 4) => { const m = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" ${S(sw)}/>`; return m + tex(m); };
+  const Rp = (x, y, w, h, fill, rx = 8, sw = 4) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" ${sw ? S(sw) : ''}/>`;
+  const C = (cx, cy, r, fill, sw = 4) => `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" ${sw ? S(sw) : ''}/>`;
+  const P = (d, fill, sw = 4) => { const m = `<path d="${d}" fill="${fill}" ${sw ? S(sw) : ''}/>`; return fill === 'none' ? m : m + tex(m); };
+  const T = (x, y, size, str, fill = INK, cls = 't', extra = '') => `<text x="${x}" y="${y}" font-size="${size}" fill="${fill}" class="${cls}" ${extra}>${str}</text>`;
+  const pin = (x, y, c = '#EF4F7A') => `<circle cx="${x}" cy="${y}" r="7" fill="${c}" ${S(3)}/><circle cx="${x - 2}" cy="${y - 2}" r="2.2" fill="#fff" opacity=".8"/>`;
+  const win = (x, y, w, h, fill = '#BFE6FF', sw = 3) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${fill}" ${S(sw)}/><path d="M${x + w / 2} ${y + 2}V${y + h - 2}M${x + 2} ${y + h / 2}H${x + w - 2}" stroke="${INK}" stroke-width="${sw * .7}" opacity=".55"/><path d="M${x + 5} ${y + h * .38}L${x + w * .36} ${y + 5}" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/>`;
+
+  /* ---------- the neighbours (the claw game's plush friends) ---------- */
+  const NAMES = { cinnamoroll: '시나모롤', kuromi: '쿠로미', melody: '마이멜로디', purin: '폼폼푸린', kitty: '헬로키티', pochacco: '포차코', keroppi: '케로피', bear: '곰돌이' };
+  const KINDS = Object.keys(NAMES);
+  function dollSVG(kind, extra = '') {
+    const s = `stroke="${INK}" stroke-width="2.6"`;
+    const eye = (x, y, c = INK, rx = 4, ry = 4.6) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${c}"/><circle cx="${x + 1.3}" cy="${y - 1.6}" r="1.4" fill="#fff"/>`;
+    const blush = (y = 55, c = '#FF8FA3') => `<ellipse cx="30" cy="${y}" rx="5.5" ry="3.2" fill="${c}" opacity=".7"/><ellipse cx="70" cy="${y}" rx="5.5" ry="3.2" fill="${c}" opacity=".7"/>`;
+    const smile = (y = 56) => `<path d="M46 ${y} Q50 ${y + 4} 54 ${y}" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linecap="round"/>`;
+    let body = '#FFFFFF', limbs = null, feet = null, belly = null, behind = '', head = `<circle cx="50" cy="44" r="31" fill="#fff" ${s}/>`, front = '', face = '';
+    switch (kind) {
+      case 'cinnamoroll':
+        behind = `<ellipse cx="17" cy="38" rx="20" ry="9.5" transform="rotate(-18 17 38)" fill="#fff" ${s}/><ellipse cx="83" cy="38" rx="20" ry="9.5" transform="rotate(18 83 38)" fill="#fff" ${s}/>` +
+          `<circle cx="76" cy="92" r="8.5" fill="#fff" ${s}/><path d="M76 92 m-3.5 0 a3.5 3.5 0 1 1 3.5 3.5" fill="none" stroke="#9FC9EA" stroke-width="2.2" stroke-linecap="round"/>`;
+        head = `<ellipse cx="50" cy="45" rx="32" ry="28" fill="#fff" ${s}/>`;
+        face = eye(39, 47, '#2F6FC6', 3.8, 4.8) + eye(61, 47, '#2F6FC6', 3.8, 4.8) + blush(55) + `<path d="M45.5 55 Q47.75 58.5 50 55 Q52.25 58.5 54.5 55" fill="none" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/>`;
+        break;
+      case 'kuromi':
+        body = DARK; limbs = DARK; feet = DARK;
+        behind = `<path d="M27 28 Q6 18 10 -1 Q24 9 41 16 Z" fill="${DARK}" ${s} stroke-linejoin="round"/><path d="M73 28 Q94 18 90 -1 Q76 9 59 16 Z" fill="${DARK}" ${s} stroke-linejoin="round"/>`;
+        head = `<path d="M50 11 C78 11 84 33 82 49 C80 70 66 78 50 78 C34 78 20 70 18 49 C16 33 22 11 50 11 Z" fill="${DARK}" ${s}/>`;
+        face = `<ellipse cx="50" cy="56" rx="24" ry="18" fill="#fff" ${s}/>` +
+          `<circle cx="50" cy="27" r="7.5" fill="#F7A8C4" stroke="${INK}" stroke-width="2"/><circle cx="47.3" cy="26" r="1.6" fill="${INK}"/><circle cx="52.7" cy="26" r="1.6" fill="${INK}"/><path d="M47.5 30.5 h5" stroke="${INK}" stroke-width="1.5"/>` +
+          eye(41, 54, INK, 3.6, 4.8) + eye(59, 54, INK, 3.6, 4.8) + blush(61) + `<ellipse cx="50" cy="60" rx="2" ry="1.5" fill="#F48CA2"/><path d="M45 64 Q50 67 56 62.5" fill="none" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/>`;
+        break;
+      case 'melody':
+        body = '#F7A8C4'; limbs = '#F7A8C4'; feet = '#fff';
+        behind = `<ellipse cx="36" cy="10" rx="9.5" ry="21" transform="rotate(-12 36 10)" fill="#F7A8C4" ${s}/><ellipse cx="64" cy="10" rx="9.5" ry="21" transform="rotate(12 64 10)" fill="#F7A8C4" ${s}/>`;
+        head = `<circle cx="50" cy="45" r="32" fill="#F7A8C4" ${s}/>`;
+        face = `<ellipse cx="50" cy="56" rx="24" ry="17.5" fill="#fff" ${s}/>` +
+          `<g transform="translate(70 22)">${[0, 72, 144, 216, 288].map((a) => `<ellipse cx="0" cy="-5.5" rx="4" ry="5.5" transform="rotate(${a})" fill="#fff" stroke="${INK}" stroke-width="1.6"/>`).join('')}<circle r="3" fill="#FFD45C" stroke="${INK}" stroke-width="1.4"/></g>` +
+          eye(41, 54, INK, 3.4, 4.4) + eye(59, 54, INK, 3.4, 4.4) + blush(60) + `<ellipse cx="50" cy="59" rx="2.8" ry="2.1" fill="#F5C842" stroke="${INK}" stroke-width="1.2"/>`;
+        break;
+      case 'purin':
+        body = '#F6CC57'; limbs = '#F6CC57'; feet = '#F6CC57';
+        head = `<circle cx="50" cy="46" r="31" fill="#F6CC57" ${s}/>`;
+        front = `<ellipse cx="21" cy="50" rx="8.5" ry="16" transform="rotate(14 21 50)" fill="#9A6A3A" ${s}/><ellipse cx="79" cy="50" rx="8.5" ry="16" transform="rotate(-14 79 50)" fill="#9A6A3A" ${s}/>` +
+          `<rect x="47.5" y="4" width="5" height="9" rx="2.5" fill="#7A4B2E" stroke="${INK}" stroke-width="2"/><ellipse cx="50" cy="17" rx="21" ry="8" fill="#7A4B2E" ${s}/>`;
+        face = eye(40, 47, INK, 3.4, 3.8) + eye(60, 47, INK, 3.4, 3.8) + blush(56, '#F59B6A') + `<ellipse cx="50" cy="53" rx="2.6" ry="2" fill="${INK}"/>` + smile(57);
+        break;
+      case 'kitty':
+        body = '#3B6FCB'; limbs = '#fff'; feet = '#fff';
+        behind = `<path d="M19 36 L23 9 L43 22 Z" fill="#fff" ${s} stroke-linejoin="round"/><path d="M81 36 L77 9 L57 22 Z" fill="#fff" ${s} stroke-linejoin="round"/>`;
+        head = `<ellipse cx="50" cy="46" rx="35" ry="28" fill="#fff" ${s}/>`;
+        front = `<g transform="translate(25 19) rotate(-15)"><ellipse cx="-9" cy="0" rx="9.5" ry="7.5" fill="#E8434B" ${s}/><ellipse cx="9" cy="1" rx="9.5" ry="7.5" fill="#E8434B" ${s}/><circle r="5" fill="#E8434B" ${s}/></g>`;
+        face = eye(36, 49, INK, 3.3, 4.6) + eye(64, 49, INK, 3.3, 4.6) + `<ellipse cx="50" cy="55" rx="4.2" ry="3.1" fill="#F5C842" stroke="${INK}" stroke-width="1.6"/>` +
+          `<path d="M10 46 L24 49 M9 53 L24 54 M11 60 L24 58 M90 46 L76 49 M91 53 L76 54 M89 60 L76 58" stroke="${INK}" stroke-width="2" stroke-linecap="round"/>`;
+        break;
+      case 'pochacco':
+        head = `<circle cx="50" cy="45" r="31" fill="#fff" ${s}/>`;
+        front = `<ellipse cx="21" cy="42" rx="9" ry="19" transform="rotate(10 21 42)" fill="${DARK}" ${s}/><ellipse cx="79" cy="42" rx="9" ry="19" transform="rotate(-10 79 42)" fill="${DARK}" ${s}/>`;
+        face = eye(40, 47, INK, 3.4, 3.8) + eye(60, 47, INK, 3.4, 3.8) + blush(56) + `<ellipse cx="50" cy="53" rx="3" ry="2.2" fill="${INK}"/>` + smile(57);
+        break;
+      case 'keroppi':
+        body = '#6CC04A'; limbs = '#6CC04A'; feet = '#6CC04A'; belly = '#FFFFFF';
+        head = `<ellipse cx="50" cy="50" rx="34" ry="25" fill="#6CC04A" ${s}/>`;
+        front = `<circle cx="34" cy="26" r="13" fill="#fff" ${s}/><circle cx="66" cy="26" r="13" fill="#fff" ${s}/><circle cx="35" cy="27" r="5" fill="${INK}"/><circle cx="65" cy="27" r="5" fill="${INK}"/><circle cx="36.5" cy="25.2" r="1.6" fill="#fff"/><circle cx="66.5" cy="25.2" r="1.6" fill="#fff"/>`;
+        face = `<ellipse cx="27" cy="55" rx="5" ry="3" fill="#E8434B"/><ellipse cx="73" cy="55" rx="5" ry="3" fill="#E8434B"/><path d="M36 54 Q50 67 64 54" fill="none" stroke="${INK}" stroke-width="2.6" stroke-linecap="round"/>`;
+        break;
+      case 'bear':
+        body = '#B9805A'; belly = '#E8C4A0';
+        behind = `<circle cx="25" cy="20" r="11" fill="${body}" ${s}/><circle cx="75" cy="20" r="11" fill="${body}" ${s}/><circle cx="25" cy="20" r="5.5" fill="#E8C4A0"/><circle cx="75" cy="20" r="5.5" fill="#E8C4A0"/>`;
+        head = `<circle cx="50" cy="44" r="31" fill="${body}" ${s}/>`;
+        face = eye(38, 41) + eye(62, 41) + blush(53) + `<ellipse cx="50" cy="54" rx="11" ry="8" fill="#F0D9BE" ${s}/><ellipse cx="50" cy="50.5" rx="4" ry="3" fill="${INK}"/>` + smile(55);
+        break;
+    }
+    limbs = limbs || body; feet = feet || limbs;
+    const plush = (m) => { const shape = m.replace(/ fill="[^"]*"/, '').replace(/ stroke(-width|-linejoin)?="[^"]*"/g, ''); return shape.replace('/>', ' fill="url(#pl-edge)"/>') + shape.replace('/>', ' fill="url(#pl-light)"/>') + shape.replace('/>', ' fill="url(#pl-fuzz)"/>'); };
+    const bodyM = `<ellipse cx="50" cy="86" rx="25" ry="20" fill="${body}" ${s}/>`;
+    const armL = `<ellipse cx="27" cy="83" rx="7" ry="10.5" fill="${limbs}" ${s} transform="rotate(28 27 83)"/>`;
+    const armR = `<ellipse cx="73" cy="83" rx="7" ry="10.5" fill="${limbs}" ${s} transform="rotate(-28 73 83)"/>`;
+    const footL = `<ellipse cx="38" cy="104" rx="9" ry="6" fill="${feet}" ${s}/>`, footR = `<ellipse cx="62" cy="104" rx="9" ry="6" fill="${feet}" ${s}/>`;
+    const seam = (d) => `<path d="${d}" fill="none" stroke="${INK}" stroke-width="1.3" stroke-dasharray="2.4 2.2" stroke-linecap="round" opacity=".38"/>`;
+    return `<svg viewBox="-8 -14 116 128" aria-hidden="true"><ellipse cx="50" cy="110" rx="27" ry="4" fill="${INK}" opacity=".14"/>${behind}` +
+      footL + plush(footL) + footR + plush(footR) +
+      bodyM + plush(bodyM) +
+      (belly ? `<ellipse cx="50" cy="90" rx="15" ry="12.5" fill="${belly}"/>` + seam('M36.5 90a13.5 11 0 0 0 27 0') : '') +
+      seam('M50 68.5V104') +
+      armL + plush(armL) + armR + plush(armR) +
+      `${head}${plush(head)}` + seam('M33 26Q50 16 67 26') + `${front}${face}${extra}</svg>`;
+  }
+  const doll = (kind, x, y, size, extra = '') => dollSVG(kind, extra).replace('<svg ', `<svg x="${x}" y="${y}" width="${size}" height="${(size * 128 / 116).toFixed(1)}" `);
+  const HAT = {
+    police: `<path d="M22 24 Q50 -2 78 24 Z" fill="#2B4C9B" stroke="${INK}" stroke-width="2.6" stroke-linejoin="round"/><rect x="18" y="20" width="64" height="9" rx="4.5" fill="#1D2F63" stroke="${INK}" stroke-width="2.4"/><path d="M50 7l2.6 5.2 5.7.8-4.1 4 1 5.7-5.2-2.7-5.2 2.7 1-5.7-4.1-4 5.7-.8z" fill="#FFC83D" stroke="${INK}" stroke-width="1.4"/>`,
+    fire: `<path d="M18 28 Q50 -10 82 28 Z" fill="#E8434B" stroke="${INK}" stroke-width="2.6" stroke-linejoin="round"/><rect x="10" y="24" width="80" height="8" rx="4" fill="#E8434B" stroke="${INK}" stroke-width="2.4"/><path d="M44 2h12v20H44z" fill="#FFC83D" stroke="${INK}" stroke-width="2.2"/>`,
+    doctor: `<path d="M22 22 Q50 6 78 22" fill="none" stroke="${INK}" stroke-width="4"/><circle cx="50" cy="11" r="9" fill="#DDE7EE" stroke="${INK}" stroke-width="2.4"/><circle cx="50" cy="11" r="3.5" fill="#fff"/><path d="M34 74 Q30 92 42 96 M66 74 Q70 92 58 96" fill="none" stroke="#5B6B7A" stroke-width="2.6" stroke-linecap="round"/><circle cx="50" cy="96" r="5" fill="#B9C6D2" stroke="${INK}" stroke-width="2"/>`,
+    glasses: `<circle cx="38" cy="48" r="9" fill="none" stroke="${INK}" stroke-width="2.6"/><circle cx="62" cy="48" r="9" fill="none" stroke="${INK}" stroke-width="2.6"/><path d="M47 48h6" stroke="${INK}" stroke-width="2.6"/>`,
+    apron: `<path d="M34 74 H66 L64 102 H36 Z" fill="#FF8A5C" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/><rect x="44" y="82" width="12" height="9" rx="2" fill="#fff" stroke="${INK}" stroke-width="1.6"/>`,
+  };
+
+  /* ---------- things to buy ---------- */
+  function item(k) {
+    switch (k) {
+      case 'apple': return C(50, 60, 32, '#F0544F') + P('M50 30 Q52 20 58 16', 'none', 4) + P('M54 26 Q70 14 78 26 Q64 34 54 26Z', '#86CF6E', 3) + `<ellipse cx="38" cy="50" rx="7" ry="10" fill="#fff" opacity=".45"/>`;
+      case 'banana': return P('M18 30 Q22 78 74 80 Q86 78 84 70 Q46 70 34 28 Q28 22 18 30Z', '#FFD84D') + P('M18 30 L14 24', 'none', 5);
+      case 'carrot': return P('M30 32 L70 32 L52 94 Q50 98 48 94Z', '#FF8A3D') + P('M38 52H54M42 70H52', 'none', 3) + P('M50 32 Q40 10 30 14 M50 32 Q50 6 50 4 M50 32 Q62 10 72 14', 'none', 5).replace(/stroke="#34264A"/, 'stroke="#3E9A3A"');
+      case 'milk': return P('M28 34 L50 14 L72 34 V92 H28Z', '#fff') + P('M28 34 H72', 'none', 3) + Rp(34, 52, 32, 24, '#74C4F2', 4, 0) + T(50, 70, 14, '우유', '#fff');
+      case 'bread': return P('M16 60 Q16 30 50 30 Q84 30 84 60 V84 H16Z', '#D99A55') + P('M34 44 L30 58 M50 40 L48 56 M66 44 L68 58', 'none', 3);
+      case 'grape': return [[38, 34], [56, 34], [30, 52], [48, 52], [66, 52], [40, 70], [58, 70], [49, 86]].map(([x, y]) => C(x, y, 11, '#9B6BD6', 3)).join('') + P('M48 24 Q50 12 58 10', 'none', 4);
+      case 'melon': return P('M10 46 A40 40 0 0 0 90 46 Z', '#86CF6E') + P('M18 46 A32 32 0 0 0 82 46 Z', '#FF6B6B', 0) + `<path d="M10 46H90" stroke="${INK}" stroke-width="4"/>` + [[36, 60], [50, 66], [64, 60], [44, 54], [58, 54]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="2.6" ry="4" fill="${INK}"/>`).join('');
+      case 'egg': return `<ellipse cx="38" cy="58" rx="20" ry="26" fill="#FFF8EA" ${S(4)}/><ellipse cx="64" cy="62" rx="20" ry="26" fill="#FFF1D6" ${S(4)}/>`;
+      case 'pencil': return `<g transform="rotate(-35 50 50)">${P('M14 40 H74 L92 50 L74 60 H14Z', '#FFC83D')}${P('M74 40 L92 50 L74 60Z', '#F5DDB3', 3)}${P('M86 47 L92 50 L86 53Z', INK, 0)}${Rp(6, 40, 12, 20, '#FF94B8', 3, 3)}</g>`;
+      case 'note': return R(22, 14, 58, 76, '#74C4F2', 6) + Rp(32, 30, 38, 12, '#fff', 3, 0) + [26, 42, 58, 74].map((y) => `<circle cx="22" cy="${y}" r="5" fill="#fff" ${S(2.5)}/>`).join('');
+      case 'balloon': return P('M50 66 Q50 82 46 96', 'none', 3) + `<ellipse cx="50" cy="38" rx="26" ry="30" fill="#EF4F7A" ${S(4)}/>` + P('M46 66 L54 66 L50 72Z', '#EF4F7A', 3) + `<ellipse cx="40" cy="28" rx="6" ry="10" fill="#fff" opacity=".45"/>`;
+      case 'pin': return P('M50 50 L18 30 Q10 50 18 70Z', '#BBA3F5') + P('M50 50 L82 30 Q90 50 82 70Z', '#BBA3F5') + C(50, 50, 10, '#FFC83D', 4);
+      case 'cup': return P('M24 30 H70 L66 86 H28Z', '#86CF6E') + P('M70 44 Q90 46 86 62 Q82 74 68 70', 'none', 5) + P('M24 30 H70', 'none', 4);
+      case 'ball': return C(50, 50, 34, '#fff') + P('M50 16 A34 34 0 0 1 82 40 L50 50Z', '#F0544F', 0) + P('M84 56 A34 34 0 0 1 60 83 L50 50Z', '#74C4F2', 0) + P('M36 81 A34 34 0 0 1 17 56 L50 50Z', '#FFC83D', 0) + C(50, 50, 34, 'none') + C(50, 50, 7, '#fff', 3);
+    }
+    return '';
+  }
+  const ITEM_AT = (k, x, y, size) => `<g transform="translate(${x} ${y}) scale(${size / 100})">${item(k)}</g>`;
+
+  /* ---------- buildings on the map ---------- */
+  function apt(w, h, o) {
+    const signH = 58, top = signH - 8;
+    const cid = `cp-${o.id}`;
+    let s = `<clipPath id="${cid}"><rect x="0" y="${top}" width="${w}" height="${h - top}" rx="6"/></clipPath>`;
+    s += `<rect x="0" y="${top}" width="${w}" height="${h - top}" rx="6" fill="${o.body}"/>`;
+    if (o.stripes) {
+      const sh = (h - top) / o.stripes.length;
+      s += `<g clip-path="url(#${cid})">${o.stripes.map((c, i) => `<rect x="0" y="${top + i * sh}" width="${w}" height="${sh + 1}" fill="${c}"/>`).join('')}</g>`;
+    }
+    s += `<rect x="0" y="${top}" width="${w}" height="${h - top}" rx="6" fill="url(#crayon)"/>`;
+    s += `<rect x="0" y="${top}" width="${w}" height="${h - top}" rx="6" fill="none" ${S()}/>`;
+    const padX = 16, padTop = top + 16, doorH = 54, rows = o.floors, cols = o.cols;
+    const gap = 9;
+    const ww = (w - padX * 2 - gap * (cols - 1)) / cols;
+    const wh = Math.min(ww * .9, (h - padTop - doorH - 18 - gap * (rows - 1)) / rows);
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const lit = (r * 7 + c * 3 + o.seed) % 5 === 0;
+        s += win(padX + c * (ww + gap), padTop + r * (wh + gap), ww, wh, lit ? '#FFE38A' : o.win, 2.6);
+        if (o.balcony) s += `<path d="M${padX + c * (ww + gap) - 3} ${padTop + r * (wh + gap) + wh}h${ww + 6}" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>`;
+      }
+    }
+    s += Rp(w / 2 - 22, h - doorH, 44, doorH, '#CDEFFF', 4, 3) + `<path d="M${w / 2} ${h - doorH + 3}V${h - 2}" stroke="${INK}" stroke-width="2.4" opacity=".6"/>`;
+    s += Rp(w / 2 - 32, h - doorH - 10, 64, 10, o.trim || '#fff', 3, 3);
+    // rooftop name board
+    const name = o.name, fs = Math.min(30, (w + 6) / name.length);
+    s += Rp(-8, 0, w + 16, signH, '#fff', 10, 4) + T(w / 2, fs + 6, fs, name) + T(w / 2, signH - 7, 16, '아파트', '#5B4D6E');
+    if (o.crown) s += P(`M${w / 2 - 22} -2 L${w / 2 - 26} -24 L${w / 2 - 12} -12 L${w / 2} -30 L${w / 2 + 12} -12 L${w / 2 + 26} -24 L${w / 2 + 22} -2Z`, '#FFC83D', 3);
+    return s;
+  }
+
+  const DRAW = {
+    hansung: (w, h) => apt(w, h, { id: 'hansung', name: '한성', body: '#BBA3F5', win: '#E8F7FF', floors: 6, cols: 3, seed: 1, trim: '#FFC83D' }),
+    gold: (w, h) => apt(w, h, { id: 'gold', name: '골드클래스', body: '#F6C744', win: '#4A5A8C', floors: 4, cols: 3, seed: 3, crown: true, trim: '#fff' }),
+    kangsin: (w, h) => apt(w, h, { id: 'kangsin', name: '강신프로그레그', body: '#8FD0F2', win: '#FFFFFF', floors: 8, cols: 3, seed: 2, balcony: true, trim: '#FF94B8' }),
+    onette: (w, h) => apt(w, h, { id: 'onette', name: '오네뜨', body: '#fff', stripes: ['#F0544F', '#FF8A3D', '#FFD84D', '#86CF6E', '#74C4F2', '#6C7FE0', '#BBA3F5'], win: '#FFFFFF', floors: 8, cols: 3, seed: 4, trim: '#fff' }),
+    hospital(w, h) {
+      let s = R(0, 46, w, h - 46, '#FFF8EC', 6);
+      s += Rp(w / 2 - 32, 0, 64, 56, '#fff', 10, 4) + `<rect x="${w / 2 - 8}" y="10" width="16" height="36" rx="2" fill="#E8434B"/><rect x="${w / 2 - 18}" y="20" width="36" height="16" rx="2" fill="#E8434B"/>`;
+      s += Rp(14, 64, w - 28, 42, '#fff', 8, 3) + T(w / 2, 97, 32, '병원', '#E8434B');
+      for (let r = 0; r < 2; r++) for (let c = 0; c < 3; c++) s += win(18 + c * 44, 118 + r * 42, 34, 30, '#9ED8F5', 2.6);
+      s += Rp(w / 2 - 28, h - 52, 56, 52, '#CDEFFF', 4, 3) + `<path d="M${w / 2} ${h - 49}V${h - 2}" stroke="${INK}" stroke-width="2.4" opacity=".6"/>`;
+      return s;
+    },
+    fire(w, h) {
+      let s = R(54, 58, w - 54, h - 58, '#F0544F', 6) + R(0, 0, 66, h, '#E8434B', 6);
+      s += T(33, 44, 28, '119', '#fff') + C(33, 76, 13, '#FFC83D', 3);
+      for (let r = 0; r < 3; r++) s += win(14, 104 + r * 32, 38, 22, '#FFE1D6', 2.6);
+      s += Rp(78, 68, w - 98, 40, '#fff', 8, 3) + T((78 + w - 20) / 2, 98, 30, '소방서', '#E8434B');
+      [82, 82 + 66].forEach((x) => {
+        s += Rp(x, 122, 58, h - 122, '#FFE1D6', 6, 3);
+        for (let y = 134; y < h - 6; y += 13) s += `<path d="M${x + 4} ${y}h50" stroke="${INK}" stroke-width="2" opacity=".35"/>`;
+      });
+      return s;
+    },
+    police(w, h) {
+      let s = R(0, 64, w, h - 64, '#74B4F0', 6);
+      s += P(`M${w / 2} 0 L${w / 2 + 34} 12 L${w / 2 + 30} 46 Q${w / 2} 72 ${w / 2 - 30} 46 L${w / 2 - 34} 12Z`, '#2B4C9B', 4);
+      s += P(`M${w / 2} 14l5.5 11.2 12.3 1.8-8.9 8.7 2.1 12.2-11-5.8-11 5.8 2.1-12.2-8.9-8.7 12.3-1.8z`, '#FFC83D', 2.6);
+      s += Rp(14, 84, w - 28, 44, '#fff', 8, 3) + T(w / 2, 117, 32, '경찰서', '#2B4C9B');
+      for (let r = 0; r < 4; r++) for (let c = 0; c < 3; c++) s += win(18 + c * 46, 144 + r * 38, 36, 28, '#DFF1FF', 2.6);
+      s += Rp(w / 2 - 26, h - 56, 52, 56, '#2B4C9B', 4, 3) + C(w / 2 + 14, h - 28, 3.5, '#FFC83D', 0);
+      return s;
+    },
+    daiso(w, h) {
+      let s = R(0, 40, w, h - 40, '#FFF4EE', 6);
+      s += Rp(-6, 40, w + 12, 50, '#E43B3B', 8, 4) + T(w / 2, 77, 32, '다이소', '#fff');
+      s += Rp(12, 106, w - 24, 70, '#DFF1FF', 6, 3);
+      s += ITEM_AT('balloon', 18, 112, 44) + ITEM_AT('pencil', 60, 116, 40) + ITEM_AT('cup', 100, 118, 40);
+      for (let r = 0; r < 1; r++) s += win(14, 190, 40, 26, '#DFF1FF', 2.6) + win(w - 54, 190, 40, 26, '#DFF1FF', 2.6);
+      s += Rp(w / 2 - 24, h - 44, 48, 44, '#CDEFFF', 4, 3);
+      return s;
+    },
+    mart(w, h) {
+      let s = R(0, 66, w, h - 66, '#FF9A5C', 6);
+      const roof = `<path d="M-10 72 L${w / 2} 0 L${w + 10} 72Z" fill="#FFE07A" ${S()}/>`;
+      s += roof + roof.replace(/ fill="[^"]*"/, '').replace(/ stroke(-width|-linejoin|-linecap)?="[^"]*"/g, '').replace('/>', ' fill="url(#dots)"/>');
+      s += Rp(w / 2 - 42, 30, 84, 36, '#fff', 8, 3) + T(w / 2, 59, 28, '마트', '#E8434B');
+      // striped awning
+      const n = 6, aw = w / n;
+      for (let i = 0; i < n; i++) s += `<path d="M${i * aw} 78 H${(i + 1) * aw} V96 A${aw / 2} ${aw / 2.4} 0 0 1 ${i * aw} 96Z" fill="${i % 2 ? '#fff' : '#EF4F7A'}" ${S(3)}/>`;
+      s += Rp(12, 112, 92, h - 124, '#FFF6E0', 6, 3) + ITEM_AT('apple', 16, 118, 36) + ITEM_AT('banana', 54, 120, 38) + ITEM_AT('carrot', 18, 148, 34) + ITEM_AT('grape', 58, 146, 36);
+      s += Rp(w - 56, 116, 44, h - 116, '#CDEFFF', 4, 3);
+      return s;
+    },
+    kinder(w, h) {
+      let s = `<path d="M${w / 2} 0V-30" stroke="${INK}" stroke-width="4"/><path d="M${w / 2} -30 L${w / 2 + 34} -21 L${w / 2} -12Z" fill="#FFC83D" ${S(3)}/>`;
+      s += P(`M-10 98 L${w / 2} 4 L${w + 10} 98Z`, '#74C4F2');
+      s += C(w / 2, 62, 20, '#FFE07A', 3) + [0, 45, 90, 135, 180, 225, 270, 315].map((a) => { const r = a * Math.PI / 180; return `<path d="M${w / 2 + Math.cos(r) * 25} ${62 + Math.sin(r) * 25}L${w / 2 + Math.cos(r) * 31} ${62 + Math.sin(r) * 31}" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>`; }).join('');
+      s += R(0, 92, w, h - 92, '#86CF6E', 6);
+      s += Rp(14, 102, w - 28, 42, '#fff', 8, 3) + T(w / 2, 134, 28, '문정유치원', '#2E8A3A');
+      ['#FF94B8', '#FFC83D', '#74C4F2', '#BBA3F5'].forEach((c, i) => { s += C(30 + i * 52, 172, 15, c, 3); });
+      s += P(`M${w / 2 - 26} ${h} V${h - 30} A26 26 0 0 1 ${w / 2 + 26} ${h - 30} V${h}Z`, '#FF8A5C', 3);
+      return s;
+    },
+    claw(w, h) {
+      let s = R(0, 76, w, h - 76, '#FF94B8', 8);
+      // marquee with chasing bulbs
+      s += Rp(-12, 0, w + 24, 86, '#B8285A', 22, 4);
+      let bulbs = '';
+      for (let i = 0; i < 12; i++) bulbs += `<circle class="bulb" cx="${4 + i * ((w - 8) / 11)}" cy="9" r="6" fill="#FFF3B0" ${S(2)}/>`;
+      for (let i = 0; i < 12; i++) bulbs += `<circle class="bulb" cx="${4 + i * ((w - 8) / 11)}" cy="77" r="6" fill="#FFF3B0" ${S(2)}/>`;
+      s += `<g>${bulbs}</g>` + T(w / 2, 62, 46, '인형뽑기', '#FFE38A', 'ts', `stroke="${INK}" stroke-width="7" paint-order="stroke" stroke-linejoin="round"`);
+      // awning
+      const n = 8, aw = w / n;
+      for (let i = 0; i < n; i++) s += `<path d="M${i * aw} 90 H${(i + 1) * aw} V106 A${aw / 2} ${aw / 2.6} 0 0 1 ${i * aw} 106Z" fill="${i % 2 ? '#fff' : '#FFC83D'}" ${S(3)}/>`;
+      // shop window with a little claw machine inside
+      s += Rp(18, 124, 170, 186, '#E8F7FF', 10, 4);
+      s += Rp(40, 138, 126, 150, '#FFF', 8, 3) + Rp(46, 150, 114, 92, '#D3ECFA', 4, 2.4) + Rp(46, 244, 114, 38, '#FFC83D', 4, 2.4);
+      s += `<path d="M64 152V172M50 172h28M54 172l-4 12M74 172l4 12" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>`;
+      s += doll('cinnamoroll', 80, 196, 40) + doll('kuromi', 112, 192, 40) + doll('melody', 52, 200, 34);
+      s += `<path d="M24 130 L60 166" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".7"/>`;
+      // door
+      s += Rp(206, 144, 86, h - 144, '#FFE0EC', 8, 4) + C(249, 190, 20, '#E8F7FF', 3) + C(276, 250, 5, '#FFC83D', 2.4);
+      return s;
+    },
+    library(w, h) {
+      let s = P(`M-10 124 L${w / 2} 0 L${w + 10} 124Z`, '#FFC83D');
+      s += C(w / 2, 72, 34, '#fff', 4) + `<path d="M${w / 2} 72V50M${w / 2} 72L${w / 2 + 16} 80" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>` + C(w / 2, 72, 4, INK, 0);
+      s += R(0, 118, w, h - 118, '#FFE9A8', 6);
+      // crayon rainbow along the bottom like the board
+      ['#F0544F', '#FF8A3D', '#FFD84D', '#86CF6E', '#74C4F2', '#BBA3F5'].forEach((c, i) => { s += `<rect x="3" y="${h - 112 + i * 14}" width="${w - 6}" height="12" fill="${c}" opacity=".55"/>`; });
+      s += Rp(30, 130, w - 60, 46, '#fff', 8, 3) + T(w / 2, 166, 34, '도서관', '#B8285A');
+      [24, w - 58].forEach((x) => { s += win(x, 194, 34, 46, '#DFF1FF', 2.6); });
+      // books in the middle window
+      s += Rp(78, 192, w - 156, 52, '#fff', 6, 3);
+      ['#F0544F', '#74C4F2', '#86CF6E', '#FFC83D', '#BBA3F5', '#FF94B8'].forEach((c, i) => { s += Rp(86 + i * 17, 200 + (i % 2) * 4, 13, 38 - (i % 2) * 4, c, 2, 2); });
+      s += P(`M${w / 2 - 30} ${h} V${h - 52} A30 30 0 0 1 ${w / 2 + 30} ${h - 52} V${h}Z`, '#B9805A', 4);
+      s += `<path d="M${w / 2} ${h - 80}V${h}" stroke="${INK}" stroke-width="3" opacity=".5"/>`;
+      return s;
+    },
+  };
+
+  const BUILDINGS = [
+    { id: 'hansung', name: '한성아파트', x: 30, y: 60, w: 170, h: 276, rot: -1.5, pin: '#FFC83D' },
+    { id: 'mart', name: '마트', x: 232, y: 150, w: 168, h: 186, rot: 1.2, pin: '#74C4F2' },
+    { id: 'kinder', name: '문정유치원', x: 432, y: 112, w: 210, h: 222, rot: -1, pin: '#EF4F7A' },
+    { id: 'hospital', name: '병원', x: 700, y: 92, w: 160, h: 220, rot: 1.5, pin: '#86CF6E' },
+    { id: 'fire', name: '소방서', x: 905, y: 68, w: 220, h: 206, rot: -1.2, pin: '#FFC83D', pinX: 33 },
+    { id: 'gold', name: '골드클래스 아파트', x: 1212, y: 36, w: 176, h: 202, rot: 1, pin: '#EF4F7A', pinY: 4 },
+    { id: 'police', name: '경찰서', x: 30, y: 466, w: 170, h: 318, rot: 1, pin: '#FFC83D' },
+    { id: 'daiso', name: '다이소', x: 224, y: 548, w: 156, h: 238, rot: -1.5, pin: '#74C4F2', pinY: 38 },
+    { id: 'claw', name: '인형뽑기 가게', x: 498, y: 462, w: 300, h: 324, rot: -.6, pin: '#FFC83D' },
+    { id: 'library', name: '도서관', x: 852, y: 446, w: 268, h: 340, rot: 1, pin: '#EF4F7A' },
+    { id: 'kangsin', name: '강신프로그레그 아파트', x: 1238, y: 356, w: 170, h: 430, rot: -1, pin: '#86CF6E' },
+    { id: 'onette', name: '오네뜨아파트', x: 1428, y: 324, w: 158, h: 462, rot: 1.2, pin: '#FFC83D' },
+  ];
+  const byId = Object.fromEntries(BUILDINGS.map((b) => [b.id, b]));
+
+  /* ---------- roads (black construction paper, white paper dashes) ---------- */
+  const ROAD = 64;
+  const roadY = (x) => 380 - 0.134 * (x - 640);
+  const ROADS = [
+    `M-900 380 H640 L2500 ${roadY(2500).toFixed(1)}`,
+    'M420 380 V830',
+    `M1180 ${roadY(1180).toFixed(1)} V830`,
+    'M-900 830 H2500',
+  ];
+  function ladder(x, y, len, ang) {
+    // a crosswalk: two paper rails with rungs, laid across the road
+    let s = `<g transform="translate(${x} ${y}) rotate(${ang})">`;
+    s += `<rect x="${-len / 2}" y="-15" width="${len}" height="30" fill="#fff" rx="2"/><rect x="${-len / 2 + 6}" y="-9" width="${len - 12}" height="18" fill="#1F1A24"/>`;
+    for (let i = -len / 2 + 14; i < len / 2 - 8; i += 16) s += `<rect x="${i}" y="-9" width="6" height="18" fill="#fff"/>`;
+    return s + '</g>';
+  }
+  function drawRoads() {
+    let s = ROADS.map((d) => `<path d="${d}" fill="none" stroke="#1F1A24" stroke-width="${ROAD}" stroke-linejoin="round"/>`).join('');
+    s += ROADS.map((d) => `<path d="${d}" fill="none" stroke="#fff" stroke-width="6" stroke-dasharray="24 22" opacity=".95"/>`).join('');
+    // tidy the junctions so dashes do not cross them
+    [[420, 380], [420, 830], [1180, roadY(1180)], [1180, 830]].forEach(([x, y]) => { s += `<rect x="${x - ROAD / 2 - 2}" y="${y - ROAD / 2 - 2}" width="${ROAD + 4}" height="${ROAD + 4}" fill="#1F1A24"/>`; });
+    const slope = Math.atan(-0.134) * 180 / Math.PI;
+    s += ladder(300, 380, ROAD + 10, 90) + ladder(420, 640, ROAD + 10, 0) + ladder(1000, roadY(1000), ROAD + 10, 90 + slope) +
+      ladder(1180, 560, ROAD + 10, 0) + ladder(600, 830, ROAD + 10, 90) + ladder(1330, 830, ROAD + 10, 90);
+    $('roads').innerHTML = s;
+  }
+
+  function tree(x, y, s = 1, c = '#86CF6E') {
+    return `<g transform="translate(${x} ${y}) scale(${s})">${Rp(-6, -30, 12, 32, '#B9805A', 3, 3)}${C(0, -50, 30, c, 4)}<circle cx="0" cy="-50" r="30" fill="url(#crayon)"/>${C(-12, -58, 6, '#fff', 0).replace('/>', ' opacity=".4"/>')}</g>`;
+  }
+  function drawDecor() {
+    let s = '';
+    // a sticky note that tells the children what to do
+    s += `<g transform="translate(1440 18) rotate(3)"><rect x="4" y="6" width="150" height="128" fill="${INK}" opacity=".16"/><rect width="150" height="128" fill="#FFF3B0" ${S(3)}/>${pin(75, 10, '#74C4F2')}` +
+      T(75, 48, 26, '건물을') + T(75, 80, 26, '눌러 보세요!') +
+      `<g transform="translate(104 86) scale(.66)"><path d="M14 2c3 0 5 2 5 5v14l3-1c3-1 6 1 6 4v4l3-1c3-1 6 1 6 4v3l2-.5c3-.6 5 1.5 5 4.5v6c0 9-7 16-16 16h-4c-6 0-10-3-13-8L3 37c-1.6-2.6 0-6 3-6.2 1.6 0 3 .8 4 2l-1-1V7c0-3 2-5 5-5z" fill="#fff" ${S(2.6)}/></g></g>`;
+    s += tree(1468, 214, .9) + tree(1574, 200, .8, '#5DB85A') + tree(1104, 384, .55, '#5DB85A') + tree(830, 410, .5);
+    $('decor').innerHTML = s;
+  }
+
+  function drawBuildings() {
+    $('blds').innerHTML = BUILDINGS.map((b) => {
+      const inner = DRAW[b.id](b.w, b.h);
+      const cta = b.id === 'claw' ? ' beckon' : '';
+      return `<g transform="translate(${b.x} ${b.y}) rotate(${b.rot} ${b.w / 2} ${b.h})">` +
+        `<g class="bld${cta}" data-id="${b.id}" tabindex="0" role="button" aria-label="${b.name}${b.id === 'claw' ? ' (게임하기)' : ' 들어가기'}">` +
+        `<rect x="-14" y="-14" width="${b.w + 28}" height="${b.h + 22}" fill="transparent"/>` +
+        inner + pin(b.pinX != null ? b.pinX : b.w / 2, b.pinY || -2, b.pin) +
+        `<rect class="focus-ring" x="-16" y="-20" width="${b.w + 32}" height="${b.h + 30}" rx="16"/></g></g>`;
+    }).join('');
+  }
+
+  /* ---------- cars driving around the block ---------- */
+  const CAR_PATHS = [
+    `M-700 396 H640 L2300 ${(396 - 0.134 * 1660).toFixed(1)}`,
+    `M2300 ${(364 - 0.134 * 1660).toFixed(1)} L640 364 H-700`,
+    'M-700 846 H2300',
+    'M2300 814 H-700',
+    `M2300 ${(364 - 0.134 * 1660).toFixed(1)} L640 364 H420 Q404 364 404 380 V830 Q404 846 420 846 H2300`,
+    `M2300 814 H1212 Q1196 814 1196 798 V${(roadY(1196) + 34).toFixed(1)} L2300 ${(396 - 0.134 * 1660).toFixed(1)}`,
+  ];
+  const CAR_COLORS = ['#6C4BC7', '#4FB35A', '#FF8A3D', '#3B6FCB', '#FF94B8', '#FFD84D'];
+  const CAR_WORDS = ['택시', '', '구급차', '', '', '버스'];
+  function carSVG(c, word) {
+    const body = `<path d="M-46 10 V-4 Q-45 -12 -36 -12 H-22 L-12 -28 H18 L30 -12 H38 Q47 -10 47 0 V10 Z" fill="${c}" ${S(3.5)}/>`;
+    return body + tex(body) + `<path d="M-8 -24 H14 L22 -14 H-15 Z" fill="#DDF3FF" ${S(2.4)}/>` +
+      (word ? `<g class="word">${T(0, 6, 15, word, INK)}</g>` : '') +
+      `<circle cx="-24" cy="12" r="9" fill="${DARK}" ${S(3)}/><circle cx="-24" cy="12" r="3" fill="#ddd"/><circle cx="26" cy="12" r="9" fill="${DARK}" ${S(3)}/><circle cx="26" cy="12" r="3" fill="#ddd"/>`;
+  }
+  const cars = [];
+  function setupCars() {
+    const g = $('cars');
+    g.innerHTML = CAR_PATHS.map((d, i) => `<path id="lane${i}" d="${d}" fill="none" stroke="none"/>`).join('');
+    CAR_PATHS.forEach((d, i) => {
+      const path = $('lane' + i);
+      const len = path.getTotalLength();
+      const el = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      el.innerHTML = `<g class="car-in" role="button" aria-label="자동차">${carSVG(CAR_COLORS[i], CAR_WORDS[i])}</g>`;
+      g.appendChild(el);
+      cars.push({ path, len, el, word: el.querySelector('.word'), flip: false, d: (len * (0.15 + i * 0.37)) % len, v: 90 + (i % 3) * 16 });
+    });
+    placeCars(0);
+  }
+  function placeCars(dt) {
+    for (const c of cars) {
+      c.d = (c.d + c.v * dt) % c.len;
+      const p = c.path.getPointAtLength(c.d), q = c.path.getPointAtLength(Math.min(c.len, c.d + 3));
+      let a = Math.atan2(q.y - p.y, q.x - p.x) * 180 / Math.PI;
+      // keep paper cars the right way up: mirror instead of driving upside down
+      const flip = Math.abs(a) > 90;
+      if (flip) a = a > 0 ? a - 180 : a + 180;
+      c.el.setAttribute('transform', `translate(${p.x.toFixed(1)} ${(p.y - 4).toFixed(1)}) rotate(${a.toFixed(1)})${flip ? ' scale(-1 1)' : ''}`);
+      if (c.word && flip !== c.flip) c.word.setAttribute('transform', flip ? 'scale(-1 1)' : '');
+      c.flip = flip;
+    }
+  }
+  let last = 0, roomOpen = false;
+  function loop(t) {
+    const dt = last ? Math.min(0.05, (t - last) / 1000) : 0;
+    last = t;
+    if (!roomOpen && !document.hidden) placeCars(dt);
+    requestAnimationFrame(loop);
+  }
+
+  function boing(el) {
+    el.classList.remove('boing');
+    void el.getBoundingClientRect();
+    el.classList.add('boing');
+  }
+
+  /* ---------- rooms ---------- */
+  function wallFloor(wall, floor, pat = 'tiles') {
+    return `<rect x="-1200" y="-600" width="4000" height="2100" fill="${wall}"/><rect x="-1200" y="-600" width="4000" height="2100" fill="url(#crayon)" opacity=".5"/>` +
+      `<rect x="-1200" y="700" width="4000" height="800" fill="${floor}"/><rect x="-1200" y="700" width="4000" height="800" fill="url(#${pat})"/>` +
+      `<rect x="-1200" y="690" width="4000" height="14" fill="#fff" opacity=".7"/><path d="M-1200 704H2800" stroke="${INK}" stroke-width="4" opacity=".4"/>`;
+  }
+  const thing = (k, label, inner) => `<g class="thing" data-k="${k}" tabindex="0" role="button" aria-label="${label}">${inner}</g>`;
+  // every thing gets a generous transparent hit box (small fingers) and a focus ring
+  const glowRect = (x, y, w, h) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="transparent"/><rect class="focus-ring" x="${x}" y="${y}" width="${w}" height="${h}" rx="18"/>`;
+
+  function aptRoom(b, o) {
+    let s = `<rect x="-1200" y="-600" width="4000" height="2100" fill="#CDEAFB"/>` + C(1460, 120, 56, '#FFE07A', 0) +
+      `<path d="M-1200 850 H0 Q400 820 800 850 T1600 840 H2800 V1500 H-1200Z" fill="#86CF6E"/>`;
+    s += tree(140, 860, 1.6) + tree(1470, 860, 1.5, '#5DB85A') + tree(250, 870, 1.1, '#5DB85A');
+    const bx = 300, bw = 1000, top = 150, bottom = 870;
+    const bodyM = `<rect x="${bx}" y="${top}" width="${bw}" height="${bottom - top}" rx="10" fill="${o.body}" ${S(5)}/>`;
+    s += bodyM;
+    if (o.stripes) {
+      const sh = (bottom - top) / o.stripes.length;
+      s += `<clipPath id="room-clip"><rect x="${bx}" y="${top}" width="${bw}" height="${bottom - top}" rx="10"/></clipPath><g clip-path="url(#room-clip)">${o.stripes.map((c, i) => `<rect x="${bx}" y="${top + i * sh}" width="${bw}" height="${sh + 1}" fill="${c}" opacity=".85"/>`).join('')}</g>`;
+    }
+    s += tex(bodyM) + `<rect x="${bx}" y="${top}" width="${bw}" height="${bottom - top}" rx="10" fill="none" ${S(5)}/>`;
+    if (o.crown) s += P('M760 50 L748 6 L776 28 L800 -6 L824 28 L852 6 L840 50Z', '#FFC83D', 4);
+    s += Rp(bx + 160, 40, bw - 320, 96, '#fff', 18, 5) + T(800, 112, 64, b.name);
+    const rows = 4, cols = 4, ww = 180, wh = 118, gx = (bw - cols * ww) / (cols + 1), rowH = 148;
+    let n = 0;
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const x = bx + gx + c * (ww + gx), y = top + 22 + r * rowH;
+        const floor = rows + 1 - r;
+        const kind = KINDS[(r * cols + c + o.seed) % KINDS.length];
+        const k = `w${r}${c}`;
+        RES[k] = { floor, kind };
+        s += thing(k, `${floor}층 창문`,
+          `<rect x="${x}" y="${y}" width="${ww}" height="${wh}" rx="8" fill="#3E4A6E" ${S(4)}/>` +
+          `<rect class="glow" x="${x + 3}" y="${y + 3}" width="${ww - 6}" height="${wh - 6}" rx="6" fill="#FFE9A0"/>` +
+          `<g class="resident">${doll(kind, x + ww / 2 - 46, y + wh - 102, 92)}</g>` +
+          `<rect class="curtain l" x="${x + 4}" y="${y + 4}" width="${ww / 2 - 4}" height="${wh - 8}" fill="${o.curtain}" opacity=".95"/>` +
+          `<rect class="curtain r" x="${x + ww / 2}" y="${y + 4}" width="${ww / 2 - 4}" height="${wh - 8}" fill="${o.curtain}" opacity=".95"/>` +
+          `<rect x="${x}" y="${y}" width="${ww}" height="${wh}" rx="8" fill="none" ${S(5)}/>` +
+          `<rect x="${x - 10}" y="${y + wh}" width="${ww + 20}" height="12" rx="4" fill="#fff" ${S(3)}/>` +
+          glowRect(x - 8, y - 8, ww + 16, wh + 30));
+        n++;
+      }
+    }
+    // entrance with intercom
+    s += Rp(700, 760, 200, 110, '#CDEFFF', 8, 5) + `<path d="M800 764V868" stroke="${INK}" stroke-width="4" opacity=".6"/>` + Rp(670, 740, 260, 22, o.trim, 6, 4);
+    s += thing('bell', '초인종', Rp(940, 770, 64, 84, '#E8E4F0', 10, 4) + C(972, 796, 12, '#74C4F2', 3) + Rp(954, 820, 36, 22, '#fff', 4, 3) + glowRect(930, 760, 84, 104));
+    s += thing('mail', '우편함', Rp(470, 780, 150, 80, '#FF8A5C', 8, 4) + [0, 1, 2].map((i) => Rp(484 + i * 46, 794, 34, 22, '#fff', 3, 3)).join('') + glowRect(460, 770, 170, 100));
+    return s;
+  }
+  const RES = {};
+
+  const ROOMS = {
+    hospital: {
+      wall: '#DDF0F6',
+      draw() {
+        let s = wallFloor('#DDF0F6', '#CFE5D9');
+        // window with the ambulance waiting outside
+        s += Rp(1040, 90, 480, 380, '#BFE6FF', 18, 6) + `<rect x="1046" y="370" width="468" height="94" fill="#8A8F9C"/><path d="M1046 418H1514" stroke="#fff" stroke-width="6" stroke-dasharray="30 24"/>`;
+        s += thing('amb', '구급차',
+          Rp(1110, 230, 330, 170, '#fff', 18, 5) + Rp(1340, 270, 100, 130, '#fff', 14, 5) + win(1356, 286, 66, 52, '#BFE6FF', 4) +
+          `<rect x="1110" y="320" width="330" height="22" fill="#E8434B"/><rect x="1110" y="320" width="330" height="22" fill="none" ${S(3)}/>` +
+          `<rect x="1196" y="252" width="20" height="56" fill="#E8434B"/><rect x="1178" y="270" width="56" height="20" fill="#E8434B"/>` +
+          Rp(1240, 206, 80, 26, '#fff', 8, 4) + `<rect class="lamp lamp-a" x="1244" y="210" width="36" height="18" rx="5" fill="#FF3B3B"/><rect class="lamp lamp-b" x="1280" y="210" width="36" height="18" rx="5" fill="#3B7BFF"/>` +
+          C(1170, 404, 30, DARK, 5) + C(1170, 404, 11, '#ccc', 0) + C(1380, 404, 30, DARK, 5) + C(1380, 404, 11, '#ccc', 0) + glowRect(1096, 196, 360, 246));
+        s += thing('cab', '약 상자', Rp(640, 120, 250, 220, '#fff', 14, 5) + `<rect x="745" y="150" width="40" height="110" rx="6" fill="#E8434B"/><rect x="710" y="185" width="110" height="40" rx="6" fill="#E8434B"/>` + Rp(668, 280, 70, 40, '#FFE07A', 6, 3) + Rp(792, 280, 70, 40, '#FFC9D9', 6, 3) + glowRect(628, 108, 274, 244));
+        // doctor behind the desk
+        s += thing('doc', '의사 선생님', doll('bear', 150, 250, 330, HAT.doctor) + glowRect(150, 236, 330, 380));
+        s += Rp(80, 560, 560, 40, '#E6C99A', 10, 5) + Rp(110, 600, 500, 160, '#F5DDB3', 8, 5);
+        s += thing('steth', '청진기', `<path d="M330 540 Q300 470 360 470 Q420 470 392 540" fill="none" stroke="#5B6B7A" stroke-width="9" stroke-linecap="round"/><path d="M392 540 Q400 560 440 556" fill="none" stroke="#5B6B7A" stroke-width="9" stroke-linecap="round"/>` + C(452, 554, 18, '#B9C6D2', 5) + glowRect(300, 452, 180, 120));
+        s += thing('thermo', '체온계', `<g transform="rotate(-18 560 530)">${Rp(500, 516, 130, 30, '#fff', 15, 5)}<rect x="506" y="524" width="70" height="14" rx="7" fill="#F0544F"/>${Rp(586, 520, 34, 22, '#DFF1FF', 4, 3)}</g>` + glowRect(490, 478, 160, 100));
+        // bed with a friend resting
+        s += Rp(940, 560, 560, 100, '#fff', 20, 5) + Rp(940, 520, 60, 220, '#B9C6D2', 10, 5) + Rp(1440, 560, 60, 180, '#B9C6D2', 10, 5);
+        s += thing('bed', '침대', `<g transform="rotate(-90 1100 540)">${doll('pochacco', 1020, 450, 170)}</g>` + Rp(1110, 530, 330, 76, '#9ED8F5', 24, 5) + `<rect x="1110" y="530" width="330" height="76" rx="24" fill="url(#crayon)"/>` + glowRect(930, 420, 580, 210));
+        return s;
+      },
+      things: {
+        doc: { say: ['어디가 아파서 왔나요? 선생님이 봐 줄게요.', '아~ 입을 크게 벌려 볼까요?', '손을 깨끗이 씻으면 감기에 안 걸려요!'], sfx: 'hello' },
+        steth: { say: ['쿵쿵, 쿵쿵! 심장 소리가 들려요.'], sfx: 'heart' },
+        thermo: { say: ['삐빅! 36.5도, 열이 없어요.', '삐빅! 열을 재 볼게요.'], sfx: 'beep' },
+        cab: { say: ['다친 곳에는 밴드를 붙여요.', '약은 어른이 주실 때만 먹어요.'], sfx: 'pop' },
+        bed: { say: ['푹 쉬면 금방 나아요. 쿨쿨~', '포차코가 쉬고 있어요. 쉿!'], sfx: 'tap' },
+        amb: { say: ['삐뽀삐뽀! 아픈 사람을 태우러 가요.'], act: 'siren' },
+      },
+    },
+    fire: {
+      wall: '#FBE3DA',
+      draw() {
+        let s = wallFloor('#FBE3DA', '#D8D2CC');
+        s += thing('bell', '종', `<path d="M250 70V110" stroke="${INK}" stroke-width="6"/><g class="swing">${P('M200 200 Q200 110 250 110 Q300 110 300 200 L316 222 H184Z', '#FFC83D', 5)}${C(250, 234, 14, '#E8A800', 4)}</g>` + glowRect(170, 60, 160, 200));
+        s += Rp(110, 300, 340, 14, '#B9805A', 4, 4);
+        const helmets = [150, 260, 370].map((x, i) => `<g transform="translate(${x - 50} 310)">${P('M8 60 Q50 -6 92 60Z', i === 1 ? '#FFC83D' : '#E8434B', 4)}${Rp(0, 54, 100, 14, i === 1 ? '#FFC83D' : '#E8434B', 7, 4)}</g>`).join('');
+        s += thing('helm', '소방관 모자', helmets + glowRect(96, 290, 370, 100));
+        // hose reel and the water it sprays
+        s += thing('hose', '소방 호스',
+          C(250, 600, 100, '#E8434B', 5) + C(250, 600, 70, '#F0544F', 4) + C(250, 600, 40, '#E8434B', 4) + C(250, 600, 14, '#FFC83D', 4) +
+          `<path d="M330 640 Q420 700 470 640" fill="none" stroke="#E8434B" stroke-width="16" stroke-linecap="round"/>` + Rp(462, 616, 50, 26, '#B9C6D2', 6, 4) +
+          `<g class="spray">${Array.from({ length: 10 }, (_, i) => `<circle cx="516" cy="628" r="${9 + (i % 3) * 3}" fill="#74C4F2" style="--i:${i};--dx:${120 + i * 26}px;--dy:${-80 - (i % 4) * 30}px"/>`).join('')}</g>` +
+          glowRect(140, 490, 390, 220));
+        // the engine
+        s += thing('truck', '소방차',
+          Rp(620, 400, 640, 260, '#E8434B', 22, 6) + Rp(1180, 460, 260, 200, '#E8434B', 22, 6) + win(1210, 486, 120, 90, '#BFE6FF', 5) +
+          `<rect x="620" y="560" width="820" height="20" fill="#fff"/><rect x="620" y="560" width="820" height="20" fill="none" ${S(3)}/>` +
+          `<g transform="rotate(-8 660 380)">${Rp(640, 360, 520, 26, '#B9C6D2', 8, 4)}${Array.from({ length: 12 }, (_, i) => `<path d="M${666 + i * 42} 362V384" stroke="${INK}" stroke-width="4"/>`).join('')}</g>` +
+          Rp(1280, 430, 120, 28, '#fff', 8, 4) + `<rect class="lamp lamp-a" x="1284" y="434" width="56" height="20" rx="6" fill="#FF3B3B"/><rect class="lamp lamp-b" x="1340" y="434" width="56" height="20" rx="6" fill="#FFD84D"/>` +
+          T(900, 520, 72, '119', '#fff', 't', `stroke="${INK}" stroke-width="8" paint-order="stroke"`) +
+          C(740, 670, 50, DARK, 6) + C(740, 670, 18, '#ccc', 0) + C(1300, 670, 50, DARK, 6) + C(1300, 670, 18, '#ccc', 0) + glowRect(604, 340, 852, 390));
+        s += thing('ff', '소방관', doll('keroppi', 1440, 380, 150, HAT.fire) + glowRect(1430, 360, 160, 190));
+        return s;
+      },
+      things: {
+        bell: { say: ['땡땡땡! 출동!'], sfx: 'bell', act: 'ring' },
+        helm: { say: ['소방관 모자는 머리를 지켜 줘요.', '노란 모자는 대장님 거예요!'], sfx: 'pop' },
+        hose: { say: ['쏴아아! 물로 불을 꺼요.'], sfx: 'water', act: 'water' },
+        truck: { say: ['삐용삐용! 불 끄러 출동해요!'], act: 'siren' },
+        ff: { say: ['불이 나면 119에 전화해요!', '불이 나면 코와 입을 막고 낮게 나가요.'], sfx: 'hello' },
+      },
+    },
+    police: {
+      wall: '#E2ECFA',
+      draw() {
+        let s = wallFloor('#E2ECFA', '#CBD5E6');
+        s += P('M800 60 L870 84 L862 152 Q800 200 738 152 L730 84Z', '#2B4C9B', 5) + P('M800 82l10 20.5 22.5 3.3-16.3 15.9 3.9 22.4-20.1-10.6-20.1 10.6 3.9-22.4-16.3-15.9 22.5-3.3z', '#FFC83D', 3);
+        s += thing('cop', '경찰관', doll('kitty', 170, 230, 320, HAT.police) + glowRect(170, 210, 320, 380));
+        s += Rp(100, 560, 520, 40, '#9AA9C9', 10, 5) + Rp(130, 600, 460, 160, '#C6D2EA', 8, 5);
+        s += thing('radio', '무전기', Rp(470, 468, 70, 100, DARK, 12, 5) + `<path d="M520 470V420" stroke="${INK}" stroke-width="8" stroke-linecap="round"/>` + Rp(482, 484, 46, 30, '#9ED8F5', 4, 3) + [0, 1, 2].map((i) => `<path d="M484 ${528 + i * 10}h42" stroke="#888" stroke-width="4"/>`).join('') + glowRect(460, 404, 92, 176));
+        // traffic light: tap to change
+        s += thing('light', '신호등', Rp(700, 260, 24, 440, '#5B6B7A', 6, 4) + Rp(652, 210, 120, 300, DARK, 24, 5) +
+          `<circle class="sig sig-r" cx="712" cy="270" r="36" fill="#F0544F" ${S(4)}/><circle class="sig sig-y" cx="712" cy="360" r="36" fill="#5A4E3A" ${S(4)}/><circle class="sig sig-g" cx="712" cy="450" r="36" fill="#2F4A3A" ${S(4)}/>` + glowRect(640, 196, 144, 520));
+        s += thing('car', '경찰차',
+          Rp(860, 470, 600, 200, '#fff', 30, 6) + P('M960 470 L1030 380 H1290 L1360 470Z', '#fff', 6) + win(1050, 396, 100, 64, '#BFE6FF', 4) + win(1170, 396, 100, 64, '#BFE6FF', 4) +
+          `<rect x="860" y="560" width="600" height="40" fill="#2B4C9B"/><rect x="860" y="560" width="600" height="40" fill="none" ${S(3)}/>` + T(1160, 594, 34, '경찰', '#fff') +
+          Rp(1100, 350, 120, 32, '#fff', 8, 4) + `<rect class="lamp lamp-a" x="1104" y="354" width="56" height="24" rx="6" fill="#FF3B3B"/><rect class="lamp lamp-b" x="1160" y="354" width="56" height="24" rx="6" fill="#3B7BFF"/>` +
+          C(980, 680, 50, DARK, 6) + C(980, 680, 18, '#ccc', 0) + C(1340, 680, 50, DARK, 6) + C(1340, 680, 18, '#ccc', 0) + glowRect(846, 336, 628, 404));
+        return s;
+      },
+      things: {
+        cop: { say: ['길을 잃으면 경찰관에게 도와 달라고 해요.', '우리 동네를 안전하게 지켜요!'], sfx: 'hello' },
+        radio: { say: ['치익- 여기는 우리동네 경찰서!', '치익- 모두 안전합니다!'], sfx: 'radio' },
+        light: { act: 'signal' },
+        car: { say: ['삐용삐용! 경찰차가 출동해요!'], act: 'siren' },
+      },
+    },
+    library: {
+      wall: '#FFF3D6',
+      draw() {
+        let s = wallFloor('#FFF3D6', '#E8C79A', 'planks');
+        s += Rp(80, 120, 700, 580, '#C98E5A', 12, 6) + `<rect x="80" y="120" width="700" height="580" rx="12" fill="url(#crayon)"/>`;
+        [300, 480, 660].forEach((y) => { s += Rp(96, y, 668, 20, '#9A6A3A', 4, 4); });
+        const spines = ['#F0544F', '#74C4F2', '#86CF6E', '#FFC83D', '#BBA3F5', '#FF94B8', '#FF8A3D', '#6C7FE0'];
+        [[300, 0], [480, 3], [660, 5]].forEach(([y, off]) => {
+          let x = 112;
+          for (let i = 0; i < 12; i++) {
+            const bw = 34 + ((i + off) % 3) * 8, bh = 120 + ((i * 7 + off) % 4) * 12;
+            if (!(y === 480 && i >= 3 && i <= 7) && !(y === 300 && i >= 6 && i <= 8)) s += Rp(x, y - bh, bw, bh, spines[(i + off) % spines.length], 4, 3);
+            x += bw + 6;
+          }
+        });
+        const BOOKS = [['dino', '#86CF6E', 300, 410], ['space', '#3E4A6E', 480, 270], ['car', '#FF8A3D', 480, 330], ['sea', '#74C4F2', 480, 390], ['bug', '#FFC83D', 300, 470]];
+        BOOKS.forEach(([k, c, y, x], i) => {
+          const icon = { dino: P(`M${x + 14} ${y - 60} q10 -20 24 -6 v24 h-24z`, '#fff', 2.4), space: P(`M${x + 26} ${y - 92}l4 9 10 1.4-7.2 7 1.7 9.8-8.5-4.5-8.5 4.5 1.7-9.8-7.2-7 10-1.4z`, '#FFE07A', 2), car: Rp(x + 10, y - 80, 32, 16, '#fff', 5, 2.4), sea: P(`M${x + 8} ${y - 70} q9 -10 18 0 t18 0`, 'none', 4), bug: C(x + 26, y - 80, 9, '#F0544F', 2.4) }[k];
+          s += thing('b' + i, '그림책', `<g class="pull">${Rp(x, y - 150, 52, 150, c, 5, 4)}${Rp(x + 6, y - 136, 40, 10, '#fff', 3, 0)}${icon}</g>` + glowRect(x - 8, y - 160, 68, 168));
+        });
+        s += thing('clock', '시계', C(1060, 170, 74, '#fff', 6) + `<path d="M1060 170V118M1060 170L1096 190" stroke="${INK}" stroke-width="7" stroke-linecap="round"/>` + C(1060, 170, 7, INK, 0) + [0, 90, 180, 270].map((a) => { const r = a * Math.PI / 180; return C(1060 + Math.cos(r) * 58, 170 + Math.sin(r) * 58, 5, INK, 0); }).join('') + glowRect(976, 86, 168, 168));
+        s += thing('lib', '사서 선생님', doll('melody', 1000, 300, 280, HAT.glasses) + glowRect(1000, 290, 280, 320));
+        s += Rp(900, 560, 600, 40, '#B9805A', 10, 5) + Rp(930, 600, 540, 160, '#D9A673', 8, 5);
+        s += thing('stamp', '도장', Rp(1340, 470, 40, 60, '#B9805A', 8, 4) + Rp(1316, 524, 88, 36, '#EF4F7A', 8, 4) + Rp(1240, 540, 80, 20, '#fff', 3, 3) + glowRect(1230, 456, 186, 112));
+        return s;
+      },
+      things: {
+        b0: { say: ['공룡 그림책이에요. 쿵쾅쿵쾅!'], sfx: 'page', act: 'book' },
+        b1: { say: ['우주 그림책이에요. 반짝반짝 별나라!'], sfx: 'page', act: 'book' },
+        b2: { say: ['자동차 그림책이에요. 부릉부릉!'], sfx: 'page', act: 'book' },
+        b3: { say: ['바다 그림책이에요. 첨벙첨벙!'], sfx: 'page', act: 'book' },
+        b4: { say: ['곤충 그림책이에요. 무당벌레가 엉금엉금!'], sfx: 'page', act: 'book' },
+        clock: { say: ['똑딱똑딱, 책 읽는 시간이에요.'], sfx: 'tick' },
+        lib: { say: ['쉿! 도서관에서는 작은 목소리로 말해요.', '다 읽은 책은 제자리에 꽂아요.'], sfx: 'hello' },
+        stamp: { say: ['쾅! 도장 찍고 책을 빌려 가요.'], sfx: 'stamp' },
+      },
+    },
+    kinder: {
+      wall: '#E9F6E2',
+      draw() {
+        let s = wallFloor('#E9F6E2', '#F2D9A6', 'planks');
+        s += `<path d="M560 40 V70 M1040 40 V70" stroke="${INK}" stroke-width="4"/>`;
+        s += thing('sign', '반 이름표', Rp(520, 64, 560, 120, '#fff', 20, 6) + T(800, 148, 72, '새들1반', '#2E8A3A') + glowRect(508, 52, 584, 144));
+        // block tower that grows with each tap
+        s += thing('blocks', '블록', `<rect x="130" y="250" width="240" height="460" fill="transparent"/><g id="tower"></g>` + glowRect(120, 240, 260, 480));
+        // slide with a friend at the top
+        s += thing('slide', '미끄럼틀',
+          Rp(560, 300, 40, 410, '#74C4F2', 8, 5) + [360, 430, 500, 570, 640].map((y) => Rp(560, y, 110, 14, '#74C4F2', 6, 4)).join('') + Rp(650, 300, 40, 410, '#74C4F2', 8, 5) +
+          Rp(560, 290, 140, 30, '#FFC83D', 8, 5) + P('M690 300 Q760 300 820 470 Q880 660 1000 690 L1000 720 Q860 710 800 520 Q760 360 690 330Z', '#FF94B8', 5) +
+          `<g id="slider">${doll('cinnamoroll', 600, 180, 120)}</g>` + glowRect(550, 170, 470, 560));
+        s += thing('easel', '그림판', `<path d="M1330 720 L1400 260 M1520 720 L1450 260 M1425 300 V720" stroke="#B9805A" stroke-width="12" stroke-linecap="round"/>` + Rp(1290, 270, 270, 220, '#fff', 8, 5) + `<g id="art">${artSVG(0)}</g>` + glowRect(1280, 250, 290, 480));
+        s += thing('teacher', '선생님', doll('purin', 1080, 400, 220) + glowRect(1080, 380, 220, 260));
+        return s;
+      },
+      things: {
+        sign: { say: ['여기는 문정유치원 새들1반이에요!', '우리 반 친구들, 안녕!'], sfx: 'hello' },
+        blocks: { act: 'stack' },
+        slide: { say: ['슝~ 미끄럼틀 재밌다!'], sfx: 'slide', act: 'slide' },
+        easel: { say: ['알록달록 그림을 그려요.', '이번엔 무지개를 그렸어요!', '해님도 그려 볼까요?'], sfx: 'pop', act: 'art' },
+        teacher: { say: ['새들1반 친구들, 오늘도 즐겁게 놀아요!', '친구와 사이좋게 지내요.'], sfx: 'hello' },
+      },
+    },
+    mart: { wall: '#FFF0DC', shop: { items: ['apple', 'banana', 'carrot', 'milk', 'bread', 'grape', 'melon', 'egg'], names: ['사과', '바나나', '당근', '우유', '빵', '포도', '수박', '달걀'], clerk: 'purin', money: false } },
+    daiso: { wall: '#FDE8E8', shop: { items: ['pencil', 'note', 'balloon', 'pin', 'cup', 'ball'], names: ['연필', '공책', '풍선', '머리핀', '컵', '공'], clerk: 'pochacco', money: true } },
+    hansung: { wall: '#CDEAFB', apt: { body: '#BBA3F5', curtain: '#FFD8E6', trim: '#FFC83D', seed: 0 } },
+    gold: { wall: '#CDEAFB', apt: { body: '#F6C744', curtain: '#E5DBFD', trim: '#fff', seed: 3, crown: true } },
+    kangsin: { wall: '#CDEAFB', apt: { body: '#8FD0F2', curtain: '#FFE6A3', trim: '#FF94B8', seed: 5 } },
+    onette: { wall: '#CDEAFB', apt: { body: '#fff', curtain: '#fff', trim: '#fff', seed: 6, stripes: ['#F0544F', '#FF8A3D', '#FFD84D', '#86CF6E', '#74C4F2', '#6C7FE0', '#BBA3F5'] } },
+  };
+
+  function artSVG(i) {
+    const arts = [
+      `<path d="M1310 460 L1380 380 L1430 430 L1480 350 L1540 460Z" fill="#86CF6E"/>${C(1500, 320, 26, '#FFC83D', 0)}`,
+      ['#F0544F', '#FF8A3D', '#FFD84D', '#86CF6E', '#74C4F2', '#BBA3F5'].map((c, k) => `<path d="M${1330 + k * 10} 470 A${95 - k * 10} ${95 - k * 10} 0 0 1 ${1520 - k * 10} 470" fill="none" stroke="${c}" stroke-width="10"/>`).join(''),
+      `${C(1425, 380, 50, '#FFC83D', 0)}${Array.from({ length: 10 }, (_, k) => { const r = k * Math.PI / 5; return `<path d="M${1425 + Math.cos(r) * 62} ${380 + Math.sin(r) * 62}L${1425 + Math.cos(r) * 86} ${380 + Math.sin(r) * 86}" stroke="#FF8A3D" stroke-width="9" stroke-linecap="round"/>`; }).join('')}`,
+    ];
+    return arts[i % arts.length];
+  }
+
+  function shopRoom(b, o) {
+    let s = wallFloor(ROOMS[b.id].wall, '#E9E2D2');
+    s += Rp(60, 150, 880, 560, '#fff', 14, 6);
+    [370, 560].forEach((y) => { s += Rp(76, y, 848, 18, '#D6AE72', 4, 4); });
+    const per = Math.ceil(o.items.length / 2);
+    o.items.forEach((k, i) => {
+      const row = Math.floor(i / per), col = i % per;
+      const x = 100 + col * (820 / per), y = 220 + row * 190;
+      s += thing('i' + i, o.names[i], ITEM_AT(k, x, y, 140) +
+        (o.money ? Rp(x + 30, y + 150, 84, 30, '#FFE07A', 6, 3) + T(x + 72, y + 173, 22, '1000원') : '') + glowRect(x - 6, y - 6, 152, o.money ? 192 : 156));
+    });
+    // cart / basket with a big count
+    s += thing('cart', o.money ? '바구니' : '장바구니',
+      (o.money
+        ? P('M1000 520 H1260 L1236 700 H1024Z', '#EF4F7A', 6) + `<path d="M1040 520 Q1130 400 1220 520" fill="none" stroke="${INK}" stroke-width="10"/>`
+        : P('M980 470 H1290 L1260 650 H1010Z', '#B9C6D2', 6) + `<path d="M940 430 H980 L1010 650" fill="none" stroke="${INK}" stroke-width="8" stroke-linecap="round"/>` + C(1040, 700, 26, DARK, 5) + C(1230, 700, 26, DARK, 5)) +
+      `<g id="pile"></g>` + Rp(1060, 380, 140, 76, '#fff', 14, 5) + T(1130, 435, 52, '0', INK, 't', 'id="cart-n"') + glowRect(930, 370, 380, 360));
+    // counter
+    s += thing('pay', '계산대', doll(o.clerk, 1350, 300, 210, HAT.apron) + Rp(1300, 520, 280, 200, '#FFC83D', 12, 6) + Rp(1340, 470, 120, 60, DARK, 8, 5) + Rp(1352, 480, 96, 30, '#9ED8F5', 4, 3) + T(1430, 640, 40, '계산대') + glowRect(1290, 290, 300, 440));
+    return s;
+  }
+
+  const roomEl = $('room'), roomSvg = $('room-svg'), bubble = $('bubble');
+  let current = null, state = {}, closing = false;
+  function openRoom(id, fromEl) {
+    const b = byId[id], def = ROOMS[id];
+    current = id;
+    state = { n: 0, picked: [], sig: 0, blocks: 1, art: 0, lines: {} };
+    for (const k in RES) delete RES[k];
+    let svg;
+    if (def.apt) svg = aptRoom(b, def.apt);
+    else if (def.shop) svg = shopRoom(b, def.shop);
+    else svg = def.draw();
+    roomSvg.innerHTML = svg;
+    if (id === 'kinder') drawTower();
+    $('room-title').textContent = b.name;
+    roomEl.style.setProperty('--room-wall', def.wall);
+    hideBubble();
+    roomEl.hidden = false;
+    roomOpen = true;
+    reveal(fromEl, true);
+    try { history.pushState({ room: id }, ''); } catch (e) { /* file:// on some browsers */ }
+    setTimeout(() => $('btn-back').focus({ preventScroll: true }), 50);
+  }
+  function closeRoom(fromHistory) {
+    if (roomEl.hidden || closing) return;
+    closing = true;
+    sfx.back();
+    hideBubble();
+    const el = document.querySelector(`.bld[data-id="${current}"]`);
+    reveal(el, false, () => {
+      roomEl.hidden = true;
+      roomOpen = false;
+      closing = false;
+      if (el) el.focus({ preventScroll: true });
+    });
+    if (!fromHistory && history.state && history.state.room) { try { history.back(); } catch (e) { /* ignore */ } }
+  }
+  // the room opens like a circle growing out of the building's door
+  function reveal(fromEl, opening, done) {
+    const r = fromEl ? fromEl.getBoundingClientRect() : { left: innerWidth / 2, top: innerHeight / 2, width: 0, height: 0 };
+    const x = r.left + r.width / 2, y = r.top + r.height * .75;
+    const far = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    const small = `circle(0px at ${x}px ${y}px)`, big = `circle(${far + 20}px at ${x}px ${y}px)`;
+    const set = (v) => { roomEl.style.clipPath = v; roomEl.style.webkitClipPath = v; };
+    if (reduce || !('clipPath' in roomEl.style || 'webkitClipPath' in roomEl.style)) {
+      roomEl.style.transition = 'opacity .2s';
+      roomEl.style.opacity = opening ? '0' : '1';
+      requestAnimationFrame(() => { roomEl.style.opacity = opening ? '1' : '0'; });
+      setTimeout(() => { roomEl.style.transition = ''; roomEl.style.opacity = ''; if (done) done(); }, 220);
+      return;
+    }
+    roomEl.style.transition = 'none';
+    set(opening ? small : big);
+    void roomEl.offsetWidth;
+    roomEl.style.transition = `clip-path ${opening ? 560 : 380}ms cubic-bezier(0.23, 1, 0.32, 1), -webkit-clip-path ${opening ? 560 : 380}ms cubic-bezier(0.23, 1, 0.32, 1)`;
+    set(opening ? big : small);
+    setTimeout(() => {
+      roomEl.style.transition = '';
+      if (opening) set('');
+      if (done) done();
+      if (!opening) set('');
+    }, opening ? 580 : 400);
+  }
+
+  let bubbleT = 0;
+  function say(text, el) {
+    if (!text) return;
+    clearTimeout(bubbleT);
+    bubble.hidden = true;
+    bubble.textContent = text;
+    bubble.classList.remove('below');
+    bubble.hidden = false;
+    const stage = $('room-stage').getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+    const bw = bubble.offsetWidth, bh = bubble.offsetHeight;
+    const cx = r.left + r.width / 2 - stage.left;
+    let left = Math.max(12, Math.min(stage.width - bw - 12, cx - bw / 2));
+    let top = r.top - stage.top - bh - 22;
+    if (top < 8) { top = Math.min(stage.height - bh - 8, r.bottom - stage.top + 22); bubble.classList.add('below'); }
+    bubble.style.left = left + 'px';
+    bubble.style.top = Math.max(8, top) + 'px';
+    bubble.style.setProperty('--ox', Math.max(26, Math.min(bw - 26, cx - left)) + 'px');
+    bubble.style.animation = 'none'; void bubble.offsetWidth; bubble.style.animation = '';
+    bubbleT = setTimeout(hideBubble, Math.max(2600, text.length * 140));
+  }
+  function hideBubble() { clearTimeout(bubbleT); bubble.hidden = true; }
+  function nextLine(k, lines) {
+    const i = state.lines[k] || 0;
+    state.lines[k] = i + 1;
+    return lines[i % lines.length];
+  }
+  function pulse(el, cls, ms) {
+    el.classList.remove(cls); void el.getBoundingClientRect(); el.classList.add(cls);
+    clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove(cls), ms);
+  }
+
+  const SIG = [['sig-r', '#F0544F', '빨간불! 멈춰서 기다려요.'], ['sig-y', '#FFD84D', '노란불! 곧 바뀌어요. 조심!'], ['sig-g', '#5DCB6A', '초록불! 손 들고 건너요.']];
+  const SIG_OFF = { 'sig-r': '#5A2E2E', 'sig-y': '#5A4E3A', 'sig-g': '#2F4A3A' };
+  function drawTower() {
+    const cols = ['#F0544F', '#FFC83D', '#74C4F2', '#86CF6E', '#BBA3F5', '#FF8A3D', '#FF94B8'];
+    let s = '';
+    for (let i = 0; i < state.blocks; i++) s += Rp(170 + (i % 2) * 14, 640 - i * 62, 150, 60, cols[i % cols.length], 6, 4);
+    $('tower').innerHTML = s;
+  }
+  function tween(ms, fn, done) {
+    const t0 = performance.now();
+    const step = (t) => { const p = Math.min(1, (t - t0) / ms); fn(p); if (p < 1) requestAnimationFrame(step); else if (done) done(); };
+    requestAnimationFrame(step);
+  }
+
+  function useThing(el) {
+    const k = el.dataset.k, def = ROOMS[current];
+    boing(el);
+    if (def.apt) return useApt(el, k);
+    if (def.shop) return useShop(el, k, def.shop);
+    const t = def.things[k] || {};
+    if (t.sfx) sfx[t.sfx]();
+    switch (t.act) {
+      case 'siren': pulse(el, 'flash', 2600); sfx.siren(); break;
+      case 'water': pulse(el, 'spraying', 2000); break;
+      case 'ring': pulse(el, 'ring', 1000); break;
+      case 'book': pulse(el, 'out', 1800); break;
+      case 'signal': {
+        state.sig = (state.sig + 1) % 3;
+        el.querySelectorAll('.sig').forEach((c) => { const on = c.classList.contains(SIG[state.sig][0]); c.setAttribute('fill', on ? SIG[state.sig][1] : SIG_OFF[[...c.classList].find((x) => x.startsWith('sig-'))]); });
+        sfx.tap(); say(SIG[state.sig][2], el); return;
+      }
+      case 'stack': {
+        if (state.blocks >= 7) { state.blocks = 1; sfx.crash(); say('와르르! 다시 쌓아 볼까요?', el); }
+        else { state.blocks++; sfx.block(); say(`블록을 ${count(state.blocks)} 개 쌓았어요!`, el); }
+        drawTower(); return;
+      }
+      case 'slide': {
+        const g = $('slider');
+        if (reduce) break;
+        tween(900, (p) => {
+          const e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+          // follow the slide's curve roughly
+          const x = 0 + e * 330, y = e * 400 - Math.sin(e * Math.PI) * 30;
+          g.setAttribute('transform', `translate(${x} ${y}) rotate(${Math.sin(e * Math.PI) * 18} 660 240)`);
+        }, () => setTimeout(() => g.setAttribute('transform', ''), 700));
+        break;
+      }
+      case 'art': state.art++; $('art').innerHTML = artSVG(state.art); break;
+    }
+    if (t.say) say(nextLine(k, t.say), el);
+  }
+
+  function useApt(el, k) {
+    if (k === 'bell') { sfx.ding(); say(nextLine(k, ['띵동! 누구세요?', `${byId[current].name}에 놀러 왔어요!`]), el); return; }
+    if (k === 'mail') { sfx.pop(); say(nextLine(k, ['편지가 왔어요! 누구에게 온 걸까요?', '우체부 아저씨가 편지를 넣어 줬어요.']), el); return; }
+    const r = RES[k]; if (!r) return;
+    const lit = !el.classList.contains('lit');
+    el.classList.toggle('lit', lit);
+    if (lit) { sfx.on(); say(`${r.floor}층에 사는 ${josa(NAMES[r.kind], '이에요', '예요')}. 안녕!`, el); }
+    else { sfx.off(); say(`${josa(NAMES[r.kind], '이', '가')} 잘 자요~`, el); }
+  }
+
+  function useShop(el, k, o) {
+    const cartEl = roomSvg.querySelector('[data-k="cart"]');
+    if (k === 'pay') {
+      if (!state.n) { sfx.hello(); say(o.money ? '갖고 싶은 물건을 골라 보세요. 모두 1000원이에요!' : '무엇을 살까요? 먹고 싶은 것을 골라 보세요.', el); return; }
+      sfx.pay();
+      say(o.money ? `삑! 모두 ${state.n * 1000}원이에요. 고맙습니다!` : `삑삑! 모두 ${count(state.n)} 개, 고맙습니다!`, el);
+      state.n = 0; state.picked = []; renderCart(o);
+      return;
+    }
+    if (k === 'cart') {
+      sfx.tap();
+      say(state.n ? (o.money ? `바구니에 ${count(state.n)} 개, 모두 ${state.n * 1000}원!` : `장바구니에 모두 ${count(state.n)} 개 있어요.`) : '아직 비어 있어요. 물건을 눌러 담아요!', el);
+      return;
+    }
+    const i = +k.slice(1);
+    if (state.n >= 10) { sfx.tap(); say(o.money ? '바구니가 꽉 찼어요! 계산대로 가요.' : '장바구니가 꽉 찼어요! 계산대로 가요.', el); return; }
+    state.n++; state.picked.push(o.items[i]);
+    sfx.cart();
+    const name = o.names[i];
+    say(o.money ? `${josa(name, '은', '는')} 1000원! 모두 ${state.n * 1000}원.` : `${name}! 장바구니에 모두 ${count(state.n)} 개.`, el);
+    flyTo(el, cartEl, o.items[i], () => renderCart(o));
+  }
+  function renderCart(o) {
+    const pile = $('pile'); if (!pile) return;
+    const base = o.money ? [1040, 560] : [1010, 500];
+    pile.innerHTML = state.picked.map((k, j) => ITEM_AT(k, base[0] + (j % 5) * 44, base[1] + 30 - Math.floor(j / 5) * 34, 66)).join('');
+    $('cart-n').textContent = String(state.n);
+  }
+  function flyTo(from, to, k, done) {
+    const a = from.getBBox(), b = to.getBBox();
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.innerHTML = item(k);
+    roomSvg.appendChild(g);
+    const x0 = a.x + a.width / 2 - 40, y0 = a.y + 20, x1 = b.x + b.width / 2 - 40, y1 = b.y + b.height * .45;
+    if (reduce) { g.remove(); done(); return; }
+    tween(520, (p) => {
+      const e = 1 - Math.pow(1 - p, 3);
+      const x = x0 + (x1 - x0) * e, y = y0 + (y1 - y0) * e - Math.sin(p * Math.PI) * 160;
+      g.setAttribute('transform', `translate(${x} ${y}) scale(${.8 - .2 * p})`);
+    }, () => { g.remove(); done(); });
+  }
+
+  /* ---------- wiring ---------- */
+  function build() {
+    $('bunting').innerHTML = ['#BBA3F5', '#86D9C8', '#FF94B8', '#9ED8F5', '#BBA3F5', '#86D9C8', '#9ED8F5', '#FFFFFF', '#FF94B8', '#BBA3F5', '#86D9C8', '#9ED8F5', '#FFFFFF', '#FF94B8', '#BBA3F5', '#86D9C8']
+      .map((c) => `<span class="flag" style="--c:${c}"></span>`).join('');
+    const ICONS = [
+      `<path d="M3 21V9h18v12z" fill="#74B4F0"/><path d="M8 4h8v5H8z" fill="#2B4C9B"/>`,
+      `<path d="M3 21V8h18v13z" fill="#fff"/><path d="M10 10h4v3h3v4h-3v3h-4v-3H7v-4h3z" fill="#E8434B"/>`,
+      `<path d="M2 11L12 3l10 8z" fill="#74C4F2"/><path d="M4 11h16v10H4z" fill="#86CF6E"/>`,
+      `<path d="M3 21V7h18v14z" fill="#F0544F"/><path d="M6 13h5v8H6zM13 13h5v8h-5z" fill="#FFE1D6"/>`,
+      `<path d="M2 12L12 3l10 9z" fill="#FFC83D"/><path d="M4 12h16v9H4z" fill="#FFE9A8"/>`,
+      `<path d="M2 5h20v6H2z" fill="#B8285A"/><path d="M3 11h18v10H3z" fill="#FF94B8"/>`,
+    ];
+    const tilts = [-4, 3, -2, 4, -3, 2];
+    $('title').innerHTML = [...'우리동네최고'].map((ch, i) =>
+      `<span class="badge${i === 4 ? ' gap' : ''}" aria-hidden="true" style="--t:${tilts[i]}deg"><svg viewBox="0 0 24 24" stroke="${INK}" stroke-width="1.6" stroke-linejoin="round">${ICONS[i]}</svg><span>${ch}</span></span>`).join('');
+    drawRoads();
+    drawDecor();
+    drawBuildings();
+    setupCars();
+  }
+
+  function enter(el) {
+    const id = el.dataset.id;
+    el.classList.add('pressed');
+    setTimeout(() => el.classList.remove('pressed'), 140);
+    if (id === 'claw') {
+      sfx.door();
+      // grow the shop's pink out of its door, then hand over to the game
+      roomEl.style.setProperty('--room-wall', '#FF94B8');
+      roomSvg.innerHTML = '';
+      $('room-title').textContent = '인형뽑기 가게';
+      roomEl.hidden = false;
+      roomOpen = true;
+      reveal(el, true);
+      setTimeout(() => { location.href = CLAW_URL; }, reduce ? 240 : 520);
+      return;
+    }
+    sfx.door();
+    openRoom(id, el);
+  }
+  $('blds').addEventListener('click', (e) => { const el = e.target.closest('.bld'); if (el) enter(el); });
+  $('blds').addEventListener('keydown', (e) => {
+    const el = e.target.closest('.bld');
+    if (el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); enter(el); }
+  });
+  $('cars').addEventListener('click', (e) => { const el = e.target.closest('.car-in'); if (el) { boing(el); sfx.honk(); } });
+  roomSvg.addEventListener('click', (e) => { const el = e.target.closest('.thing'); if (el) useThing(el); });
+  roomSvg.addEventListener('keydown', (e) => {
+    const el = e.target.closest('.thing');
+    if (el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); useThing(el); }
+  });
+  $('btn-back').addEventListener('click', () => closeRoom(false));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeRoom(false); });
+  window.addEventListener('popstate', () => { if (!roomEl.hidden) closeRoom(true); });
+  // coming back from the game with the browser's back button
+  window.addEventListener('pageshow', (e) => { if (e.persisted && current === null) { roomEl.hidden = true; roomOpen = false; roomEl.style.clipPath = ''; roomEl.style.webkitClipPath = ''; } });
+
+  const soundBtn = $('btn-sound');
+  const paintSound = () => soundBtn.setAttribute('aria-pressed', String(!!st.soundOn));
+  soundBtn.addEventListener('click', () => { st.soundOn = !st.soundOn; save(); paintSound(); sfx.tap(); });
+  $('btn-full').addEventListener('click', () => {
+    const el = document.documentElement;
+    try {
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+      else if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
+    } catch (e) { /* not allowed here */ }
+  });
+
+  // On a portrait phone the board keeps its shape and scrolls sideways.
+  const wrap = $('map-wrap'), map = $('map');
+  function fit() {
+    const r = wrap.getBoundingClientRect();
+    if (r.width / r.height < 1.2) {
+      wrap.classList.add('scroll');
+      map.style.width = Math.round(r.height * 16 / 9) + 'px';
+    } else {
+      wrap.classList.remove('scroll');
+      map.style.width = '';
+    }
+  }
+  window.addEventListener('resize', fit);
+
+  build();
+  paintSound();
+  fit();
+  if (!reduce) requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

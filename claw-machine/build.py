@@ -1,6 +1,8 @@
-"""Build claw-machine/index.html from src/app.html with the fonts inlined.
+"""Build the pages with the fonts inlined:
+    claw-machine/src/app.html -> claw-machine/index.html  (the claw game)
+    town/src/app.html         -> index.html               (the 우리동네 map, the site's front page)
 
-The page must work from a USB stick or a school network that blocks web fonts,
+The pages must work from a USB stick or a school network that blocks web fonts,
 so the subset fonts in fonts/ are embedded as data URIs. Standard library only:
     python3 claw-machine/build.py
 """
@@ -25,14 +27,22 @@ def font_faces():
     return ''.join(rules)
 
 
+TARGETS = [
+    (HERE / 'src' / 'app.html', HERE / 'index.html'),
+    (HERE.parent / 'town' / 'src' / 'app.html', HERE.parent / 'index.html'),
+]
+
+
 def main():
-    src = (HERE / 'src' / 'app.html').read_text(encoding='utf-8')
+    faces = font_faces()
     marker = '/*@@FONTS@@*/'
-    if marker not in src:
-        raise SystemExit('font marker missing from src/app.html')
-    out = src.replace(marker, font_faces())
-    (HERE / 'index.html').write_text(out, encoding='utf-8')
-    print('index.html', len(out.encode('utf-8')) // 1024, 'KB')
+    for src_path, out_path in TARGETS:
+        src = src_path.read_text(encoding='utf-8')
+        if marker not in src:
+            raise SystemExit('font marker missing from %s' % src_path)
+        out = src.replace(marker, faces)
+        out_path.write_text(out, encoding='utf-8')
+        print(out_path.relative_to(HERE.parent), len(out.encode('utf-8')) // 1024, 'KB')
 
 
 if __name__ == '__main__':

@@ -142,6 +142,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
   transition: transform 120ms var(--ease-out);
 }
 .knob svg { width: 46%; height: 46%; }
+a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; touch-action: manipulation; }
 .knob:active { transform: translateY(2px) scale(.97); }
 
 .bays {
@@ -711,6 +712,9 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
       <span class="cut" aria-hidden="true" style="--p:#FF8A5C;--t:2deg;--cutr:.26em .2em .16em .3em / .22em .34em .2em .3em">게</span>
     </h1>
     <div class="knobs">
+      <a class="knob" id="btn-town" href="../index.html" aria-label="우리동네로 돌아가기" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#34264A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11.5L12 4l8.5 7.5M6 10v9.5h4.5v-5h3v5H18V10"/></svg>
+      </a>
       <button class="knob" id="btn-full" type="button" aria-label="크게 보기">
         <svg viewBox="0 0 24 24" fill="none" stroke="#34264A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
       </button>
@@ -1928,6 +1932,8 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('settings').hidden) closeSettings(); });
 
   /* ---------- extras ---------- */
+  // Arrived from the 우리동네 map: offer the way back.
+  if (/[?&]from=town\b/.test(location.search)) $('btn-town').hidden = false;
   $('btn-full').addEventListener('click', () => {
     const el = document.documentElement;
     try {
