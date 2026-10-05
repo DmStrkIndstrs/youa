@@ -447,11 +447,12 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
 
   /* ---------- reading the bubbles aloud ----------
      Pre-readers follow by ear: a calm, slightly unhurried Korean voice
-     reads every speech bubble. The device's own voice is used (no network). */
+     reads every speech bubble. Bundled recordings take priority over the device voice. */
   // Recorded lines (town/voices/lines.csv → NNN.mp3), filled in by build.py: { "대사": "town/voices/001.mp3" }.
   // A line with a recording plays it; every other line falls back to the device voice.
   const VOICES = /*@@VOICES@@*/{};
   let clip = null;
+  let speechVersion = 0;
   const synth = window.speechSynthesis || null;
   let koVoice = null;
   function pickVoice() {
@@ -467,8 +468,16 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     const clean = String(text).replace(/[~…]/g, ' ').replace(/\s+/g, ' ').trim();
     if (!clean) return;
     hush();
+    const version = speechVersion;
     if (VOICES[clean]) {
-      try { clip = new Audio(VOICES[clean]); clip.play().catch(() => deviceVoice(clean)); return; } catch (e) { /* fall through */ }
+      try {
+        clip = new Audio(VOICES[clean]);
+        clip.play().catch(() => {
+          // A canceled recording must not start speaking after a newer tap or mute.
+          if (version === speechVersion && st.voiceOn) deviceVoice(clean);
+        });
+        return;
+      } catch (e) { /* fall through */ }
     }
     deviceVoice(clean);
   }
@@ -486,6 +495,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     } catch (e) { /* no voice on this device */ }
   }
   function hush() {
+    speechVersion++;
     if (clip) { try { clip.pause(); } catch (e) { /* ignore */ } clip = null; }
     try { if (synth) synth.cancel(); } catch (e) { /* ignore */ }
   }
