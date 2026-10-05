@@ -448,6 +448,10 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   /* ---------- reading the bubbles aloud ----------
      Pre-readers follow by ear: a calm, slightly unhurried Korean voice
      reads every speech bubble. The device's own voice is used (no network). */
+  // Recorded lines (town/voices/lines.csv → NNN.mp3), filled in by build.py: { "대사": "town/voices/001.mp3" }.
+  // A line with a recording plays it; every other line falls back to the device voice.
+  const VOICES = /*@@VOICES@@*/{};
+  let clip = null;
   const synth = window.speechSynthesis || null;
   let koVoice = null;
   function pickVoice() {
@@ -459,11 +463,18 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   }
   if (synth) { pickVoice(); try { synth.addEventListener('voiceschanged', pickVoice); } catch (e) { synth.onvoiceschanged = pickVoice; } }
   function speak(text) {
-    if (!synth || !st.voiceOn) return;
+    if (!st.voiceOn) return;
     const clean = String(text).replace(/[~…]/g, ' ').replace(/\s+/g, ' ').trim();
     if (!clean) return;
+    hush();
+    if (VOICES[clean]) {
+      try { clip = new Audio(VOICES[clean]); clip.play().catch(() => deviceVoice(clean)); return; } catch (e) { /* fall through */ }
+    }
+    deviceVoice(clean);
+  }
+  function deviceVoice(clean) {
+    if (!synth) return;
     try {
-      synth.cancel();
       const u = new SpeechSynthesisUtterance(clean);
       u.lang = 'ko-KR';
       if (koVoice) u.voice = koVoice;
@@ -474,7 +485,10 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       synth.speak(u);
     } catch (e) { /* no voice on this device */ }
   }
-  function hush() { try { if (synth) synth.cancel(); } catch (e) { /* ignore */ } }
+  function hush() {
+    if (clip) { try { clip.pause(); } catch (e) { /* ignore */ } clip = null; }
+    try { if (synth) synth.cancel(); } catch (e) { /* ignore */ }
+  }
 
   /* ---------- words ---------- */
   function hasFinal(word) {

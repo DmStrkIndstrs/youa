@@ -7,6 +7,8 @@ so the subset fonts in fonts/ are embedded as data URIs. Standard library only:
     python3 claw-machine/build.py
 """
 import base64
+import csv
+import json
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -33,14 +35,39 @@ TARGETS = [
 ]
 
 
+VOICE_DIR = HERE.parent / 'town' / 'voices'
+VOICE_EXTS = ('.mp3', '.m4a', '.wav', '.ogg', '.webm')
+
+
+def voices():
+    """Map each line in town/voices/lines.csv to its recording, if one has been added.
+
+    A recording is any file named after the line's number (001.mp3, 001.m4a, ...).
+    Lines without a file are left out, so the page reads them with the device voice.
+    """
+    found = {}
+    with open(VOICE_DIR / 'lines.csv', encoding='utf-8-sig', newline='') as f:
+        for row in csv.DictReader(f):
+            for ext in VOICE_EXTS:
+                if (VOICE_DIR / (row['번호'] + ext)).exists():
+                    found[row['대사']] = 'town/voices/' + row['번호'] + ext
+                    break
+    return found
+
+
 def main():
     faces = font_faces()
     marker = '/*@@FONTS@@*/'
+    voice_marker = '/*@@VOICES@@*/{}'
+    recorded = voices()
     for src_path, out_path in TARGETS:
         src = src_path.read_text(encoding='utf-8')
         if marker not in src:
             raise SystemExit('font marker missing from %s' % src_path)
         out = src.replace(marker, faces)
+        if voice_marker in out:
+            out = out.replace(voice_marker, json.dumps(recorded, ensure_ascii=False))
+            print('voices: %d recorded lines' % len(recorded))
         out_path.write_text(out, encoding='utf-8')
         print(out_path.relative_to(HERE.parent), len(out.encode('utf-8')) // 1024, 'KB')
 
