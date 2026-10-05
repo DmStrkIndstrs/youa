@@ -11,6 +11,60 @@
         ],
         "createdAt": "2026-10-05T12:32:15.316Z",
         "reason": "Claude: literal marquee bulbs on an arcade claw machine, not a status indicator"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "claw-machine/index.html"
+        ],
+        "createdAt": "2026-10-05T13:31:36.689Z",
+        "reason": "Claude: measured computed padding 8-30px at 390/1024/1920 widths; padding is calc() of runtime vars (--ring, --mw) that the static scan reads as zero"
+      },
+      {
+        "rule": "nested-cards",
+        "value": "*",
+        "files": [
+          "claw-machine/index.html"
+        ],
+        "createdAt": "2026-10-05T13:31:36.700Z",
+        "reason": "Claude: the flagged boxes are the cubby-unit world's ply-edged furniture compartments and laminated name tags (direction contract), verified in screenshots; not stacked card UI"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "claw-machine/src/app.html"
+        ],
+        "createdAt": "2026-10-05T13:31:36.720Z",
+        "reason": "Claude: measured computed padding 8-30px at 390/1024/1920 widths; padding is calc() of runtime vars (--ring, --mw) that the static scan reads as zero"
+      },
+      {
+        "rule": "nested-cards",
+        "value": "*",
+        "files": [
+          "claw-machine/src/app.html"
+        ],
+        "createdAt": "2026-10-05T13:31:36.729Z",
+        "reason": "Claude: the flagged boxes are the cubby-unit world's ply-edged furniture compartments and laminated name tags (direction contract), verified in screenshots; not stacked card UI"
+      },
+      {
+        "rule": "dark-glow",
+        "value": "*",
+        "files": [
+          "claw-machine/index.html"
+        ],
+        "createdAt": "2026-10-05T13:31:47.733Z",
+        "reason": "Claude: only offset+blur elevation shadows tinted with the plum ink on a light birch page; the detector reads the page as dark; no zero-offset halo remains"
+      },
+      {
+        "rule": "dark-glow",
+        "value": "*",
+        "files": [
+          "claw-machine/src/app.html"
+        ],
+        "createdAt": "2026-10-05T13:31:47.744Z",
+        "reason": "Claude: only offset+blur elevation shadows tinted with the plum ink on a light birch page; the detector reads the page as dark; no zero-offset halo remains"
       }
     ]
   }
