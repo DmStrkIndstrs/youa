@@ -2,7 +2,15 @@
   "mcpServers": {
     "playwright": {
       "command": "sh",
-      "args": [".claude/scripts/playwright-mcp.sh"]
+      "args": [
+        ".claude/scripts/playwright-mcp.sh"
+      ]
+    },
+    "markitdown": {
+      "command": "uvx",
+      "args": [
+        "markitdown-mcp@0.0.1a7"
+      ]
     }
   }
 }
