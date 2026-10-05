@@ -687,6 +687,19 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
   .r-row input[type="text"] { flex: 1 1 9em; width: auto; }
   .r-row select { flex: 1 1 7em; width: auto; }
 }
+/* Big classes (13+) on landscape screens: denser cubbies. The symbol disc sits on the cubby's corner
+   so the whole tag is free for the name, and if the rows would get shorter than a doll the cubbies
+   scroll instead of squashing. Portrait layouts already grow the page, so they are left alone. */
+@media (min-width: 900px) and (min-aspect-ratio: 1/1) {
+  .cubbies.dense { grid-template-rows: none; grid-auto-rows: minmax(92px, 1fr); overflow-y: auto; overscroll-behavior: contain; }
+  .cubbies.dense .cubby { padding: calc(var(--ring) + .4vmin) calc(var(--ring) + .3vmin) calc(var(--ring) + .3vmin); }
+  .cubbies.dense .tag { justify-content: center; padding: .22em .3em; font-size: clamp(.9rem, min(2vmin, 1.15vw), 1.35rem); }
+  .cubbies.dense .tag .disc { position: absolute; left: -.35em; top: -1.7em; width: 1.35em; height: 1.35em; }
+  .cubbies.dense .tag .rest { display: none; }
+}
+@media (min-width: 900px) and (max-width: 1199px) and (min-aspect-ratio: 1/1) {
+  .cubbies.dense { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
 @media (hover: hover) and (pointer: fine) {
   .spin-btn:hover, .big-btn:hover { filter: brightness(1.07); }
   .knob:hover { transform: translateY(-1px); }
@@ -1325,6 +1338,8 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
     const left = p.filter((i) => !st.prizes[i].length);
     return left.length ? left : p;
   }
+  // Label size for n slices: full size up to 14 friends, then smaller so neighbours never touch.
+  const wheelFont = (n) => (n <= 14 ? 25 : Math.max(13, Math.round(25 * 14 / n)));
   function drawWheel() {
     const ids = eligible();
     run.wheelIds = ids;
@@ -1340,7 +1355,7 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
         const [px, py] = wpt(i * seg - seg / 2, WC.r - 9);
         pegs += `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="5.5" fill="#FFF1C2" stroke="${INK}" stroke-width="2"/>`;
       }
-      const fs = n <= 14 ? 25 : Math.max(15, Math.round(25 * 14 / n));
+      const fs = wheelFont(n);
       const chars = Array.from(name(id).slice(0, 4)).map(() => `<text class="lbl-ch" style="font-size:${fs}px" text-anchor="middle" dominant-baseline="central"></text>`).join('');
       labels += `<g class="lbl" data-i="${i}" data-id="${id}">${chars}<g class="lbl-sym">${symbolInner(st.symbols[id])}</g></g>`;
     });
@@ -1365,7 +1380,11 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
       const abs = ((((a + A) % 360) + 360) % 360) * Math.PI / 180;
       const outward = Math.sin(abs) - Math.cos(abs) >= 0;
       const texts = g.querySelectorAll('.lbl-ch');
-      const k = texts.length, step = k >= 4 ? 21 : 25, mid = n === 1 ? 74 : 92;
+      const fs = wheelFont(n), k = texts.length;
+      const step = n <= 14 ? (k >= 4 ? 21 : 25) : Math.round(fs * 0.95);
+      // the innermost syllable must sit where the slice is wider than one letter
+      const inner = n <= 14 ? 0 : (fs * 1.2 * n) / (2 * Math.PI);
+      const mid = n === 1 ? 74 : Math.max(92, inner + ((k - 1) / 2) * step);
       texts.forEach((t, j) => {
         const off = (j - (k - 1) / 2) * step;
         const [x, y] = wpt(a, outward ? mid + off : mid - off);
@@ -1374,7 +1393,7 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
         t.setAttribute('transform', `rotate(${(-A).toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)})`);
       });
       const [sx, sy] = wpt(a, n === 1 ? 140 : 147);
-      g.querySelector('.lbl-sym').setAttribute('transform', `translate(${sx.toFixed(1)} ${sy.toFixed(1)}) rotate(${(-A).toFixed(1)}) translate(-16 -16) scale(.8)`);
+      g.querySelector('.lbl-sym').setAttribute('transform', `translate(${sx.toFixed(1)} ${sy.toFixed(1)}) rotate(${(-A).toFixed(1)}) translate(-16 -16) scale(${n > 20 ? 0.62 : 0.8})`);
     });
   }
   function setWheelAngle(A) { $('wheel-rot').setAttribute('transform', `rotate(${A.toFixed(2)} ${WC.cx} ${WC.cy})`); }
@@ -1442,6 +1461,8 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
 
   /* ---------- the customer ---------- */
   const cubbyEl = (i) => $('cubbies').querySelector(`.cubby[data-i="${i}"]`);
+  // In a big class the cubbies may scroll: bring a cubby into view before something flies to or from it.
+  const showCubby = (el) => { if (el && el.parentNode.scrollHeight > el.parentNode.clientHeight) el.scrollIntoView({ block: 'nearest' }); return el; };
   function fillGuest(i) {
     const disc = $('g-disc');
     disc.style.setProperty('--c', BINS[i % BINS.length].c);
@@ -1468,7 +1489,7 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
     slot.classList.add('seated');
     refresh();
     fitGuestName();
-    const cub = cubbyEl(i);
+    const cub = showCubby(cubbyEl(i));
     const from = cub.querySelector('.tag').getBoundingClientRect();
     const to = guest.getBoundingClientRect();
     cub.classList.add('away');
@@ -1482,7 +1503,7 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
     announce(`${name(i)} 손님 차례예요. 갖고 싶은 인형을 눌러요.`);
   }
   async function sendGuestHome(i) {
-    const cub = cubbyEl(i);
+    const cub = showCubby(cubbyEl(i));
     const to = cub.querySelector('.tag').getBoundingClientRect();
     const from = guest.getBoundingClientRect();
     const tagHTML = cub.querySelector('.tag').outerHTML;
@@ -1518,6 +1539,7 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
     box.style.setProperty('--cols', cols);
     box.style.setProperty('--rows', Math.ceil(n / cols));
     box.style.setProperty('--rows2', Math.ceil(n / 2));
+    box.classList.toggle('dense', n > 12);
     box.innerHTML = st.names.map((_, i) => cubbyHTML(i)).join('');
     fitNames(box);
   }
@@ -1748,7 +1770,7 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
     run.phase = 'stow';
     refresh();
     const { id, kind } = run.stow;
-    const cub = cubbyEl(id);
+    const cub = showCubby(cubbyEl(id));
     const prizeBox = $('door-prize');
     const from = prizeBox.getBoundingClientRect();
     const to = cub.querySelector('.prize').getBoundingClientRect();
