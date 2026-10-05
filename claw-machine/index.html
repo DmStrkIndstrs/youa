@@ -8,8 +8,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap">
 <style>
-/* Layout: a toy-shop floor — the claw machine fills the left, the shop counter
-   (whose turn, class list, restock) stands on the right; stacks on phones.
+/* Layout: a toy-shop floor read left to right — the name wheel (who plays),
+   the claw machine (the play), the shop counter (class list, restock).
+   Collapses to two columns on tablets and one on phones.
    One deliberate look (bright shop in daylight), so no dark variant. */
 :root {
   color-scheme: light;
@@ -17,7 +18,7 @@
   --ink: #3A2F4A;         /* plum ink: text and sticker outlines */
   --ink-soft: #6A5F78;
   --coral: #F2665A;       /* machine body, awning */
-  --coral-deep: #B53B33;   /* text-safe coral: 5.4:1 with cream */
+  --coral-deep: #B53B33;  /* text-safe coral: 5.4:1 with cream */
   --butter: #FFD45C;      /* coins, bulbs, highlights */
   --cream: #FFF8EC;       /* counter, cards */
   --glass: #E6F5FD;
@@ -25,6 +26,7 @@
   --leaf: #2B7350;        /* success, 5.4:1 with cream */
   --font-display: "Jua", "Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   --font-body: "Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -39,7 +41,7 @@ body {
   overscroll-behavior: none;
 }
 button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulation; }
-button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outline-offset: 3px; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 4px solid var(--ink); outline-offset: 3px; }
 .app { min-height: 100%; display: grid; grid-template-rows: auto 1fr; }
 
 /* ---------- shop front ---------- */
@@ -51,15 +53,9 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
 }
 .shopbar {
   display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-  padding-block: 10px 4px; padding-inline: clamp(16px, 3vw, 40px);
+  padding-block: 8px 2px; padding-inline: clamp(16px, 3vw, 40px);
 }
-.sign {
-  font-family: var(--font-display);
-  font-size: clamp(1.5rem, 3.2vw, 2.4rem);
-  line-height: 1.1;
-  margin: 0;
-  text-wrap: balance;
-}
+.sign { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.5rem, 3vw, 2.3rem); line-height: 1.1; margin: 0; text-wrap: balance; }
 .sign small { display: block; margin-top: 6px; font-family: var(--font-body); font-size: .9rem; color: var(--ink-soft); letter-spacing: .02em; }
 .bar-tools { margin-left: auto; display: flex; gap: 8px; }
 .tool {
@@ -71,13 +67,51 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
 /* ---------- floor ---------- */
 .floor {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
-  gap: clamp(16px, 2.5vw, 36px);
-  align-items: center;
+  grid-template-columns: minmax(260px, 330px) minmax(0, 1fr) minmax(230px, 290px);
+  grid-template-areas: "wheel machine counter";
+  gap: clamp(16px, 2.2vw, 32px);
+  align-items: start;
   padding-block: 12px 24px; padding-inline: clamp(16px, 3vw, 40px);
 }
-@media (max-width: 820px) { .floor { grid-template-columns: minmax(0, 1fr); } }
-.machine-wrap { display: flex; justify-content: center; min-width: 0; }
+.wheel-col { grid-area: wheel; display: grid; gap: 14px; min-width: 0; }
+.machine-wrap { grid-area: machine; display: flex; justify-content: center; min-width: 0; }
+.counter { grid-area: counter; display: grid; gap: 14px; align-content: start; min-width: 0; }
+@media (max-width: 1180px) {
+  .floor { grid-template-columns: minmax(250px, 320px) minmax(0, 1fr); grid-template-areas: "wheel machine" "counter counter"; }
+  .counter .friends { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .floor { grid-template-columns: minmax(0, 1fr); grid-template-areas: "wheel" "machine" "counter"; }
+}
+
+/* ---------- name wheel ---------- */
+.wheel-box { position: relative; width: min(100%, 330px); margin-inline: auto; }
+.wheel-box > svg { display: block; width: 100%; height: auto; overflow: visible; }
+#wheel-rot { transform-box: view-box; transform-origin: 160px 172px; }
+.slice-label { font-family: var(--font-display); font-size: 21px; fill: var(--ink); }
+.slice.win path { stroke-width: 5; }
+.slice.win .slice-label { font-size: 25px; }
+.pointer { transform-box: view-box; transform-origin: 160px 14px; transition: transform 140ms var(--ease-out); }
+.pointer.flick { transform: rotate(-18deg); transition: none; }
+.spin {
+  width: 100%; border: 3px solid var(--ink); background: var(--coral-deep); color: var(--cream);
+  border-radius: 20px; padding: 14px 18px; font-family: var(--font-display); font-size: clamp(1.4rem, 2.6vw, 1.8rem);
+  box-shadow: 0 5px 0 var(--ink); transition: transform 120ms var(--ease-out), box-shadow 120ms var(--ease-out);
+}
+.spin:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
+.spin:disabled { background: var(--ink-soft); cursor: default; }
+.spin.shake, .coin.shake { animation: shake .45s; }
+@keyframes shake { 20%, 60% { translate: -7px 0; } 40%, 80% { translate: 7px 0; } }
+
+.turn {
+  background: var(--cream); border: 4px solid var(--ink); border-radius: 22px;
+  padding: 14px 16px; display: grid; gap: 4px; box-shadow: 0 6px 0 var(--ink);
+}
+.eyebrow { font-size: .85rem; letter-spacing: .06em; color: var(--ink-soft); }
+.now-name { font-family: var(--font-display); font-size: clamp(2rem, 3.6vw, 2.7rem); line-height: 1.1; overflow-wrap: anywhere; }
+.now-name.empty { color: var(--ink-soft); font-size: clamp(1.5rem, 2.6vw, 1.9rem); }
+.step { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: clamp(1.1rem, 1.9vw, 1.35rem); line-height: 1.3; min-height: 2.6em; }
+.step .dot { width: 32px; height: 32px; flex: none; border-radius: 50%; background: var(--butter); border: 3px solid var(--ink); display: grid; place-items: center; font-size: 1rem; }
 
 /* ---------- the machine ---------- */
 .machine {
@@ -89,15 +123,12 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
   display: flex; flex-direction: column; gap: 10px;
   box-shadow: 0 14px 0 -4px #B8D8CA;
 }
+@media (max-width: 1180px) { .machine { width: min(100%, max(300px, calc((100dvh - 150px) * .66)), 560px); } }
 .marquee {
-  position: relative;
-  background: var(--ink); color: var(--butter);
-  border-radius: 22px 22px 10px 10px;
-  text-align: center;
-  font-family: var(--font-display);
-  font-size: clamp(1.6rem, 4.2vw, 2.5rem);
-  padding: 12px 8px 10px;
-  letter-spacing: .08em;
+  position: relative; background: var(--ink); color: var(--butter);
+  border-radius: 22px 22px 10px 10px; text-align: center;
+  font-family: var(--font-display); font-size: clamp(1.6rem, 4vw, 2.4rem);
+  padding: 12px 8px 10px; letter-spacing: .08em;
 }
 .bulbs { display: flex; justify-content: space-between; padding-inline: 10px; position: absolute; inset: 4px 0 auto; }
 .bulbs.bottom { inset: auto 0 4px; }
@@ -106,15 +137,11 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
 @keyframes blink { 50% { opacity: 1; } }
 
 .glass {
-  position: relative;
-  container-type: size;
-  aspect-ratio: 1 / 1.02;
-  border: 4px solid var(--ink);
-  border-radius: 16px;
-  overflow: hidden;
+  position: relative; container-type: size; aspect-ratio: 1 / 1.02;
+  border: 4px solid var(--ink); border-radius: 16px; overflow: hidden;
   background: linear-gradient(180deg, var(--glass) 0%, var(--glass-deep) 100%);
 }
-.glass::after { /* light streak on the glass */
+.glass::after {
   content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 40;
   background: linear-gradient(115deg, transparent 18%, rgba(255,255,255,.55) 19%, rgba(255,255,255,.55) 23%, transparent 24%, transparent 29%, rgba(255,255,255,.35) 30%, rgba(255,255,255,.35) 31.5%, transparent 32.5%);
 }
@@ -125,7 +152,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
 .rope { position: absolute; top: 3cqh; left: 50%; width: 1.1cqw; min-width: 3px; transform: translateX(-50%); background: var(--ink); height: 2cqh; }
 .head { position: absolute; left: 0; width: 15cqw; top: 2cqh; }
 .head svg { display: block; width: 100%; height: auto; overflow: visible; }
-.prong { transition: transform .28s ease; transform-box: view-box; }
+.prong { transition: transform .28s var(--ease-out); transform-box: view-box; }
 .prong.l { transform-origin: 44px 30px; }
 .prong.r { transform-origin: 56px 30px; }
 .claw.open .prong.l { transform: rotate(26deg); }
@@ -134,12 +161,10 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
 .doll {
   position: absolute; width: 17cqw; padding: 0; border: 0; background: none;
   transform: translate(-50%, -50%) rotate(var(--r, 0deg));
-  transition: filter .15s;
 }
 .doll svg { display: block; width: 100%; height: auto; pointer-events: none; }
 .doll:active { filter: brightness(1.08); }
 .doll.held { z-index: 15 !important; pointer-events: none; }
-.doll.gone { visibility: hidden; }
 .glass.waiting .doll:not(.held) { animation: wiggle 2.4s ease-in-out infinite; }
 .glass.waiting .doll:nth-child(3n) { animation-delay: .4s; }
 .glass.waiting .doll:nth-child(3n+1) { animation-delay: .9s; }
@@ -150,16 +175,16 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
   display: flex; align-items: flex-end; justify-content: center; padding-bottom: 2cqh;
   font-family: var(--font-display); font-size: 4.4cqw; color: var(--ink); }
 
-/* control panel under the glass */
 .panel { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.panel.nocoin { grid-template-columns: 1fr; }
 .slot-area, .door {
   background: var(--coral-deep); border: 3px solid var(--ink); border-radius: 14px;
-  min-height: 92px; padding: 8px; display: flex; align-items: center; justify-content: center; gap: 10px; position: relative;
+  min-height: 88px; padding: 8px; display: flex; align-items: center; justify-content: center; gap: 10px;
 }
 .slot { width: 30px; height: 62px; background: var(--ink); border-radius: 8px; display: grid; place-items: center; flex: none; }
 .slot::before { content: ""; width: 5px; height: 38px; border-radius: 3px; background: #15101c; box-shadow: 0 0 0 2px var(--butter); }
 .coin {
-  width: 74px; height: 74px; border-radius: 50%; flex: none;
+  width: 72px; height: 72px; border-radius: 50%; flex: none;
   background: radial-gradient(circle at 35% 30%, #FFF0B0, var(--butter) 55%, #E9A92A);
   border: 3px solid var(--ink); box-shadow: inset 0 0 0 5px rgba(255,255,255,.45), 0 4px 0 var(--ink);
   font-family: var(--font-display); font-size: 1.35rem; line-height: 1; display: grid; place-content: center;
@@ -167,76 +192,71 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
 .coin small { font-size: .75rem; font-family: var(--font-body); }
 .coin:active { transform: translateY(3px); box-shadow: inset 0 0 0 5px rgba(255,255,255,.45), 0 1px 0 var(--ink); }
 .coin.ready { animation: nudge 1.4s ease-in-out infinite; }
-.coin.shake { animation: shake .45s; }
 .coin.paid { display: none; }
 .coin-fly { position: fixed; z-index: 90; pointer-events: none; }
-@keyframes nudge { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
-@keyframes shake { 20%, 60% { transform: translateX(-7px); } 40%, 80% { transform: translateX(7px); } }
-.paid-tag { font-family: var(--font-display); color: var(--cream); font-size: 1.05rem; text-align: center; line-height: 1.25; }
-.door { background: #2a2236; color: var(--cream); font-size: .9rem; flex-direction: column; gap: 4px; overflow: hidden; }
-.door .label { opacity: .8; }
+@keyframes nudge { 0%, 100% { scale: 1; } 50% { scale: 1.08; } }
+.paid-tag { font-family: var(--font-display); color: var(--cream); font-size: 1.1rem; }
+.door { background: #2A2236; color: var(--cream); font-size: .9rem; flex-direction: column; gap: 4px; overflow: hidden; }
+.door .label { opacity: .85; }
 .door .prize { width: 46px; height: 52px; }
 .door .prize svg { width: 100%; height: auto; }
-.door.pop .prize { animation: pop .5s cubic-bezier(.2,1.6,.4,1); }
-@keyframes pop { from { transform: translateY(30px) scale(.4); } }
+.door.pop .prize { animation: pop 300ms var(--ease-out); }
+@keyframes pop { from { transform: translateY(24px) scale(.9); opacity: 0; } }
 
 /* ---------- counter ---------- */
-.counter { display: grid; gap: 14px; align-content: start; min-width: 0; }
-.turn {
-  background: var(--cream); border: 4px solid var(--ink); border-radius: 22px;
-  padding: 16px 18px; display: grid; gap: 6px; box-shadow: 0 6px 0 var(--ink);
-}
-.eyebrow { font-size: .85rem; letter-spacing: .06em; color: var(--ink-soft); }
-.now-name { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 2.8rem); line-height: 1.05; overflow-wrap: anywhere; }
-.step { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: clamp(1.15rem, 2.1vw, 1.45rem); line-height: 1.25; min-height: 2.6em; }
-.step .dot { width: 34px; height: 34px; flex: none; border-radius: 50%; background: var(--butter); border: 3px solid var(--ink); display: grid; place-items: center; font-size: 1rem; }
-.step.good .dot { background: var(--leaf); color: var(--cream); }
-
-.friends-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.friends-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
 .friends-head h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.25rem; margin: 0; }
 .friends-head span { font-size: .9rem; color: var(--ink-soft); }
-.friends { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.friends { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .friend {
   border: 2.5px solid var(--ink); background: var(--cream); border-radius: 14px;
-  padding: 6px 6px 5px; text-align: left; display: grid; gap: 3px; min-width: 0;
+  padding: 6px 8px 5px; text-align: left; display: grid; gap: 2px; min-width: 0;
 }
-.friend .nm { font-weight: 700; font-size: .95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.friend .nm { font-weight: 700; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .friend .bag { display: flex; gap: 1px; height: 22px; align-items: center; font-size: .75rem; color: var(--ink-soft); }
 .friend .bag svg { width: 19px; height: auto; }
 .friend.now { background: var(--butter); box-shadow: 0 4px 0 var(--ink); transform: translateY(-2px); }
 .friend.done:not(.now) { background: #E4F4EA; }
+.friend.absent { opacity: .45; }
 .stock { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .restock { border: 3px solid var(--ink); background: var(--leaf); color: var(--cream); border-radius: 14px; padding: 10px 14px; font-family: var(--font-display); font-size: 1.1rem; box-shadow: 0 4px 0 var(--ink); }
 .restock:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
 .stock span { color: var(--ink-soft); font-size: .95rem; }
+.roles { font-size: .9rem; color: var(--ink-soft); line-height: 1.5; margin: 0; }
 
-/* ---------- win ---------- */
+/* ---------- result popups ---------- */
 .overlay { position: fixed; inset: 0; z-index: 80; background: rgba(58,47,74,.55); display: grid; place-items: center; padding: 16px; }
-.win {
+.result {
   background: var(--cream); border: 4px solid var(--ink); border-radius: 28px; box-shadow: 0 10px 0 var(--ink);
-  width: min(100%, 460px); padding: 22px 22px 24px; text-align: center; display: grid; gap: 12px; justify-items: center;
-  animation: rise .45s cubic-bezier(.2,1.4,.4,1);
+  width: min(100%, 480px); padding: 22px 22px 24px; text-align: center; display: grid; gap: 10px; justify-items: center;
+  animation: rise 320ms var(--ease-out);
 }
-@keyframes rise { from { transform: translateY(40px) scale(.9); opacity: 0; } }
-.win .big { width: min(46vw, 190px); animation: hop 1.1s ease-in-out infinite; }
-.win .big svg { width: 100%; height: auto; display: block; }
+@keyframes rise { from { transform: scale(.95); opacity: 0; } }
+.result .shout { font-family: var(--font-display); font-size: clamp(2.8rem, 9vw, 4.2rem); line-height: 1; color: var(--leaf); }
+.result.fail .shout { color: var(--coral-deep); animation: stamp 260ms var(--ease-out); }
+@keyframes stamp { from { transform: scale(1.3) rotate(-8deg); opacity: 0; } }
+.result .big { width: min(42vw, 170px); animation: hop 1.1s ease-in-out infinite; }
+.result .big svg { width: 100%; height: auto; display: block; }
+.result.fail .big { animation: none; filter: grayscale(.2); }
 @keyframes hop { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-10px) rotate(3deg); } }
-.win h3 { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.6rem, 5vw, 2.2rem); line-height: 1.25; margin: 0; text-wrap: balance; }
-.win p { margin: 0; color: var(--ink-soft); }
-.big-btn { border: 3px solid var(--ink); background: var(--coral-deep); color: var(--cream); border-radius: 18px; padding: 14px 26px; font-family: var(--font-display); font-size: 1.4rem; box-shadow: 0 5px 0 var(--ink); }
+.result h3 { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.4rem, 4.4vw, 1.9rem); line-height: 1.3; margin: 0; text-wrap: balance; }
+.result p { margin: 0; color: var(--ink-soft); font-size: 1.05rem; text-wrap: balance; }
+.big-btn { border: 3px solid var(--ink); background: var(--coral-deep); color: var(--cream); border-radius: 18px; padding: 14px 26px; font-family: var(--font-display); font-size: 1.4rem; box-shadow: 0 5px 0 var(--ink); margin-top: 4px; }
 .big-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
-.win.miss .big { animation: none; }
+.result.ok .big-btn { background: var(--leaf); }
 
 /* ---------- teacher settings ---------- */
-.sheet { background: var(--cream); border: 4px solid var(--ink); border-radius: 22px; width: min(100%, 560px); max-height: calc(100dvh - 32px); overflow: auto; padding: 18px 20px 20px; display: grid; gap: 14px; }
+.sheet { background: var(--cream); border: 4px solid var(--ink); border-radius: 22px; width: min(100%, 580px); max-height: calc(100dvh - 32px); overflow: auto; padding: 18px 20px 20px; display: grid; gap: 14px; }
 .sheet h3 { font-family: var(--font-display); font-weight: 400; font-size: 1.5rem; margin: 0; }
 .sheet h4 { margin: 0; font-size: 1rem; }
+.sheet .hint { margin: -8px 0 0; font-size: .85rem; color: var(--ink-soft); }
 .names { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
 .names label { display: flex; align-items: center; gap: 6px; font-size: .85rem; color: var(--ink-soft); }
 .names input { flex: 1; min-width: 0; font: inherit; font-size: 1rem; color: var(--ink); padding: 7px 9px; border: 2px solid var(--ink); border-radius: 10px; background: #fff; }
-.opts { display: grid; gap: 8px; }
-.opts label { display: flex; align-items: center; gap: 10px; font-size: 1rem; }
-.opts input { width: 22px; height: 22px; accent-color: var(--coral); }
+.opts { display: grid; gap: 10px; }
+.opts label { display: flex; align-items: center; gap: 10px; font-size: 1rem; flex-wrap: wrap; }
+.opts input[type=checkbox] { width: 22px; height: 22px; accent-color: var(--coral-deep); }
+.opts select { font: inherit; font-size: 1rem; padding: 6px 8px; border: 2px solid var(--ink); border-radius: 10px; background: #fff; color: var(--ink); }
 .sheet-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; }
 .warn { border-color: var(--coral-deep); color: var(--coral-deep); }
 .warn.armed { background: var(--coral-deep); color: var(--cream); }
@@ -244,17 +264,18 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
 #confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 85; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-@media (max-width: 820px) {
-  .machine { width: min(100%, 520px); }
-  .friends { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 760px) {
+  .counter .friends { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .wheel-box { width: min(100%, 300px); }
 }
 @media (max-width: 480px) {
-  .friends { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .bar-tools .txt { display: none; }
   .coin { width: 62px; height: 62px; font-size: 1.15rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .bulbs i, .glass.waiting .doll, .coin.ready, .win .big { animation: none !important; }
+  .bulbs i, .glass.waiting .doll, .coin.ready, .result .big { animation: none !important; }
+  .result, .result.fail .shout, .door.pop .prize { animation-name: fade !important; }
+  @keyframes fade { from { opacity: 0; } }
 }
 </style>
 </head>
@@ -263,7 +284,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
   <header>
     <div class="awning" aria-hidden="true"></div>
     <div class="shopbar">
-      <h1 class="sign">우리 동네 인형뽑기 가게<small>우리 동네 이웃이 하는 일 · 6세반 가게 놀이</small></h1>
+      <h1 class="sign">우리 동네 인형뽑기 가게<small>우리 동네 이웃이 되어 놀아요 · 엄마와 함께하는 인형뽑기</small></h1>
       <div class="bar-tools">
         <button class="tool" id="btn-full" type="button" aria-label="크게 보기">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span class="txt">크게 보기</span>
@@ -276,6 +297,26 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
   </header>
 
   <main class="floor">
+    <!-- who plays -->
+    <section class="wheel-col" aria-label="돌림판">
+      <div class="wheel-box">
+        <svg viewBox="0 0 320 340" id="wheel-svg" role="img" aria-label="친구 이름 돌림판">
+          <circle cx="160" cy="172" r="158" fill="#3A2F4A"/>
+          <g id="wheel-rot"></g>
+          <circle cx="160" cy="172" r="30" fill="#FFD45C" stroke="#3A2F4A" stroke-width="5"/>
+          <path d="M160 160 l3.5 7.5 8 1 -6 5.5 1.6 8 -7.1 -4 -7.1 4 1.6 -8 -6 -5.5 8 -1 z" fill="#3A2F4A"/>
+          <g class="pointer" id="pointer"><path d="M144 2 h32 l-16 34 z" fill="#F2665A" stroke="#3A2F4A" stroke-width="5" stroke-linejoin="round"/></g>
+        </svg>
+      </div>
+      <button class="spin" id="spin" type="button">돌림판 돌리기!</button>
+      <section class="turn" aria-live="polite">
+        <div class="eyebrow">지금 차례인 손님</div>
+        <div class="now-name empty" id="now-name">누구 차례일까요?</div>
+        <div class="step" id="step"><span class="dot">1</span><span id="step-text">돌림판을 돌려서 차례를 정해요</span></div>
+      </section>
+    </section>
+
+    <!-- the play -->
     <div class="machine-wrap">
       <div class="machine">
         <div class="marquee" aria-hidden="true">
@@ -301,11 +342,11 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
           <div id="dolls"></div>
           <div class="chute" aria-hidden="true">출구</div>
         </div>
-        <div class="panel">
-          <div class="slot-area">
+        <div class="panel" id="panel">
+          <div class="slot-area" id="slot-area">
             <div class="slot" id="slot" aria-hidden="true"></div>
             <button class="coin" id="coin" type="button" aria-label="동전 넣기">100<small>원</small></button>
-            <div class="paid-tag" id="paid-tag" hidden>동전<br>넣었어요!</div>
+            <div class="paid-tag" id="paid-tag" hidden>동전 넣었어요!</div>
           </div>
           <div class="door" id="door" aria-hidden="true">
             <div class="prize" id="door-prize"></div>
@@ -315,42 +356,49 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
       </div>
     </div>
 
+    <!-- the counter -->
     <aside class="counter">
-      <section class="turn" aria-live="polite">
-        <div class="eyebrow">지금 차례인 손님</div>
-        <div class="now-name" id="now-name">1번 친구</div>
-        <div class="step" id="step"><span class="dot">1</span><span id="step-text">동전을 넣어 주세요</span></div>
-      </section>
       <section>
-        <div class="friends-head"><h2>우리 반 손님</h2><span id="done-count">0 / 12명 뽑았어요</span></div>
+        <div class="friends-head"><h2>우리 반 손님</h2><span id="done-count">0 / 12명 성공</span></div>
         <div class="friends" id="friends"></div>
       </section>
       <section class="stock">
         <button class="restock" id="restock" type="button">가게 주인: 인형 채우기</button>
         <span id="stock-count">남은 인형 14개</span>
       </section>
+      <p class="roles">도전자: 차례인 친구 · 기계 도우미: 엄마<br>가게 주인 · 응원단 · 다음 손님: 다른 친구들</p>
     </aside>
   </main>
 </div>
 
-<div class="overlay" id="win" hidden>
-  <div class="win" role="dialog" aria-modal="true" aria-labelledby="win-title">
-    <div class="big" id="win-doll"></div>
-    <h3 id="win-title"></h3>
-    <p id="win-sub"></p>
-    <button class="big-btn" id="win-next" type="button">다음 친구 차례!</button>
+<div class="overlay" id="result" hidden>
+  <div class="result" id="result-card" role="dialog" aria-modal="true" aria-labelledby="result-title">
+    <div class="shout" id="result-shout"></div>
+    <div class="big" id="result-doll"></div>
+    <h3 id="result-title"></h3>
+    <p id="result-sub"></p>
+    <button class="big-btn" id="result-btn" type="button"></button>
   </div>
 </div>
 
 <div class="overlay" id="settings" hidden>
   <form class="sheet" id="settings-form" aria-labelledby="settings-title">
     <h3 id="settings-title">선생님 설정</h3>
-    <h4>우리 반 친구 이름 (12명)</h4>
+    <h4>우리 반 친구 이름</h4>
+    <p class="hint">결석한 친구는 이름을 지우면 돌림판에서 빠져요.</p>
     <div class="names" id="names"></div>
     <div class="opts">
-      <label><input type="checkbox" id="opt-coin"> 동전 넣고 시작하기 (손님 역할 놀이)</label>
+      <label>꽝이 나오는 정도
+        <select id="opt-miss">
+          <option value="none">꽝 없음</option>
+          <option value="some">가끔 꽝</option>
+          <option value="often">자주 꽝</option>
+        </select>
+      </label>
+      <label><input type="checkbox" id="opt-sure"> 다시 도전하면 꼭 성공하기</label>
+      <label><input type="checkbox" id="opt-skip"> 성공한 친구는 돌림판에서 빼기</label>
+      <label><input type="checkbox" id="opt-coin"> 동전 넣고 시작하기</label>
       <label><input type="checkbox" id="opt-sound"> 소리 켜기</label>
-      <label><input type="checkbox" id="opt-miss"> 가끔 인형을 놓치기 (진짜 기계처럼)</label>
     </div>
     <div class="sheet-actions">
       <button class="tool warn" id="btn-reset" type="button">뽑은 기록 모두 지우기</button>
@@ -365,95 +413,94 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
 <script>
 (() => {
   const INK = '#3A2F4A';
+  const DARK = '#2E2733';
   const KINDS = {
-    bear:    { name: '곰돌이' },
-    rabbit:  { name: '토끼' },
-    cat:     { name: '고양이' },
-    dog:     { name: '강아지' },
-    chick:   { name: '병아리' },
-    panda:   { name: '판다' },
-    frog:    { name: '개구리' },
-    pig:     { name: '아기 돼지' },
-    penguin: { name: '펭귄' },
+    cinnamoroll: { name: '시나모롤' },
+    kuromi:      { name: '쿠로미' },
+    melody:      { name: '마이멜로디' },
+    purin:       { name: '폼폼푸린' },
+    kitty:       { name: '헬로키티' },
+    pochacco:    { name: '포차코' },
+    keroppi:     { name: '케로피' },
+    bear:        { name: '곰돌이' },
   };
-  const STOCK = ['bear', 'rabbit', 'cat', 'dog', 'chick', 'panda', 'frog', 'pig', 'penguin', 'bear', 'rabbit', 'chick', 'cat', 'pig'];
-  const CLASS_SIZE = 12;
+  const STOCK = ['cinnamoroll', 'kuromi', 'melody', 'purin', 'kitty', 'pochacco', 'keroppi', 'bear', 'cinnamoroll', 'kuromi', 'cinnamoroll', 'kuromi', 'melody', 'purin'];
+  const CLASS = ['강하율', '권민석', '김다연', '김연우', '김온유', '김주원', '박소윤', '백시안', '변정현', '서로희', '진하성', '한윤재'];
+  const CLASS_SIZE = CLASS.length;
   const HOME_X = 0.86, REST_ROPE = 0.02;
   const HELD_OFF = 18.5;   // cqw from rope end to the held doll's centre
-  const DOLL_W = 17;
+  const MISS_P = { none: 0, some: 0.35, often: 0.55 };
 
   /* ---------- doll drawings ---------- */
   function dollSVG(kind) {
-    const eye = (x, y) => `<circle cx="${x}" cy="${y}" r="4.2" fill="${INK}"/><circle cx="${x + 1.4}" cy="${y - 1.5}" r="1.4" fill="#fff"/>`;
-    const blush = `<ellipse cx="30" cy="54" rx="5.5" ry="3.2" fill="#FF8FA3" opacity=".65"/><ellipse cx="70" cy="54" rx="5.5" ry="3.2" fill="#FF8FA3" opacity=".65"/>`;
-    const smile = (y = 55) => `<path d="M45 ${y} Q50 ${y + 5} 55 ${y}" fill="none" stroke="${INK}" stroke-width="2.6" stroke-linecap="round"/>`;
     const s = `stroke="${INK}" stroke-width="3"`;
-    let body = '#B9805A', head = null, belly = null, limbs = null, behind = '', front = '', face = eye(39, 43) + eye(61, 43) + blush + smile();
+    const eye = (x, y, c = INK, rx = 4, ry = 4.6) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${c}"/><circle cx="${x + 1.3}" cy="${y - 1.6}" r="1.4" fill="#fff"/>`;
+    const blush = (y = 55, c = '#FF8FA3') => `<ellipse cx="30" cy="${y}" rx="5.5" ry="3.2" fill="${c}" opacity=".7"/><ellipse cx="70" cy="${y}" rx="5.5" ry="3.2" fill="${c}" opacity=".7"/>`;
+    const smile = (y = 56) => `<path d="M46 ${y} Q50 ${y + 4} 54 ${y}" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linecap="round"/>`;
+    let body = '#FFFFFF', limbs = null, feet = null, belly = null, behind = '', head = `<circle cx="50" cy="44" r="31" fill="#fff" ${s}/>`, front = '', face = '';
     switch (kind) {
+      case 'cinnamoroll':
+        behind = `<ellipse cx="17" cy="38" rx="20" ry="9.5" transform="rotate(-18 17 38)" fill="#fff" ${s}/><ellipse cx="83" cy="38" rx="20" ry="9.5" transform="rotate(18 83 38)" fill="#fff" ${s}/>` +
+          `<circle cx="76" cy="92" r="8.5" fill="#fff" ${s}/><path d="M76 92 m-3.5 0 a3.5 3.5 0 1 1 3.5 3.5" fill="none" stroke="#9FC9EA" stroke-width="2.2" stroke-linecap="round"/>`;
+        head = `<ellipse cx="50" cy="45" rx="32" ry="28" fill="#fff" ${s}/>`;
+        face = eye(39, 47, '#2F6FC6', 3.8, 4.8) + eye(61, 47, '#2F6FC6', 3.8, 4.8) + blush(55) + `<path d="M45.5 55 Q47.75 58.5 50 55 Q52.25 58.5 54.5 55" fill="none" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/>`;
+        break;
+      case 'kuromi':
+        body = DARK; limbs = DARK; feet = DARK;
+        behind = `<path d="M27 28 Q6 18 10 -1 Q24 9 41 16 Z" fill="${DARK}" ${s} stroke-linejoin="round"/><path d="M73 28 Q94 18 90 -1 Q76 9 59 16 Z" fill="${DARK}" ${s} stroke-linejoin="round"/>`;
+        head = `<path d="M50 11 C78 11 84 33 82 49 C80 70 66 78 50 78 C34 78 20 70 18 49 C16 33 22 11 50 11 Z" fill="${DARK}" ${s}/>`;
+        face = `<ellipse cx="50" cy="56" rx="24" ry="18" fill="#fff" ${s}/>` +
+          `<circle cx="50" cy="27" r="7.5" fill="#F7A8C4" stroke="${INK}" stroke-width="2"/><circle cx="47.3" cy="26" r="1.6" fill="${INK}"/><circle cx="52.7" cy="26" r="1.6" fill="${INK}"/><path d="M47.5 30.5 h5" stroke="${INK}" stroke-width="1.5"/>` +
+          eye(41, 54, INK, 3.6, 4.8) + eye(59, 54, INK, 3.6, 4.8) + blush(61) + `<ellipse cx="50" cy="60" rx="2" ry="1.5" fill="#F48CA2"/><path d="M45 64 Q50 67 56 62.5" fill="none" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/>`;
+        break;
+      case 'melody':
+        body = '#F7A8C4'; limbs = '#F7A8C4'; feet = '#fff';
+        behind = `<ellipse cx="36" cy="10" rx="9.5" ry="21" transform="rotate(-12 36 10)" fill="#F7A8C4" ${s}/><ellipse cx="64" cy="10" rx="9.5" ry="21" transform="rotate(12 64 10)" fill="#F7A8C4" ${s}/>`;
+        head = `<circle cx="50" cy="45" r="32" fill="#F7A8C4" ${s}/>`;
+        face = `<ellipse cx="50" cy="56" rx="24" ry="17.5" fill="#fff" ${s}/>` +
+          `<g transform="translate(70 22)">${[0, 72, 144, 216, 288].map((a) => `<ellipse cx="0" cy="-5.5" rx="4" ry="5.5" transform="rotate(${a})" fill="#fff" stroke="${INK}" stroke-width="1.6"/>`).join('')}<circle r="3" fill="#FFD45C" stroke="${INK}" stroke-width="1.4"/></g>` +
+          eye(41, 54, INK, 3.4, 4.4) + eye(59, 54, INK, 3.4, 4.4) + blush(60) + `<ellipse cx="50" cy="59" rx="2.8" ry="2.1" fill="#F5C842" stroke="${INK}" stroke-width="1.2"/>`;
+        break;
+      case 'purin':
+        body = '#F6CC57'; limbs = '#F6CC57'; feet = '#F6CC57';
+        head = `<circle cx="50" cy="46" r="31" fill="#F6CC57" ${s}/>`;
+        front = `<ellipse cx="21" cy="50" rx="8.5" ry="16" transform="rotate(14 21 50)" fill="#9A6A3A" ${s}/><ellipse cx="79" cy="50" rx="8.5" ry="16" transform="rotate(-14 79 50)" fill="#9A6A3A" ${s}/>` +
+          `<rect x="47.5" y="4" width="5" height="9" rx="2.5" fill="#7A4B2E" stroke="${INK}" stroke-width="2"/><ellipse cx="50" cy="17" rx="21" ry="8" fill="#7A4B2E" ${s}/>`;
+        face = eye(40, 47, INK, 3.4, 3.8) + eye(60, 47, INK, 3.4, 3.8) + blush(56, '#F59B6A') + `<ellipse cx="50" cy="53" rx="2.6" ry="2" fill="${INK}"/>` + smile(57);
+        break;
+      case 'kitty':
+        body = '#3B6FCB'; limbs = '#fff'; feet = '#fff';
+        behind = `<path d="M19 36 L23 9 L43 22 Z" fill="#fff" ${s} stroke-linejoin="round"/><path d="M81 36 L77 9 L57 22 Z" fill="#fff" ${s} stroke-linejoin="round"/>`;
+        head = `<ellipse cx="50" cy="46" rx="35" ry="28" fill="#fff" ${s}/>`;
+        front = `<g transform="translate(25 19) rotate(-15)"><ellipse cx="-9" cy="0" rx="9.5" ry="7.5" fill="#E8434B" ${s}/><ellipse cx="9" cy="1" rx="9.5" ry="7.5" fill="#E8434B" ${s}/><circle r="5" fill="#E8434B" ${s}/></g>`;
+        face = eye(36, 49, INK, 3.3, 4.6) + eye(64, 49, INK, 3.3, 4.6) + `<ellipse cx="50" cy="55" rx="4.2" ry="3.1" fill="#F5C842" stroke="${INK}" stroke-width="1.6"/>` +
+          `<path d="M10 46 L24 49 M9 53 L24 54 M11 60 L24 58 M90 46 L76 49 M91 53 L76 54 M89 60 L76 58" stroke="${INK}" stroke-width="2" stroke-linecap="round"/>`;
+        break;
+      case 'pochacco':
+        head = `<circle cx="50" cy="45" r="31" fill="#fff" ${s}/>`;
+        front = `<ellipse cx="21" cy="42" rx="9" ry="19" transform="rotate(10 21 42)" fill="${DARK}" ${s}/><ellipse cx="79" cy="42" rx="9" ry="19" transform="rotate(-10 79 42)" fill="${DARK}" ${s}/>`;
+        face = eye(40, 47, INK, 3.4, 3.8) + eye(60, 47, INK, 3.4, 3.8) + blush(56) + `<ellipse cx="50" cy="53" rx="3" ry="2.2" fill="${INK}"/>` + smile(57);
+        break;
+      case 'keroppi':
+        body = '#6CC04A'; limbs = '#6CC04A'; feet = '#6CC04A'; belly = '#FFFFFF';
+        head = `<ellipse cx="50" cy="50" rx="34" ry="25" fill="#6CC04A" ${s}/>`;
+        front = `<circle cx="34" cy="26" r="13" fill="#fff" ${s}/><circle cx="66" cy="26" r="13" fill="#fff" ${s}/><circle cx="35" cy="27" r="5" fill="${INK}"/><circle cx="65" cy="27" r="5" fill="${INK}"/><circle cx="36.5" cy="25.2" r="1.6" fill="#fff"/><circle cx="66.5" cy="25.2" r="1.6" fill="#fff"/>`;
+        face = `<ellipse cx="27" cy="55" rx="5" ry="3" fill="#E8434B"/><ellipse cx="73" cy="55" rx="5" ry="3" fill="#E8434B"/><path d="M36 54 Q50 67 64 54" fill="none" stroke="${INK}" stroke-width="2.6" stroke-linecap="round"/>`;
+        break;
       case 'bear':
+        body = '#B9805A'; belly = '#E8C4A0';
         behind = `<circle cx="25" cy="20" r="11" fill="${body}" ${s}/><circle cx="75" cy="20" r="11" fill="${body}" ${s}/><circle cx="25" cy="20" r="5.5" fill="#E8C4A0"/><circle cx="75" cy="20" r="5.5" fill="#E8C4A0"/>`;
-        belly = '#E8C4A0';
-        face = eye(38, 41) + eye(62, 41) + blush + `<ellipse cx="50" cy="54" rx="11" ry="8" fill="#F0D9BE" ${s}/><ellipse cx="50" cy="50.5" rx="4" ry="3" fill="${INK}"/>` + smile(55);
-        break;
-      case 'rabbit':
-        body = '#FBF1EE';
-        behind = `<ellipse cx="37" cy="14" rx="8.5" ry="22" fill="${body}" ${s}/><ellipse cx="63" cy="14" rx="8.5" ry="22" fill="${body}" ${s}/><ellipse cx="37" cy="15" rx="4" ry="15" fill="#FFB7C5"/><ellipse cx="63" cy="15" rx="4" ry="15" fill="#FFB7C5"/>`;
-        face = eye(39, 44) + eye(61, 44) + blush + `<path d="M47 50 L53 50 L50 53.5 Z" fill="#FF8FA3" stroke="${INK}" stroke-width="1.6" stroke-linejoin="round"/>` + smile(56);
-        break;
-      case 'cat':
-        body = '#F4A259';
-        behind = `<path d="M21 34 L27 4 L48 18 Z" fill="${body}" ${s} stroke-linejoin="round"/><path d="M79 34 L73 4 L52 18 Z" fill="${body}" ${s} stroke-linejoin="round"/><path d="M27 26 L29 12 L39 19 Z" fill="#FFC9A8"/><path d="M73 26 L71 12 L61 19 Z" fill="#FFC9A8"/>`;
-        front = `<path d="M44 16 L45 24 M50 14 L50 23 M56 16 L55 24" stroke="#D97E33" stroke-width="3" stroke-linecap="round"/>`;
-        face = eye(39, 44) + eye(61, 44) + blush + `<path d="M47.5 50 L52.5 50 L50 53 Z" fill="${INK}"/>` + `<path d="M50 53 Q47 57 44 55 M50 53 Q53 57 56 55" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linecap="round"/>` +
-          `<path d="M18 48 L30 50 M18 55 L30 54 M82 48 L70 50 M82 55 L70 54" stroke="${INK}" stroke-width="1.8" stroke-linecap="round"/>`;
-        break;
-      case 'dog':
-        body = '#EBCB9C';
-        front = `<ellipse cx="22" cy="42" rx="10" ry="19" fill="#A8714A" ${s} transform="rotate(18 22 42)"/><ellipse cx="78" cy="42" rx="10" ry="19" fill="#A8714A" ${s} transform="rotate(-18 78 42)"/>`;
-        face = `<ellipse cx="62" cy="42" rx="8" ry="7" fill="#D9AE78"/>` + eye(39, 42) + eye(62, 42) + blush + `<ellipse cx="50" cy="54" rx="11" ry="8" fill="#FFF1DC" ${s}/><ellipse cx="50" cy="50.5" rx="4.2" ry="3.2" fill="${INK}"/>` + smile(55);
-        break;
-      case 'chick':
-        body = '#FFD84D';
-        behind = `<path d="M44 16 Q46 2 51 13 Q55 3 58 15" fill="${body}" ${s} stroke-linejoin="round"/>`;
-        face = eye(39, 43) + eye(61, 43) + blush + `<path d="M43 51 L57 51 L50 59 Z" fill="#F59B2E" ${s} stroke-linejoin="round"/>`;
-        limbs = '#F7C531';
-        break;
-      case 'panda':
-        body = '#FFFFFF';
-        limbs = INK;
-        behind = `<circle cx="25" cy="20" r="11" fill="${INK}"/><circle cx="75" cy="20" r="11" fill="${INK}"/>`;
-        face = `<ellipse cx="38" cy="45" rx="8" ry="10" fill="${INK}" transform="rotate(-25 38 45)"/><ellipse cx="62" cy="45" rx="8" ry="10" fill="${INK}" transform="rotate(25 62 45)"/>` +
-          `<circle cx="39" cy="44" r="3.4" fill="#fff"/><circle cx="61" cy="44" r="3.4" fill="#fff"/><circle cx="39.6" cy="44.4" r="1.8" fill="${INK}"/><circle cx="60.4" cy="44.4" r="1.8" fill="${INK}"/>` +
-          blush + `<ellipse cx="50" cy="52" rx="3.6" ry="2.6" fill="${INK}"/>` + smile(56);
-        break;
-      case 'frog':
-        body = '#8BCB6A';
-        belly = '#D8F0B8';
-        front = `<circle cx="33" cy="20" r="12" fill="${body}" ${s}/><circle cx="67" cy="20" r="12" fill="${body}" ${s}/><circle cx="33" cy="20" r="7" fill="#fff"/><circle cx="67" cy="20" r="7" fill="#fff"/><circle cx="34" cy="21" r="3.8" fill="${INK}"/><circle cx="66" cy="21" r="3.8" fill="${INK}"/>`;
-        face = blush + `<path d="M33 50 Q50 64 67 50" fill="none" stroke="${INK}" stroke-width="2.8" stroke-linecap="round"/>`;
-        break;
-      case 'pig':
-        body = '#F7A9B8';
-        behind = `<path d="M23 28 L25 6 L45 17 Z" fill="#EE8FA3" ${s} stroke-linejoin="round"/><path d="M77 28 L75 6 L55 17 Z" fill="#EE8FA3" ${s} stroke-linejoin="round"/>`;
-        face = eye(37, 41) + eye(63, 41) + blush + `<ellipse cx="50" cy="53" rx="11" ry="8" fill="#F48CA2" ${s}/><ellipse cx="46" cy="53" rx="2" ry="3" fill="${INK}"/><ellipse cx="54" cy="53" rx="2" ry="3" fill="${INK}"/>` + smile(63.5);
-        break;
-      case 'penguin':
-        body = '#34496A';
-        belly = '#FFFFFF';
-        limbs = '#34496A';
-        face = `<path d="M50 36 C43 26 24 30 27 47 C29 60 42 66 50 66 C58 66 71 60 73 47 C76 30 57 26 50 36 Z" fill="#fff"/>` +
-          eye(40, 45) + eye(60, 45) + blush + `<path d="M44 53 L56 53 L50 60 Z" fill="#F59B2E" ${s} stroke-linejoin="round"/>`;
+        head = `<circle cx="50" cy="44" r="31" fill="${body}" ${s}/>`;
+        face = eye(38, 41) + eye(62, 41) + blush(53) + `<ellipse cx="50" cy="54" rx="11" ry="8" fill="#F0D9BE" ${s}/><ellipse cx="50" cy="50.5" rx="4" ry="3" fill="${INK}"/>` + smile(55);
         break;
     }
-    head = head || body;
-    limbs = limbs || body;
-    const feet = kind === 'penguin' || kind === 'chick' ? '#F59B2E' : limbs;
+    limbs = limbs || body; feet = feet || limbs;
     return `<svg viewBox="0 0 100 112" aria-hidden="true">${behind}` +
       `<ellipse cx="38" cy="104" rx="9" ry="6" fill="${feet}" ${s}/><ellipse cx="62" cy="104" rx="9" ry="6" fill="${feet}" ${s}/>` +
       `<ellipse cx="50" cy="86" rx="25" ry="20" fill="${body}" ${s}/>` +
       (belly ? `<ellipse cx="50" cy="90" rx="15" ry="12.5" fill="${belly}"/>` : '') +
       `<ellipse cx="27" cy="83" rx="7" ry="10.5" fill="${limbs}" ${s} transform="rotate(28 27 83)"/><ellipse cx="73" cy="83" rx="7" ry="10.5" fill="${limbs}" ${s} transform="rotate(-28 73 83)"/>` +
-      `<circle cx="50" cy="44" r="31" fill="${head}" ${s}/>${front}${face}</svg>`;
+      `${head}${front}${face}</svg>`;
   }
 
   /* ---------- Korean particles ---------- */
@@ -467,26 +514,30 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
   const josa = (w, withF, without) => w + (hasFinal(w) ? withF : without);
 
   /* ---------- state ---------- */
-  const KEY = 'claw-shop-v1';
+  const KEY = 'claw-shop-v2';
   const defaults = () => ({
-    names: Array.from({ length: CLASS_SIZE }, (_, i) => `${i + 1}번 친구`),
+    names: CLASS.slice(),
     prizes: Array.from({ length: CLASS_SIZE }, () => []),
-    turn: 0, coinOn: true, soundOn: true, missOn: false, dolls: null,
+    turn: null, coinOn: false, soundOn: true, miss: 'some', sure: true, skipDone: true, dolls: null,
   });
   let saved = null;
   try { saved = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { saved = null; }
   const st = Object.assign(defaults(), saved || {});
   if (!Array.isArray(st.names) || st.names.length !== CLASS_SIZE) st.names = defaults().names;
   if (!Array.isArray(st.prizes) || st.prizes.length !== CLASS_SIZE) st.prizes = defaults().prizes;
+  if (Array.isArray(st.dolls) && st.dolls.some((d) => !KINDS[d.kind])) st.dolls = null;
+  if (st.turn !== null && !st.names[st.turn]) st.turn = null;
   function save() {
-    try { localStorage.setItem(KEY, JSON.stringify({ names: st.names, prizes: st.prizes, turn: st.turn, coinOn: st.coinOn, soundOn: st.soundOn, missOn: st.missOn, dolls: st.dolls })); } catch (e) { /* storage unavailable */ }
+    const { names, prizes, turn, coinOn, soundOn, miss, sure, skipDone } = st;
+    const dolls = (st.dolls || []).map(({ el, ...d }) => d);
+    try { localStorage.setItem(KEY, JSON.stringify({ names, prizes, turn, coinOn, soundOn, miss, sure, skipDone, dolls })); } catch (e) { /* storage unavailable */ }
   }
 
-  const run = { paid: false, busy: false, clawX: HOME_X, rope: REST_ROPE, held: null, open: false };
+  const run = { paid: false, busy: false, clawX: HOME_X, rope: REST_ROPE, held: null, open: false, tries: 0, wheelAngle: 0, wheelIds: [] };
 
   const $ = (id) => document.getElementById(id);
   const glass = $('glass'), claw = $('claw'), rope = $('rope'), head = $('head'), dollsEl = $('dolls');
-  const coin = $('coin');
+  const coin = $('coin'), spinBtn = $('spin');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const SPEED = reduce ? 0.5 : 1;
 
@@ -517,15 +568,17 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
     grab() { tone(330, 0.12, { type: 'triangle', vol: 0.18, to: 180 }); },
     drop() { tone(700, 0.35, { type: 'sine', vol: 0.12, to: 200 }); },
     win() { [523, 659, 784, 1047, 784, 1047].forEach((f, i) => tone(f, i === 5 ? 0.5 : 0.16, { type: 'triangle', vol: 0.16, at: i * 0.13 })); },
-    miss() { [392, 349, 311].forEach((f, i) => tone(f, 0.25, { type: 'triangle', vol: 0.14, at: i * 0.18 })); },
+    miss() { [392, 349, 311, 262].forEach((f, i) => tone(f, i === 3 ? 0.45 : 0.22, { type: 'triangle', vol: 0.15, at: i * 0.18 })); },
+    tick() { tone(1500, 0.035, { type: 'square', vol: 0.05 }); },
+    picked() { [659, 880].forEach((f, i) => tone(f, 0.18, { type: 'triangle', vol: 0.15, at: i * 0.12 })); },
     tap() { tone(880, 0.07, { type: 'sine', vol: 0.08 }); },
     restock() { [392, 523, 659, 784].forEach((f, i) => tone(f, 0.12, { type: 'square', vol: 0.05, at: i * 0.08 })); },
   };
 
   /* ---------- tweening ---------- */
   const easeInOut = (p) => p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
-  const easeIn = (p) => p * p * p;
-  const easeOutBack = (p) => 1 + 2.2 * Math.pow(p - 1, 3) + 1.2 * Math.pow(p - 1, 2);
+  const easeIn = (p) => p * p * p;          // only for things falling under gravity
+  const easeOutQuart = (p) => 1 - Math.pow(1 - p, 4);
   function tween(ms, fn, ease = easeInOut) {
     return new Promise((done) => {
       const t0 = performance.now(), d = ms * SPEED;
@@ -539,6 +592,88 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
   }
   const wait = (ms) => new Promise((r) => setTimeout(r, ms * SPEED));
   const lerp = (a, b, p) => a + (b - a) * p;
+
+  /* ---------- name wheel ---------- */
+  const COLORS = ['#F7A9C0', '#9FD3F0', '#FFE08A', '#A8E0C4', '#CDB8F0', '#FFC49E'];
+  const CX = 160, CY = 172, R = 150;
+  function eligible() {
+    const present = st.names.map((n, i) => (n ? i : -1)).filter((i) => i >= 0);
+    if (!st.skipDone) return present;
+    const left = present.filter((i) => !st.prizes[i].length);
+    return left.length ? left : present;
+  }
+  function drawWheel() {
+    const ids = eligible();
+    run.wheelIds = ids;
+    const n = ids.length, seg = 360 / Math.max(n, 1);
+    const pt = (deg, r) => { const a = deg * Math.PI / 180; return [CX + r * Math.sin(a), CY - r * Math.cos(a)]; };
+    let html = '';
+    ids.forEach((id, i) => {
+      let c = i % COLORS.length;
+      if (n > 1 && i === n - 1 && c === 0) c = 2;
+      const name = st.names[id].slice(0, 5);
+      let shape;
+      if (n === 1) shape = `<circle cx="${CX}" cy="${CY}" r="${R}" fill="${COLORS[c]}" stroke="${INK}" stroke-width="3"/>`;
+      else {
+        const [x0, y0] = pt(i * seg - seg / 2, R), [x1, y1] = pt(i * seg + seg / 2, R);
+        shape = `<path d="M${CX} ${CY} L${x0.toFixed(2)} ${y0.toFixed(2)} A${R} ${R} 0 ${seg > 180 ? 1 : 0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)} Z" fill="${COLORS[c]}" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>`;
+      }
+      // Names read outward on the right half; flip the left half so no name sits upside down at rest.
+      const a = i * seg, left = a > 180 && a < 360;
+      const label = left
+        ? `transform="rotate(${(a + 90).toFixed(2)} ${CX} ${CY})" x="${CX - R + 14}" text-anchor="start"`
+        : `transform="rotate(${(a - 90).toFixed(2)} ${CX} ${CY})" x="${CX + R - 14}" text-anchor="end"`;
+      html += `<g class="slice" data-id="${id}">${shape}<text class="slice-label" ${label} y="${CY}" dominant-baseline="central"></text></g>`;
+    });
+    const g = $('wheel-rot');
+    g.innerHTML = html;
+    g.querySelectorAll('.slice').forEach((el) => { el.querySelector('text').textContent = st.names[+el.dataset.id].slice(0, 5); });
+    run.wheelAngle = 0;
+    g.style.transform = 'rotate(0deg)';
+  }
+  function markWinner(id) {
+    $('wheel-rot').querySelectorAll('.slice').forEach((el) => el.classList.toggle('win', +el.dataset.id === id));
+  }
+
+  async function spin() {
+    if (run.busy) return;
+    const ids = run.wheelIds;
+    if (!ids.length) { setStep('!', '선생님 설정에서 친구 이름을 넣어 주세요'); return; }
+    run.busy = true; markWinner(-1); refresh();
+    setStep('1', '빙글빙글… 누구 차례일까요?');
+    const n = ids.length, seg = 360 / n;
+    const w = Math.floor(Math.random() * n);
+    const jitter = (Math.random() - 0.5) * seg * 0.6;
+    const start = run.wheelAngle;
+    const base = ((-(w * seg) + jitter) % 360 + 360) % 360;
+    const turns = reduce ? 2 : 6;
+    const end = start - (start % 360) + 360 * turns + base;
+    const g = $('wheel-rot'), pointer = $('pointer');
+    let lastK = Math.floor((start + seg / 2) / seg);
+    await tween(reduce ? 2400 : 5200, (p) => {
+      run.wheelAngle = lerp(start, end, p);
+      g.style.transform = `rotate(${run.wheelAngle.toFixed(2)}deg)`;
+      const k = Math.floor((run.wheelAngle + seg / 2) / seg);
+      if (k !== lastK && n > 1) {
+        lastK = k; sfx.tick();
+        pointer.classList.add('flick');
+        requestAnimationFrame(() => pointer.classList.remove('flick'));
+      }
+    }, easeOutQuart);
+    const id = ids[w];
+    markWinner(id);
+    sfx.picked();
+    setTurn(id);
+    run.busy = false; refresh();
+    announce(`${st.names[id]} 친구 차례예요!`);
+  }
+  spinBtn.addEventListener('click', spin);
+  $('wheel-svg').addEventListener('click', spin);
+
+  function setTurn(id) {
+    st.turn = id; run.paid = false; run.tries = 0;
+    save();
+  }
 
   /* ---------- machine rendering ---------- */
   function render() {
@@ -561,8 +696,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
     const list = []; let k = 0;
     rows.forEach((row) => {
       for (let i = 0; i < row.n; i++) {
-        const span = 0.66 - 0.13;
-        const x = 0.13 + span * (row.n === 1 ? 0.5 : i / (row.n - 1)) + (Math.random() - 0.5) * 0.03 + (row.n === 4 ? 0.02 : 0);
+        const x = 0.13 + 0.53 * (i / (row.n - 1)) + (Math.random() - 0.5) * 0.03 + (row.n === 4 ? 0.02 : 0);
         list.push({ id: 'd' + Date.now().toString(36) + k, kind: kinds[k++ % kinds.length], x: +x.toFixed(3), y: +(row.y + (Math.random() - 0.5) * 0.025).toFixed(3), z: row.z, r: Math.round((Math.random() - 0.5) * 24) });
       }
     });
@@ -593,43 +727,54 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
     st.names.forEach((nm, i) => {
       const b = document.createElement('button');
       b.type = 'button';
-      b.className = 'friend' + (i === st.turn ? ' now' : '') + (st.prizes[i].length ? ' done' : '');
-      b.setAttribute('aria-label', `${nm} 차례로 바꾸기, 뽑은 인형 ${st.prizes[i].length}개`);
+      b.className = 'friend' + (i === st.turn ? ' now' : '') + (st.prizes[i].length ? ' done' : '') + (nm ? '' : ' absent');
+      b.disabled = !nm;
+      b.setAttribute('aria-label', nm ? `${nm} 차례로 바꾸기, 뽑은 인형 ${st.prizes[i].length}개` : `${i + 1}번 결석`);
       const bag = st.prizes[i].slice(-3).map(dollSVG).join('') + (st.prizes[i].length > 3 ? `+${st.prizes[i].length - 3}` : '');
       b.innerHTML = `<span class="nm"></span><span class="bag">${bag}</span>`;
-      b.querySelector('.nm').textContent = nm;
-      b.addEventListener('click', () => { if (run.busy) return; st.turn = i; run.paid = false; save(); sfx.tap(); refresh(); });
+      b.querySelector('.nm').textContent = nm || '결석';
+      b.addEventListener('click', () => { if (run.busy) return; setTurn(i); markWinner(i); sfx.tap(); refresh(); });
       box.appendChild(b);
     });
-    const done = st.prizes.filter((p) => p.length).length;
-    $('done-count').textContent = done === CLASS_SIZE ? '우리 반 모두 뽑았어요!' : `${done} / ${CLASS_SIZE}명 뽑았어요`;
+    const present = st.names.filter(Boolean).length;
+    const done = st.prizes.filter((p, i) => p.length && st.names[i]).length;
+    $('done-count').textContent = present && done >= present ? '우리 반 모두 성공!' : `${done} / ${present}명 성공`;
   }
 
-  function setStep(n, text, good = false) {
-    const step = $('step');
-    step.classList.toggle('good', good);
-    step.querySelector('.dot').textContent = n;
+  function setStep(n, text) {
+    $('step').querySelector('.dot').textContent = n;
     $('step-text').textContent = text;
   }
 
   function refresh() {
-    $('now-name').textContent = st.names[st.turn];
-    const needCoin = st.coinOn && !run.paid;
-    coin.hidden = !st.coinOn;
+    const has = st.turn !== null;
+    const nameEl = $('now-name');
+    nameEl.textContent = has ? st.names[st.turn] : '누구 차례일까요?';
+    nameEl.classList.toggle('empty', !has);
+    $('panel').classList.toggle('nocoin', !st.coinOn);
+    $('slot-area').hidden = !st.coinOn;
+    const needCoin = has && st.coinOn && !run.paid;
     coin.classList.toggle('paid', st.coinOn && run.paid);
     coin.classList.toggle('ready', needCoin && !run.busy);
     $('paid-tag').hidden = !(st.coinOn && run.paid);
-    glass.classList.toggle('waiting', !needCoin && !run.busy);
+    glass.classList.toggle('waiting', has && !needCoin && !run.busy);
+    spinBtn.disabled = run.busy;
+    spinBtn.textContent = has ? '다른 친구 돌리기' : '돌림판 돌리기!';
     if (!run.busy) {
-      if (needCoin) setStep(1, '100원 동전을 눌러 넣어 주세요');
-      else setStep(st.coinOn ? 2 : 1, '갖고 싶은 인형을 콕! 눌러요');
+      if (!has) setStep('1', '돌림판을 돌려서 차례를 정해요');
+      else if (needCoin) setStep('2', '100원 동전을 눌러 넣어 주세요');
+      else if (run.tries > 0) setStep(st.coinOn ? '3' : '2', '다시 도전! 인형을 콕! 눌러요');
+      else setStep(st.coinOn ? '3' : '2', '엄마와 함께 인형을 콕! 눌러요');
     }
     renderFriends();
   }
 
+  function nudge(el) { el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); }
+
   /* ---------- coin ---------- */
   coin.addEventListener('click', () => {
     if (run.busy || run.paid) return;
+    if (st.turn === null) { nudge(spinBtn); setStep('1', '먼저 돌림판을 돌려요!'); return; }
     const from = coin.getBoundingClientRect(), to = $('slot').getBoundingClientRect();
     const fly = coin.cloneNode(true);
     fly.className = 'coin coin-fly'; fly.removeAttribute('id'); fly.setAttribute('aria-hidden', 'true');
@@ -649,25 +794,20 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
   /* ---------- the grab ---------- */
   async function pick(d, el) {
     if (run.busy) return;
-    if (st.coinOn && !run.paid) {
-      coin.classList.remove('shake'); void coin.offsetWidth; coin.classList.add('shake');
-      setStep(1, '먼저 동전을 넣어요!');
-      sfx.miss();
-      return;
-    }
+    if (st.turn === null) { nudge(spinBtn); setStep('1', '먼저 돌림판을 돌려요!'); sfx.tap(); return; }
+    if (st.coinOn && !run.paid) { nudge(coin); setStep('2', '먼저 동전을 넣어요!'); sfx.tap(); return; }
     run.busy = true; refresh();
-    const n = st.coinOn ? 3 : 2;
-    setStep(n, `집게가 ${josa(KINDS[d.kind].name, '을', '를')} 잡으러 가요…`);
+    const n = st.coinOn ? '3' : '2';
+    const dollName = KINDS[d.kind].name;
+    setStep(n, `집게가 ${josa(dollName, '을', '를')} 잡으러 가요…`);
     sfx.tap();
 
     const W = glass.clientWidth, H = glass.clientHeight;
-    // move over the doll
     const x0 = run.clawX, dur = 500 + Math.abs(d.x - x0) * 1100;
     sfx.motor(dur);
     await tween(dur, (p) => { run.clawX = lerp(x0, d.x, p); });
     run.open = true; render();
     await wait(300);
-    // go down
     const target = d.y - (HELD_OFF / 100) * W / H + 0.01;
     sfx.motor(900);
     await tween(900, (p) => { run.rope = lerp(REST_ROPE, target, p); });
@@ -678,44 +818,40 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
     el.classList.add('held');
     glass.classList.remove('waiting');
 
-    const slip = st.missOn && Math.random() < 0.3;
-    setStep(n, `${josa(KINDS[d.kind].name, '이', '가')} 집게에 매달렸어요!`);
+    const p = MISS_P[st.miss] || 0;
+    const slip = !(st.sure && run.tries > 0) && Math.random() < p;
+    run.tries++;
+    setStep(n, `${josa(dollName, '이', '가')} 집게에 매달렸어요!`);
     sfx.motor(1000);
     if (slip) {
-      await tween(600, (p) => { run.rope = lerp(target, (target + REST_ROPE) / 2, p); }, easeInOut);
+      await tween(650, (q) => { run.rope = lerp(target, (target + REST_ROPE) / 2, q); });
       const yNow = (run.rope * H + HELD_OFF / 100 * W) / H;
       run.held = null;
       run.open = true; render();
       el.classList.remove('held');
-      sfx.miss();
-      await tween(450, (p) => { el.style.top = (lerp(yNow, d.y, p) * 100) + 'cqh'; el.style.setProperty('--r', (d.r * p).toFixed(1) + 'deg'); }, easeIn);
+      await tween(450, (q) => { el.style.top = (lerp(yNow, d.y, q) * 100) + 'cqh'; el.style.setProperty('--r', (d.r * q).toFixed(1) + 'deg'); }, easeIn);
       el.style.zIndex = d.z;
-      setStep(n, '앗! 놓쳤어요. 한 번 더 해 봐요!');
+      sfx.miss();
       const r0 = run.rope;
-      await tween(500, (p) => { run.rope = lerp(r0, REST_ROPE, p); });
+      await tween(450, (q) => { run.rope = lerp(r0, REST_ROPE, q); });
       run.open = false;
       const x1 = run.clawX;
-      await tween(700, (p) => { run.clawX = lerp(x1, HOME_X, p); });
-      run.busy = false; refresh();
-      setStep(st.coinOn ? 2 : 1, '앗! 놓쳤어요. 다른 인형도 골라 봐요!');
+      await tween(700, (q) => { run.clawX = lerp(x1, HOME_X, q); });
+      showResult(false, st.turn, d.kind);
       return;
     }
-    await tween(1000, (p) => { run.rope = lerp(target, REST_ROPE, p); });
-    // carry to the chute
+    await tween(1000, (q) => { run.rope = lerp(target, REST_ROPE, q); });
     const x1 = run.clawX, carry = 600 + Math.abs(HOME_X - x1) * 1100;
     sfx.motor(carry);
-    await tween(carry, (p) => { run.clawX = lerp(x1, HOME_X, p); });
+    await tween(carry, (q) => { run.clawX = lerp(x1, HOME_X, q); });
     await wait(250);
-    // let go
     run.held = null;
     run.open = true; render();
     const y0 = (run.rope * H + HELD_OFF / 100 * W) / H;
     sfx.drop();
-    await tween(550, (p) => { el.style.top = (lerp(y0, 1.25, p) * 100) + 'cqh'; }, easeIn);
-    el.classList.add('gone');
+    await tween(550, (q) => { el.style.top = (lerp(y0, 1.25, q) * 100) + 'cqh'; }, easeIn);
     run.open = false; render();
 
-    // prize door + record
     const who = st.turn;
     st.prizes[who].push(d.kind);
     st.dolls = st.dolls.filter((x) => x.id !== d.id);
@@ -726,29 +862,47 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
     door.classList.remove('pop'); void door.offsetWidth; door.classList.add('pop');
     save();
     await wait(350);
-    showWin(who, d.kind);
+    showResult(true, who, d.kind);
   }
 
-  /* ---------- win ---------- */
-  function showWin(who, kind) {
-    const name = st.names[who];
-    $('win-doll').innerHTML = dollSVG(kind);
-    $('win-title').textContent = `${josa(name, '이', '가')} ${josa(KINDS[kind].name, '을', '를')} 뽑았어요!`;
-    const done = st.prizes.filter((p) => p.length).length;
-    $('win-sub').textContent = done === CLASS_SIZE ? '우리 반 친구 12명이 모두 인형을 뽑았어요. 짝짝짝!' : `${name} 바구니에 인형이 ${st.prizes[who].length}개 있어요.`;
-    $('win').hidden = false;
-    $('win-next').focus();
-    sfx.win();
-    confetti();
-    announce($('win-title').textContent);
+  /* ---------- result popups ---------- */
+  let resultOk = false;
+  function showResult(ok, who, kind) {
+    resultOk = ok;
+    const name = st.names[who], dollName = KINDS[kind].name;
+    const card = $('result-card');
+    card.className = 'result ' + (ok ? 'ok' : 'fail');
+    $('result-doll').innerHTML = dollSVG(kind);
+    if (ok) {
+      $('result-shout').textContent = '성공~~~!';
+      $('result-title').textContent = `${josa(name, '이', '가')} ${josa(dollName, '을', '를')} 뽑았어요!`;
+      const present = st.names.filter(Boolean).length;
+      const done = st.prizes.filter((pz, i) => pz.length && st.names[i]).length;
+      $('result-sub').textContent = done >= present ? '엄마와 힘을 합쳐서 성공했네요! 우리 반 친구 모두 성공했어요. 짝짝짝!' : '엄마와 힘을 합쳐서 성공했네요!';
+      $('result-btn').textContent = '다음 친구 돌림판 돌리기';
+      sfx.win(); confetti();
+    } else {
+      $('result-shout').textContent = '꽝~~!';
+      $('result-title').textContent = `이번에는 아쉽게도 ${josa(dollName, '을', '를')} 잡지 못했네요!`;
+      $('result-sub').textContent = st.sure ? `${name}, 다른 방법을 생각해 볼까요? 다시 도전하면 꼭 뽑을 수 있어요!` : `${name}, 다른 방법을 생각해 볼까요? 한 번 더 도전해요!`;
+      $('result-btn').textContent = '다시 도전!';
+    }
+    $('result').hidden = false;
+    $('result-btn').focus();
+    announce($('result-shout').textContent + ' ' + $('result-title').textContent);
   }
-  $('win-next').addEventListener('click', () => {
-    $('win').hidden = true;
-    st.turn = (st.turn + 1) % CLASS_SIZE;
-    run.paid = false;
+  $('result-btn').addEventListener('click', () => {
+    $('result').hidden = true;
     run.busy = false;
-    if (!st.dolls.length) { restock(); }
-    save(); refresh();
+    if (resultOk) {
+      st.turn = null; run.paid = false; run.tries = 0;
+      if (!st.dolls.length) restock();
+      drawWheel();
+      save(); refresh();
+      spinBtn.focus();
+    } else {
+      refresh();
+    }
   });
 
   /* ---------- restock ---------- */
@@ -756,7 +910,9 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
     st.dolls = freshDolls();
     drawDolls();
     sfx.restock();
-    dollsEl.querySelectorAll('.doll').forEach((b, i) => b.animate([{ transform: 'translate(-50%, -160%) rotate(0deg)', opacity: 0 }, { transform: `translate(-50%, -50%) rotate(${b.style.getPropertyValue('--r')})`, opacity: 1 }], { duration: (420 + i * 40) * SPEED, easing: 'cubic-bezier(.3,1.4,.5,1)' }));
+    if (!reduce) dollsEl.querySelectorAll('.doll').forEach((b, i) => b.animate(
+      [{ transform: 'translate(-50%, -130%) rotate(0deg)', opacity: 0 }, { transform: `translate(-50%, -50%) rotate(${b.style.getPropertyValue('--r')})`, opacity: 1 }],
+      { duration: 300, delay: i * 40, easing: 'cubic-bezier(0.23, 1, 0.32, 1)', fill: 'backwards' }));
     save();
   }
   $('restock').addEventListener('click', () => { if (!run.busy) restock(); });
@@ -767,7 +923,7 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
     if (reduce) return;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     cv.width = innerWidth * dpr; cv.height = innerHeight * dpr;
-    const colors = ['#F2665A', '#FFD45C', '#4FA77A', '#7CC6EE', '#F7A9B8', '#FFFFFF'];
+    const colors = ['#F2665A', '#FFD45C', '#2B7350', '#7CC6EE', '#F7A9B8', '#FFFFFF'];
     const parts = Array.from({ length: 140 }, () => ({
       x: innerWidth / 2 + (Math.random() - 0.5) * 120, y: innerHeight * 0.45,
       vx: (Math.random() - 0.5) * 16, vy: -Math.random() * 16 - 6, s: 6 + Math.random() * 8,
@@ -778,11 +934,11 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
       const t = now - t0;
       cx.setTransform(dpr, 0, 0, dpr, 0, 0);
       cx.clearRect(0, 0, innerWidth, innerHeight);
-      parts.forEach((p) => {
-        p.vy += 0.45; p.vx *= 0.99; p.x += p.vx; p.y += p.vy; p.a += p.va;
-        cx.save(); cx.translate(p.x, p.y); cx.rotate(p.a); cx.fillStyle = p.c;
+      parts.forEach((q) => {
+        q.vy += 0.45; q.vx *= 0.99; q.x += q.vx; q.y += q.vy; q.a += q.va;
+        cx.save(); cx.translate(q.x, q.y); cx.rotate(q.a); cx.fillStyle = q.c;
         cx.globalAlpha = Math.max(0, 1 - t / 2600);
-        cx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); cx.restore();
+        cx.fillRect(-q.s / 2, -q.s / 4, q.s, q.s / 2); cx.restore();
       });
       if (t < 2600) requestAnimationFrame(frame); else cx.clearRect(0, 0, innerWidth, innerHeight);
     };
@@ -793,13 +949,15 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
   const namesBox = $('names');
   st.names.forEach((_, i) => {
     const l = document.createElement('label');
-    l.innerHTML = `${i + 1}<input id="name-${i + 1}" maxlength="12" autocomplete="off">`;
+    l.innerHTML = `${i + 1}<input id="name-${i + 1}" maxlength="10" autocomplete="off">`;
     namesBox.appendChild(l);
   });
+  const resetBtn = $('btn-reset');
   function openSettings() {
     if (run.busy) return;
     st.names.forEach((nm, i) => { $('name-' + (i + 1)).value = nm; });
-    $('opt-coin').checked = st.coinOn; $('opt-sound').checked = st.soundOn; $('opt-miss').checked = st.missOn;
+    $('opt-miss').value = st.miss; $('opt-sure').checked = st.sure; $('opt-skip').checked = st.skipDone;
+    $('opt-coin').checked = st.coinOn; $('opt-sound').checked = st.soundOn;
     resetBtn.classList.remove('armed'); resetBtn.textContent = '뽑은 기록 모두 지우기';
     $('settings').hidden = false;
     $('name-1').focus();
@@ -807,20 +965,22 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
   $('btn-settings').addEventListener('click', openSettings);
   $('settings-form').addEventListener('submit', (e) => {
     e.preventDefault();
-    st.names = st.names.map((old, i) => $('name-' + (i + 1)).value.trim() || `${i + 1}번 친구`);
-    st.coinOn = $('opt-coin').checked; st.soundOn = $('opt-sound').checked; st.missOn = $('opt-miss').checked;
+    st.names = st.names.map((_, i) => $('name-' + (i + 1)).value.trim());
+    st.miss = $('opt-miss').value; st.sure = $('opt-sure').checked; st.skipDone = $('opt-skip').checked;
+    st.coinOn = $('opt-coin').checked; st.soundOn = $('opt-sound').checked;
+    if (st.turn !== null && !st.names[st.turn]) st.turn = null;
     $('settings').hidden = true;
+    drawWheel(); if (st.turn !== null) markWinner(st.turn);
     save(); refresh();
   });
-  const resetBtn = $('btn-reset');
   resetBtn.addEventListener('click', () => {
     if (!resetBtn.classList.contains('armed')) {
       resetBtn.classList.add('armed'); resetBtn.textContent = '정말 지울까요? 한 번 더 누르세요';
       return;
     }
-    st.prizes = defaults().prizes; st.turn = 0; run.paid = false;
+    st.prizes = defaults().prizes; st.turn = null; run.paid = false; run.tries = 0;
     resetBtn.classList.remove('armed'); resetBtn.textContent = '기록을 지웠어요';
-    restock(); refresh();
+    restock(); drawWheel(); refresh();
   });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('settings').hidden) $('settings').hidden = true; });
 
@@ -836,12 +996,14 @@ button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outli
   document.addEventListener('pointerdown', () => {
     if (lockTried) return; lockTried = true;
     try { navigator.wakeLock && navigator.wakeLock.request('screen').catch(() => {}); } catch (e) { /* ignore */ }
-  }, { once: false });
+  });
   function announce(t) { $('announce').textContent = t; }
 
   /* ---------- start ---------- */
   if (!Array.isArray(st.dolls) || !st.dolls.length) st.dolls = freshDolls();
   drawDolls();
+  drawWheel();
+  if (st.turn !== null) markWinner(st.turn);
   render();
   refresh();
 })();
