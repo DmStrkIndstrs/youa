@@ -463,23 +463,29 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     if (!koVoice) koVoice = ko[0] || null;
   }
   if (synth) { pickVoice(); try { synth.addEventListener('voiceschanged', pickVoice); } catch (e) { synth.onvoiceschanged = pickVoice; } }
-  function speak(text) {
+  // `parts` is one line or a list of recorded pieces played back to back (e.g. "사과는 천 원!" + "모두 삼천 원.").
+  // Pieces only play as recordings when every piece has one; otherwise the device voice reads them all,
+  // so a sentence never switches voices halfway.
+  function speak(parts) {
     if (!st.voiceOn) return;
-    const clean = String(text).replace(/[~…]/g, ' ').replace(/\s+/g, ' ').trim();
-    if (!clean) return;
+    const list = [].concat(parts).map((t) => String(t).replace(/[~…]/g, ' ').replace(/\s+/g, ' ').trim()).filter(Boolean);
+    if (!list.length) return;
     hush();
     const version = speechVersion;
-    if (VOICES[clean]) {
+    const whole = list.join(' ');
+    if (!list.every((t) => VOICES[t])) { deviceVoice(whole); return; }
+    const playFrom = (i) => {
+      if (i >= list.length || version !== speechVersion) return;
       try {
-        clip = new Audio(VOICES[clean]);
+        clip = new Audio(VOICES[list[i]]);
+        clip.addEventListener('ended', () => playFrom(i + 1));
         clip.play().catch(() => {
           // A canceled recording must not start speaking after a newer tap or mute.
-          if (version === speechVersion && st.voiceOn) deviceVoice(clean);
+          if (version === speechVersion && st.voiceOn) deviceVoice(list.slice(i).join(' '));
         });
-        return;
-      } catch (e) { /* fall through */ }
-    }
-    deviceVoice(clean);
+      } catch (e) { deviceVoice(list.slice(i).join(' ')); }
+    };
+    playFrom(0);
   }
   function deviceVoice(clean) {
     if (!synth) return;
@@ -1454,7 +1460,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   }
 
   let bubbleT = 0;
-  function say(text, el) {
+  function say(text, el, spoken) {
     if (!text) return;
     clearTimeout(bubbleT);
     bubble.hidden = true;
@@ -1473,7 +1479,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     bubble.style.setProperty('--ox', Math.max(26, Math.min(bw - 26, cx - left)) + 'px');
     bubble.style.animation = 'none'; void bubble.offsetWidth; bubble.style.animation = '';
     bubbleT = setTimeout(hideBubble, Math.max(2600, text.length * 160));
-    speak(text);
+    speak(spoken || text);
   }
   function hideBubble() { clearTimeout(bubbleT); bubble.hidden = true; }
   function nextLine(k, lines) {
@@ -1581,6 +1587,8 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   }
 
   const WON = ['', '천', '이천', '삼천', '사천', '오천', '육천', '칠천', '팔천', '구천', '만'];
+  // prices are shown as numbers but spoken (and recorded) as words: 3000 → "삼천 원"
+  const wonWord = (n) => `${WON[n / 1000]} 원`;
   const BUDGET = 10000;
   function useShop(el, k, o) {
     const cartEl = roomSvg.querySelector('[data-k="cart"]');
@@ -1588,7 +1596,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     if (k[0] === 'm') return payBill(el, o);
     if (k === 'pay') {
       if (!state.n) { sfx.hello(); say(o.money ? '갖고 싶은 물건을 골라 보세요. 가격표를 잘 보세요!' : '무엇을 살까요? 먹고 싶은 것을 골라 보세요.', el); return; }
-      if (o.money) { sfx.hello(); openPay(); say(`모두 ${state.total}원이에요. 돈을 내 주세요!`, el); return; }
+      if (o.money) { sfx.hello(); openPay(); say(`모두 ${state.total}원이에요. 돈을 내 주세요!`, el, `모두 ${wonWord(state.total)}이에요. 돈을 내 주세요!`); return; }
       sfx.pay();
       say(`삑삑! 모두 ${count(state.n)} 개, 고맙습니다!`, el);
       state.n = 0; state.picked = []; renderCart(o);
@@ -1596,7 +1604,8 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     }
     if (k === 'cart') {
       sfx.tap();
-      say(state.n ? (o.money ? `${o.basket ? '바구니' : '장바구니'}에 ${count(state.n)} 개, 모두 ${state.total}원!` : `장바구니에 모두 ${count(state.n)} 개 있어요.`) : '아직 비어 있어요. 물건을 눌러 담아요!', el);
+      if (!state.n) say('아직 비어 있어요. 물건을 눌러 담아요!', el);
+      else say(`모두 ${state.total}원어치 담았어요!`, el, `모두 ${wonWord(state.total)}어치 담았어요!`);
       return;
     }
     const i = +k.slice(1);
@@ -1605,7 +1614,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     state.n++; state.total += price; state.picked.push(o.items[i]);
     sfx.cart();
     const name = o.names[i];
-    say(o.money ? `${josa(name, '은', '는')} ${price}원! 모두 ${state.total}원.` : `${name}! 장바구니에 모두 ${count(state.n)} 개.`, el);
+    say(`${josa(name, '은', '는')} ${price}원! 모두 ${state.total}원.`, el, [`${josa(name, '은', '는')} ${wonWord(price)}!`, `모두 ${wonWord(state.total)}.`]);
     flyTo(el, cartEl, o.items[i], () => renderCart(o));
   }
   // a 1000-won bill, like the one the claw game takes
@@ -1634,7 +1643,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     tone(1320, 0.08, { type: 'square', vol: 0.05 });
     if (state.paid < state.total) { say(`${WON[state.paid / 1000]} 원!`, el); return; }
     sfx.pay();
-    say(`${WON[state.paid / 1000]} 원! 딱 맞게 냈어요. 고맙습니다!`, $('tray').parentNode.querySelector('#paid-n') || el);
+    say(`${WON[state.paid / 1000]} 원! 딱 맞게 냈어요. 고맙습니다!`, $('tray').parentNode.querySelector('#paid-n') || el, [`${WON[state.paid / 1000]} 원!`, '딱 맞게 냈어요. 고맙습니다!']);
     setTimeout(() => { closePay(); state.n = 0; state.total = 0; state.picked = []; renderCart(o); }, 2200);
   }
   function renderCart(o) {
