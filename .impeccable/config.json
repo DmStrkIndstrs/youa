@@ -91,7 +91,7 @@
           "town/src/app.html"
         ],
         "createdAt": "2026-10-05T15:20:22.622Z",
-        "reason": "Claude: tool only supports file scope; the flagged box is the yellow sticky-note hint pinned to the bulletin board header, the same paper-tag anatomy as the 새들1반 plaque"
+        "reason": "Claude: tool only supports file scope; the flagged box is the one-time '건물을 눌러 보세요!' pop-up note over the map (fades after a few seconds), the same paper-tag anatomy as the 새들1반 plaque"
       },
       {
         "rule": "nested-cards",
@@ -100,7 +100,7 @@
           "index.html"
         ],
         "createdAt": "2026-10-05T15:20:23.543Z",
-        "reason": "Claude: tool only supports file scope; the flagged box is the yellow sticky-note hint pinned to the bulletin board header, the same paper-tag anatomy as the 새들1반 plaque"
+        "reason": "Claude: tool only supports file scope; the flagged box is the one-time '건물을 눌러 보세요!' pop-up note over the map (fades after a few seconds), the same paper-tag anatomy as the 새들1반 plaque"
       }
     ]
   }

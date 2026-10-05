@@ -142,25 +142,31 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   white-space: nowrap;
 }
 .plaque-hole { flex: none; width: .5em; height: .5em; border: 2px solid var(--ink); border-radius: 50%; background: var(--birch-lo); }
-.hint {
+.toast {
   position: absolute;
-  right: calc(clamp(10px, 1.8vmin, 24px) + 2 * clamp(44px, 5.4vmin, 60px) + 3 * clamp(8px, 1.2vmin, 14px));
-  top: 50%;
-  margin: 0;
+  left: 50%;
+  top: 46%;
+  z-index: 5;
   display: inline-flex;
   align-items: center;
-  gap: .35em;
-  padding: .3em .7em .34em .5em;
+  gap: .4em;
+  margin: 0;
+  padding: .45em .9em .5em .6em;
   background: #FFF3B0;
-  border: 3px solid var(--ink);
-  border-radius: 10px;
-  font-size: clamp(1rem, 2.4vmin, 1.7rem);
+  border: 4px solid var(--ink);
+  border-radius: 22px;
+  font-size: clamp(1.5rem, 5vmin, 3.4rem);
   line-height: 1.1;
   white-space: nowrap;
-  transform: translateY(-30%) rotate(2deg);
+  box-shadow: var(--depth-2);
+  pointer-events: none;
+  transform: translate(-50%, -50%) rotate(-2deg);
+  animation: toast-in .5s var(--ease-spring);
+  transition: opacity .35s var(--ease-out), transform .35s var(--ease-out);
 }
-.hint svg { width: 1.1em; height: 1.4em; }
-@media (max-width: 1180px) { .hint { display: none; } }
+.toast.out { opacity: 0; transform: translate(-50%, -50%) rotate(-2deg) scale(.9); }
+.toast svg { width: 1em; height: 1.3em; }
+@keyframes toast-in { from { opacity: 0; transform: translate(-50%, -50%) rotate(-2deg) scale(.6); } }
 .knobs { position: absolute; right: clamp(10px, 1.8vmin, 24px); top: 50%; transform: translateY(-30%); display: flex; gap: clamp(8px, 1.2vmin, 14px); }
 .knob {
   width: clamp(44px, 5.4vmin, 60px);
@@ -312,7 +318,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
 @keyframes hop { 0%, 100% { transform: translateY(0); } 20% { transform: translateY(-50px); } 40% { transform: translateY(0); } 58% { transform: translateY(-26px); } 74% { transform: translateY(0); } 86% { transform: translateY(-8px); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .bulb, .beckon, .flash .lamp-a, .flash .lamp-b, .spraying .spray circle, .ring .swing, .boing, .bubble, .hopping .hop { animation: none; }
+  .toast, .bulb, .beckon, .flash .lamp-a, .flash .lamp-b, .spraying .spray circle, .ring .swing, .boing, .bubble, .hopping .hop { animation: none; }
   .flash .lamp, .spraying .spray circle { opacity: 1; }
   .bld, .pull, .door, .night, .stars { transition: none; }
 }
@@ -335,7 +341,6 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       <div class="bunting" id="bunting" aria-hidden="true"></div>
       <div class="plaque"><span class="plaque-hole" aria-hidden="true"></span><span>새들1반</span></div>
       <h1 class="title" id="title" aria-label="우리동네 최고"></h1>
-      <div class="hint"><svg viewBox="0 0 48 64" aria-hidden="true"><path d="M14 2c3 0 5 2 5 5v14l3-1c3-1 6 1 6 4v4l3-1c3-1 6 1 6 4v3l2-.5c3-.6 5 1.5 5 4.5v6c0 9-7 16-16 16h-4c-6 0-10-3-13-8L3 37c-1.6-2.6 0-6 3-6.2 1.6 0 3 .8 4 2l-1-1V7c0-3 2-5 5-5z" fill="#fff" stroke="#34264A" stroke-width="3" stroke-linejoin="round"/></svg>건물을 눌러 보세요!</div>
       <div class="knobs">
         <button class="knob" id="btn-sound" type="button" aria-label="소리" aria-pressed="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="#34264A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="#34264A"/><path class="on" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="off" d="M16 9.5l5 5M21 9.5l-5 5"/></svg>
@@ -346,6 +351,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       </div>
     </header>
     <main class="map-wrap" id="map-wrap">
+      <p class="toast" id="toast" role="status" hidden><svg viewBox="0 0 48 64" aria-hidden="true"><path d="M14 2c3 0 5 2 5 5v14l3-1c3-1 6 1 6 4v4l3-1c3-1 6 1 6 4v3l2-.5c3-.6 5 1.5 5 4.5v6c0 9-7 16-16 16h-4c-6 0-10-3-13-8L3 37c-1.6-2.6 0-6 3-6.2 1.6 0 3 .8 4 2l-1-1V7c0-3 2-5 5-5z" fill="#fff" stroke="#34264A" stroke-width="3" stroke-linejoin="round"/></svg>건물을 눌러 보세요!</p>
       <svg id="map" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" role="group" aria-label="우리동네 약도">
         <g id="roads" aria-hidden="true"></g>
         <g id="decor"></g>
@@ -1025,7 +1031,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
           Rp(1280, 430, 120, 28, '#fff', 8, 4) + `<rect class="lamp lamp-a" x="1284" y="434" width="56" height="20" rx="6" fill="#FF3B3B"/><rect class="lamp lamp-b" x="1340" y="434" width="56" height="20" rx="6" fill="#FFD84D"/>` +
           T(900, 520, 72, '119', '#fff', 't', `stroke="${INK}" stroke-width="8" paint-order="stroke"`) +
           C(740, 670, 50, DARK, 6) + C(740, 670, 18, '#ccc', 0) + C(1300, 670, 50, DARK, 6) + C(1300, 670, 18, '#ccc', 0) + glowRect(604, 340, 852, 390));
-        s += thing('ff', '소방관', doll('keroppi', 1440, 380, 150, HAT.fire) + glowRect(1430, 360, 160, 190));
+        s += thing('ff', '소방관', doll('keroppi', 1448, 545, 150, HAT.fire) + glowRect(1438, 520, 160, 190));
         return s;
       },
       things: {
@@ -1112,7 +1118,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
           Rp(560, 290, 140, 30, '#FFC83D', 8, 5) + P('M690 300 Q760 300 820 470 Q880 660 1000 690 L1000 720 Q860 710 800 520 Q760 360 690 330Z', '#FF94B8', 5) +
           `<g id="slider">${doll('cinnamoroll', 600, 180, 120)}</g>` + glowRect(550, 170, 470, 560));
         s += thing('easel', '그림판', `<path d="M1330 720 L1400 260 M1520 720 L1450 260 M1425 300 V720" stroke="#B9805A" stroke-width="12" stroke-linecap="round"/>` + Rp(1290, 270, 270, 220, '#fff', 8, 5) + `<g id="art">${artSVG(0)}</g>` + glowRect(1280, 250, 290, 480));
-        s += thing('teacher', '선생님', doll('purin', 1080, 400, 220) + glowRect(1080, 380, 220, 260));
+        s += thing('teacher', '선생님', doll('purin', 1080, 470, 220) + glowRect(1080, 450, 220, 260));
         return s;
       },
       things: {
@@ -1136,7 +1142,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
         s += Rp(560, 600, 280, 40, '#BBA3F5', 16, 5) + Rp(690, 640, 20, 70, '#8E95A4', 4, 4) + Rp(620, 700, 160, 16, '#8E95A4', 8, 4);
         s += thing('cust', '손님', Rp(580, 420, 240, 190, '#BBA3F5', 24, 5) + `<rect x="580" y="420" width="240" height="190" rx="24" fill="url(#crayon)"/>` + `<g id="cust">${doll('bear', 590, 360, 220)}</g>` + glowRect(570, 340, 260, 280));
         // hairdresser with the tools
-        s += thing('stylist', '미용사', doll('kitty', 960, 330, 240, `<path d="M34 74 H66 L64 102 H36 Z" fill="#fff" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/>`) + glowRect(950, 320, 260, 290));
+        s += thing('stylist', '미용사', doll('kitty', 960, 448, 240, `<path d="M34 74 H66 L64 102 H36 Z" fill="#fff" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/>`) + glowRect(950, 436, 260, 280));
         s += Rp(1250, 470, 300, 30, '#D6AE72', 6, 5) + Rp(1270, 500, 260, 210, '#F7E2BB', 8, 5);
         s += thing('scissors', '가위', `<g transform="translate(1300 420) rotate(-20)">${C(-22, 22, 16, '#FF94B8', 5)}${C(22, 22, 16, '#FF94B8', 5)}<path d="M-12 10 L30 -46 M12 10 L-30 -46" stroke="${INK}" stroke-width="8" stroke-linecap="round"/></g>` + glowRect(1250, 350, 110, 120));
         s += thing('dryer', '드라이기', Rp(1380, 380, 120, 60, '#74C4F2', 30, 5) + Rp(1400, 430, 34, 60, '#74C4F2', 10, 5) + C(1380, 410, 22, '#fff', 5) +
@@ -1156,7 +1162,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     },
     mart: { wall: '#FFF0DC', shop: { items: ['apple', 'banana', 'carrot', 'milk', 'bread', 'grape', 'melon', 'egg'], names: ['사과', '바나나', '당근', '우유', '빵', '포도', '수박', '달걀'], clerk: 'purin', money: false } },
     fruit: { wall: '#EEF7DF', shop: { items: ['apple', 'banana', 'grape', 'melon', 'berry', 'orange'], names: ['사과', '바나나', '포도', '수박', '딸기', '귤'], clerk: 'keroppi', money: false, crates: true } },
-    daiso: { wall: '#FDE8E8', shop: { items: ['pencil', 'note', 'balloon', 'pin', 'cup', 'ball'], names: ['연필', '공책', '풍선', '머리핀', '컵', '공'], clerk: 'pochacco', money: true } },
+    daiso: { wall: '#FDE8E8', shop: { items: ['pencil', 'note', 'balloon', 'pin', 'cup', 'ball'], names: ['연필', '공책', '풍선', '머리핀', '컵', '공'], clerk: 'pochacco', money: true, prices: [1000, 2000, 1000, 2000, 3000, 5000] } },
     hansung: { wall: '#CDEAFB', apt: { body: '#BBA3F5', walls: ['#FFF1D6', '#E5DBFD', '#FFE0EC'], kinds: ['purin', 'cinnamoroll', 'pochacco'], blanket: '#FF94B8', floor: 5 } },
     onette: { wall: '#CDEAFB', apt: { body: '#FF9A5C', walls: ['#FFF6CC', '#DDF3E4', '#E5F1FF'], kinds: ['melody', 'kuromi', 'keroppi'], blanket: '#86CF6E', floor: 3 } },
     gold: { wall: '#CDEAFB', apt: { body: '#F6C744', walls: ['#FFF1D6', '#FBE7C6', '#E8DEFF'], kinds: ['bear', 'kitty', 'cinnamoroll'], blanket: '#BBA3F5', floor: 12 } },
@@ -1189,7 +1195,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       const row = Math.floor(i / per), col = i % per;
       const x = 100 + col * (820 / per), y = 220 + row * 190;
       s += thing('i' + i, o.names[i], ITEM_AT(k, x, y, 140) +
-        (o.money ? Rp(x + 30, y + 150, 84, 30, '#FFE07A', 6, 3) + T(x + 72, y + 173, 22, '1000원') : '') + glowRect(x - 6, y - 6, 152, o.money ? 192 : 156));
+        (o.money ? Rp(x + 30, y + 150, 84, 30, '#FFE07A', 6, 3) + T(x + 72, y + 173, 22, `${o.prices[i]}원`) : '') + glowRect(x - 6, y - 6, 152, o.money ? 192 : 156));
     });
     return s + cartAndCounter(o);
   }
@@ -1227,7 +1233,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   function openRoom(id, fromEl) {
     const b = byId[id], def = ROOMS[id];
     current = id;
-    state = { n: 0, picked: [], sig: 0, blocks: 1, art: 0, lines: {} };
+    state = { n: 0, total: 0, picked: [], sig: 0, blocks: 1, art: 0, lines: {} };
     let svg;
     roomSvg.classList.remove('is-night');
     if (def.apt) svg = aptHome(b, def.apt);
@@ -1410,27 +1416,62 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     }
   }
 
+  const WON = ['', '천', '이천', '삼천', '사천', '오천', '육천', '칠천', '팔천', '구천', '만'];
+  const BUDGET = 10000;
   function useShop(el, k, o) {
     const cartEl = roomSvg.querySelector('[data-k="cart"]');
+    if (k === 'pclose') { closePay(); sfx.back(); return; }
+    if (k[0] === 'm') return payBill(el, o);
     if (k === 'pay') {
-      if (!state.n) { sfx.hello(); say(o.money ? '갖고 싶은 물건을 골라 보세요. 모두 1000원이에요!' : '무엇을 살까요? 먹고 싶은 것을 골라 보세요.', el); return; }
+      if (!state.n) { sfx.hello(); say(o.money ? '갖고 싶은 물건을 골라 보세요. 가격표를 잘 보세요!' : '무엇을 살까요? 먹고 싶은 것을 골라 보세요.', el); return; }
+      if (o.money) { sfx.hello(); openPay(); say(`모두 ${state.total}원이에요. 돈을 내 주세요!`, el); return; }
       sfx.pay();
-      say(o.money ? `삑! 모두 ${state.n * 1000}원이에요. 고맙습니다!` : `삑삑! 모두 ${count(state.n)} 개, 고맙습니다!`, el);
+      say(`삑삑! 모두 ${count(state.n)} 개, 고맙습니다!`, el);
       state.n = 0; state.picked = []; renderCart(o);
       return;
     }
     if (k === 'cart') {
       sfx.tap();
-      say(state.n ? (o.money ? `바구니에 ${count(state.n)} 개, 모두 ${state.n * 1000}원!` : `장바구니에 모두 ${count(state.n)} 개 있어요.`) : '아직 비어 있어요. 물건을 눌러 담아요!', el);
+      say(state.n ? (o.money ? `바구니에 ${count(state.n)} 개, 모두 ${state.total}원!` : `장바구니에 모두 ${count(state.n)} 개 있어요.`) : '아직 비어 있어요. 물건을 눌러 담아요!', el);
       return;
     }
     const i = +k.slice(1);
-    if (state.n >= 10) { sfx.tap(); say(o.money ? '바구니가 꽉 찼어요! 계산대로 가요.' : '장바구니가 꽉 찼어요! 계산대로 가요.', el); return; }
-    state.n++; state.picked.push(o.items[i]);
+    const price = o.money ? o.prices[i] : 0;
+    if (state.n >= 10 || state.total + price > BUDGET) { sfx.tap(); say(o.money ? '돈이 모자라요! 이제 계산대로 가요.' : '장바구니가 꽉 찼어요! 계산대로 가요.', el); return; }
+    state.n++; state.total += price; state.picked.push(o.items[i]);
     sfx.cart();
     const name = o.names[i];
-    say(o.money ? `${josa(name, '은', '는')} 1000원! 모두 ${state.n * 1000}원.` : `${name}! 장바구니에 모두 ${count(state.n)} 개.`, el);
+    say(o.money ? `${josa(name, '은', '는')} ${price}원! 모두 ${state.total}원.` : `${name}! 장바구니에 모두 ${count(state.n)} 개.`, el);
     flyTo(el, cartEl, o.items[i], () => renderCart(o));
+  }
+  // a 1000-won bill, like the one the claw game takes
+  function bill(x, y, w = 170, h = 86) {
+    return Rp(x, y, w, h, '#8EC3F0', 8, 4) + `<rect x="${x + 7}" y="${y + 7}" width="${w - 14}" height="${h - 14}" rx="5" fill="none" stroke="#fff" stroke-width="3" opacity=".8"/>` +
+      C(x + h * .32, y + h / 2, h * .2, '#DDEEFB', 3) + T(x + w * .62, y + h * .62, h * .3, '1000원', INK);
+  }
+  function openPay() {
+    state.paid = 0;
+    let s = `<g id="paypanel"><rect x="-1200" y="-600" width="4000" height="2100" fill="${INK}" opacity=".4"/>` +
+      Rp(250, 60, 1100, 790, '#fff', 30, 6) + T(800, 140, 56, `모두 ${state.total}원이에요`) +
+      Rp(330, 180, 940, 250, '#FFF3B0', 18, 4) + `<g id="tray"></g>` + T(800, 490, 46, '낸 돈: 0원', INK, 't', 'id="paid-n"') +
+      T(800, 545, 28, '지갑에서 1000원을 하나씩 눌러 내요', '#5B4D6E');
+    for (let i = 0; i < 10; i++) s += thing('m' + i, '1000원', bill(330 + (i % 5) * 190, 580 + Math.floor(i / 5) * 116) + glowRect(324 + (i % 5) * 190, 574 + Math.floor(i / 5) * 116, 182, 98));
+    s += thing('pclose', '그만하기', Rp(1166, 80, 160, 56, '#E5DBFD', 28, 4) + T(1246, 118, 28, '그만하기') + glowRect(1160, 74, 172, 68));
+    roomSvg.insertAdjacentHTML('beforeend', s + '</g>');
+  }
+  function closePay() { const p = $('paypanel'); if (p) p.remove(); state.paying = false; }
+  function payBill(el, o) {
+    if (state.paid >= state.total) return;
+    state.paid += 1000;
+    const j = state.paid / 1000 - 1;
+    el.style.visibility = 'hidden';
+    $('tray').insertAdjacentHTML('beforeend', bill(350 + (j % 5) * 182, 196 + Math.floor(j / 5) * 116));
+    $('paid-n').textContent = `낸 돈: ${state.paid}원`;
+    tone(1320, 0.08, { type: 'square', vol: 0.05 });
+    if (state.paid < state.total) { say(`${WON[state.paid / 1000]} 원!`, el); return; }
+    sfx.pay();
+    say(`${WON[state.paid / 1000]} 원! 딱 맞게 냈어요. 고맙습니다!`, $('tray').parentNode.querySelector('#paid-n') || el);
+    setTimeout(() => { closePay(); state.n = 0; state.total = 0; state.picked = []; renderCart(o); }, 2200);
   }
   function renderCart(o) {
     const pile = $('pile'); if (!pile) return;
@@ -1542,6 +1583,18 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   build();
   paintSound();
   fit();
+  // Say how to play once per visit, then get out of the way.
+  (function hint() {
+    let seen = false;
+    try { seen = sessionStorage.getItem('town-hint') === '1'; sessionStorage.setItem('town-hint', '1'); } catch (e) { /* ignore */ }
+    if (seen) return;
+    const t = $('toast');
+    t.hidden = false;
+    let gone = false;
+    const hide = () => { if (gone) return; gone = true; t.classList.add('out'); setTimeout(() => { t.hidden = true; }, 380); };
+    setTimeout(hide, 3600);
+    document.addEventListener('pointerdown', hide, { once: true });
+  })();
   if (!reduce) requestAnimationFrame(loop);
 })();
 </script>
