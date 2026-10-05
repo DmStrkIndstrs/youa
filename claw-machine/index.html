@@ -729,7 +729,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
             <span class="g-name" id="g-name"></span>
             <span class="g-hello">손님, 어서 오세요!</span>
           </div>
-          <p class="g-roles" style="margin:0">엄마는 기계 도우미, 친구들은 응원단!</p>
+          <p class="g-roles" style="margin:0">친구들은 응원단, 다 같이 응원해요!</p>
           <button class="swap" id="swap" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg>
             <span id="swap-label">다른 친구로</span>
@@ -1529,7 +1529,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
     run.phase = 'play';
     refresh();
     const who = st.turn, dn = KINDS[d.kind];
-    setLED(`집게가 ${josa(dn, '을', '를')} 잡으러 가요`, '엄마랑 같이 지켜봐요!');
+    setLED(`집게가 ${josa(dn, '을', '를')} 잡으러 가요`, '다 같이 지켜봐요!');
     sfx.tap();
     const x0 = run.clawX, dur = 500 + Math.abs(d.x - x0) * 1100;
     sfx.motor(dur);
@@ -1608,10 +1608,10 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
       dollBox.className = 'b-doll';
       dollBox.innerHTML = dollSVG(kind);
       title.innerHTML = `<span class="b-name">${esc(name(who))}</span><span class="b-line">${esc(josa(KINDS[kind], '을', '를'))} 뽑았어요!</span>`;
-      sub.textContent = '엄마와 힘을 합쳐서 성공했네요!';
+      sub.textContent = '친구들이 응원해서 성공했네요!';
       btn.textContent = '내 사물함에 넣기!';
       sfx.win();
-      announce(`성공! ${name(who)} 손님이 ${josa(KINDS[kind], '을', '를')} 뽑았어요. 엄마와 힘을 합쳐서 성공했네요!`);
+      announce(`성공! ${name(who)} 손님이 ${josa(KINDS[kind], '을', '를')} 뽑았어요. 친구들이 응원해서 성공했네요!`);
     } else if (mode === 'miss') {
       dollBox.className = 'b-doll';
       dollBox.innerHTML = dollSVG(kind);
@@ -1623,7 +1623,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
       dollBox.className = 'b-roll';
       dollBox.innerHTML = present().map((i) => { const p = st.prizes[i]; return `<figure>${dollSVG(p[p.length - 1])}<figcaption>${esc(name(i))}</figcaption></figure>`; }).join('');
       title.innerHTML = `<span class="b-name">${esc(st.className)} 친구들</span><span class="b-line">모두 인형을 뽑았어요!</span>`;
-      sub.textContent = '엄마와 힘을 합쳐서 모두 성공했네요! 짝짝짝!';
+      sub.textContent = '다 같이 힘을 모아 모두 성공했네요! 짝짝짝!';
       btn.textContent = '사물함 구경하기';
       sfx.fanfare();
       announce(`${st.className} 친구들 모두 성공했어요!`);

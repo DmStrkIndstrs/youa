@@ -20,7 +20,7 @@ delegated: static single-file HTML/CSS/JS with no build step, so the teacher can
   - The other children play 가게 주인 (shopkeeper), 응원단 (cheer squad) and 다음 손님 (next customer).
   - Most cannot read yet *(inferred from age)*.
   - Age is unresolved: the lesson plan says 4세 and the user said 6세.
-- **The mothers.** Each mother sits beside her child as the 기계 도우미 (machine helper) and watches from classroom distance.
+- **Parents (may or may not take part).** The lesson plan pairs each child with their mother as the 기계 도우미 (machine helper), but the user said mothers may not join in. On-screen copy must not assume a parent is there.
 
 ## Product Purpose
 
@@ -44,7 +44,7 @@ delegated: static single-file HTML/CSS/JS with no build step, so the teacher can
 - **Audience:** viewers sit 2–4 m away, including parents at the back.
 - **Network:** may be restricted. Web fonts can fail to load.
 - **Lines from the plan:**
-  - Success: "엄마와 힘을 합쳐서 성공했네요!" ("You did it by joining forces with mum!")
+  - Success: "엄마와 힘을 합쳐서 성공했네요!" ("You did it by joining forces with mum!"). This is the teacher's spoken line only. On screen it is replaced by class-cheer wording at the user's request.
   - Failure: "이번에는 아쉽게도 … 잡지 못했네요! 다른 방법을 생각해 볼까요?" ("Unfortunately you couldn't catch it this time! Shall we think of another way?")
   - After a failure, give the child another chance.
 
@@ -74,7 +74,7 @@ delegated: static single-file HTML/CSS/JS with no build step, so the teacher can
 
 ## Product Principles
 
-1. **Every child succeeds with mum.** A miss is a beat in the story, never the ending.
+1. **Every child succeeds, cheered on by the class.** A miss is a beat in the story, never the ending. The copy never assumes a parent is helping.
 2. **One thing at a time for pre-readers.** Each moment has one obvious target, cued by picture and motion, not text alone.
 3. **The teacher stays in control.** Nothing a child can tap may steal a turn or reset the game.
 4. **Readable from the back of the room.** Names and outcomes are legible at classroom distance on a shared screen.
