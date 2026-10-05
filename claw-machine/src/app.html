@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>우리 동네 인형뽑기 가게</title>
+<meta name="description" content="새들1반 가게 놀이: 돌림판으로 차례를 정하고 인형뽑기 기계로 인형을 뽑아 내 사물함에 넣어요.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23EF4F7A'/%3E%3Cpath d='M44 34C28 44 24 62 34 80M56 34C72 44 76 62 66 80' fill='none' stroke='%2334264A' stroke-width='12' stroke-linecap='round'/%3E%3Crect x='32' y='12' width='36' height='24' rx='9' fill='%23FFC83D' stroke='%2334264A' stroke-width='6'/%3E%3C/svg%3E">
 <style id="font-faces">/*@@FONTS@@*/</style>
 <style>
 /* One piece of classroom furniture seen front-on: a birch-ply unit whose
@@ -40,7 +42,7 @@
   --ring: clamp(6px, .8vmin, 10px);
   --depth-1: 0 2px 3px rgba(52, 38, 74, .16), 0 8px 18px rgba(52, 38, 74, .14);
   --depth-2: 0 3px 6px rgba(52, 38, 74, .2), 0 18px 34px rgba(52, 38, 74, .2);
-  --ply: inset 0 0 0 calc(var(--ring) * .25) var(--ply-dark), inset 0 0 0 calc(var(--ring) * .5) var(--ply-light), inset 0 0 0 calc(var(--ring) * .75) var(--ply-dark), inset 0 0 0 var(--ring) var(--birch-hi);
+  --ply: inset 0 0 0 1.5px var(--ply-dark), inset 0 0 0 calc(var(--ring) * .45) var(--ply-light), inset 0 0 0 calc(var(--ring) * .45 + 1.5px) var(--ply-dark), inset 0 0 0 var(--ring) var(--birch-hi);
   --recess: inset 0 calc(var(--ring) + 14px) 18px -14px rgba(52, 38, 74, .34), inset calc(var(--ring) + 12px) 0 16px -14px rgba(52, 38, 74, .2);
 }
 * { box-sizing: border-box; }
@@ -69,7 +71,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
   grid-template-rows: auto minmax(0, 1fr);
   padding: var(--ring);
   border-radius: 24px;
-  background: linear-gradient(180deg, var(--birch-hi) 0%, var(--birch) 60%, var(--birch-lo) 140%);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .32' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .3 0 0 0 0 .15 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)' opacity='.16'/%3E%3C/svg%3E"), linear-gradient(180deg, var(--birch-hi) 0%, var(--birch) 60%, var(--birch-lo) 140%);
   box-shadow: var(--ply), var(--depth-2);
 }
 .rail {
@@ -80,7 +82,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
   gap: 2vmin;
   padding: clamp(10px, 1.5vmin, 20px) clamp(14px, 2.4vmin, 30px);
   border-radius: 16px;
-  background: linear-gradient(180deg, #FAE9CA, var(--birch) 95%);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .32' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .3 0 0 0 0 .15 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)' opacity='.16'/%3E%3C/svg%3E"), linear-gradient(180deg, #FAE9CA, var(--birch) 95%);
   box-shadow: var(--ply);
 }
 .plaque {
@@ -121,8 +123,8 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
   background: var(--p);
   color: var(--ink);
   border: 3px solid var(--ink);
-  border-radius: .2em;
-  box-shadow: inset 0 0 0 .07em rgba(255, 255, 255, .85), var(--depth-1);
+  border-radius: var(--cutr, .18em .3em .22em .26em / .28em .2em .32em .2em);
+  box-shadow: var(--depth-1);
   transform: rotate(var(--t));
 }
 .cut.space { margin-left: .3em; }
@@ -165,7 +167,8 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
   padding: calc(var(--ring) + 1.8vmin) calc(var(--ring) + 1.8vmin) calc(var(--ring) + 2.2vmin);
 }
 .spinner { flex: 1 1 0; min-height: 0; display: flex; justify-content: center; align-items: center; }
-#wheel { display: block; width: 100%; height: 100%; overflow: visible; cursor: pointer; }
+#wheel { display: block; width: 100%; height: 100%; overflow: visible; cursor: grab; touch-action: none; }
+[data-phase="spin"] #wheel { cursor: default; }
 .lbl-ch { font-family: var(--font-ui); font-size: 25px; fill: var(--ink); }
 #wheel-labels { transition: opacity 140ms var(--ease-out); }
 #wheel-labels.fading { opacity: 0; }
@@ -211,7 +214,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
   padding: 1em 1.2em;
   background: linear-gradient(160deg, var(--paper) 58%, #F2EFF6);
   border: 3.5px solid var(--ink);
-  border-radius: 22px;
+  border-radius: .9em;
   box-shadow: var(--depth-2);
   font-size: clamp(.9rem, min(2vmin, 1.25vw), 1.45rem);
   line-height: 1.12;
@@ -221,9 +224,10 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
 .slot.seated .guest { display: grid; }
 .slot:not(.seated) .guest { display: none; }
 .guest.in { opacity: 1; }
+.guest::before { content: ""; position: absolute; top: -.62em; left: 50%; width: 1em; height: 1em; margin-left: -.5em; border: 3px solid var(--ink); border-radius: 50%; background: var(--birch-lo); }
 .guest .disc { width: 4.8em; height: 4.8em; border-width: 3px; }
 .g-who { min-width: 0; display: grid; gap: .25em; }
-.g-name { font-size: 3.5em; line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.g-name { font-size: 3.5em; line-height: 1; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .g-hello { font-size: 1.45em; }
 .g-roles { grid-column: 1 / -1; font-size: 1.08em; color: var(--ink-soft); }
 .swap {
@@ -247,10 +251,13 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
 /* ---------- the machine ---------- */
 .machine-hole {
   --back: #E8DEFF;
+  --mat-h: clamp(26px, 6vmin, 62px);
   display: grid;
-  place-items: center;
+  place-items: end center;
   padding: calc(var(--ring) + 2vmin);
+  padding-bottom: calc(var(--ring) + var(--mat-h) * .5);
 }
+.mat { position: absolute; left: var(--ring); right: var(--ring); bottom: var(--ring); width: calc(100% - 2 * var(--ring)); height: var(--mat-h); border-radius: 0 0 8px 8px; }
 .machine { position: relative; display: flex; flex-direction: column; width: 420px; height: 583px; --mw: 420px; }
 .crown { position: relative; z-index: 2; display: block; width: 100%; height: auto; margin-bottom: -3px; overflow: visible; }
 .crown-text { font-family: var(--font-sign); font-size: 31px; fill: var(--sun); }
@@ -329,7 +336,8 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
   transform-origin: 50% 50%;
   will-change: transform;
 }
-.doll-art { display: block; width: 100%; height: 100%; }
+.doll-art { display: block; width: 100%; height: 100%; transition: transform 160ms var(--ease-out); }
+.doll.pressed .doll-art { transform: scale(.92); animation: none !important; transition-duration: 90ms; }
 .doll-art svg { display: block; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 .doll.held { z-index: 15 !important; pointer-events: none; }
 [data-phase="ready"][data-grab="1"] .doll:not(.held) .doll-art { animation: wiggle 2.4s var(--ease-in-out) infinite; }
@@ -370,7 +378,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
 .hand { position: absolute; z-index: 25; display: none; height: auto; pointer-events: none; filter: drop-shadow(0 4px 4px rgba(52, 38, 74, .25)); animation: bob 900ms var(--ease-in-out) infinite alternate; }
 @keyframes bob { from { transform: translate(0, 0) rotate(var(--rot, 0deg)); } to { transform: translate(var(--bx, 0px), var(--by, 10px)) rotate(var(--rot, 0deg)); } }
 .spin-btn { position: relative; white-space: nowrap; }
-.spin-btn .hand-spin { right: 7%; bottom: 72%; width: var(--hs); height: auto; --rot: 0deg; --by: 10px; z-index: 5; }
+.spin-btn .hand-spin { right: -3%; bottom: 62%; width: var(--hs); height: auto; --rot: 0deg; --by: 10px; z-index: 5; }
 .hand-glass { left: 38%; top: 20%; width: calc(var(--gw, 400px) * .12); --by: 12px; }
 [data-phase="idle"] .hand-spin { display: block; }
 [data-phase="ready"][data-grab="1"] .hand-glass { display: block; }
@@ -464,7 +472,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
   padding: calc(var(--mw) * .05) calc(var(--mw) * .05) calc(var(--mw) * .045);
   background: #FFFDF8;
   border: 3.5px solid var(--ink);
-  border-radius: calc(var(--mw) * .04);
+  border-radius: calc(var(--mw) * .025) calc(var(--mw) * .05) calc(var(--mw) * .03) calc(var(--mw) * .045) / calc(var(--mw) * .045) calc(var(--mw) * .025) calc(var(--mw) * .05) calc(var(--mw) * .03);
   box-shadow: var(--depth-2);
   text-align: center;
   animation: banner-in 320ms var(--ease-out);
@@ -473,7 +481,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
 .tape { position: absolute; top: calc(var(--mw) * -.028); width: calc(var(--mw) * .2); height: calc(var(--mw) * .056); background: rgba(255, 200, 61, .78); }
 .tape.l { left: 8%; transform: rotate(-7deg); }
 .tape.r { right: 8%; transform: rotate(6deg); }
-.shout { display: flex; gap: .04em; font-family: var(--font-sign); font-size: min(6rem, calc(var(--mw) * .155)); line-height: 1; }
+.shout { display: flex; gap: .02em; letter-spacing: -.02em; font-family: var(--font-sign); font-size: min(6rem, calc(var(--mw) * .155)); line-height: 1; }
 .shout span { color: var(--c); -webkit-text-stroke: .045em var(--ink); }
 .banner[data-mode="miss"] .shout { animation: stamp 260ms var(--ease-out); }
 @keyframes stamp { from { transform: scale(1.25) rotate(-6deg); opacity: 0; } }
@@ -486,7 +494,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
 .b-roll figure { margin: 0; width: calc(var(--mw) * .1); display: grid; justify-items: center; gap: .1em; font-size: max(.8rem, calc(var(--mw) * .027)); }
 .b-roll svg { width: 100%; height: auto; overflow: visible; }
 .b-title { margin: 0; display: grid; gap: .1em; }
-.b-name { font-size: calc(var(--mw) * .11); line-height: 1.05; }
+.b-name { font-size: calc(var(--mw) * .11); line-height: 1.05; letter-spacing: -.02em; }
 .b-line { font-size: calc(var(--mw) * .058); line-height: 1.2; text-wrap: balance; }
 .b-sub { margin: 0; max-width: 30em; color: var(--ink-soft); font-size: max(1rem, calc(var(--mw) * .045)); line-height: 1.3; text-wrap: balance; }
 .big-btn {
@@ -513,7 +521,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
   gap: .4em 1em;
   padding: calc(var(--ring) + 1vmin) calc(var(--ring) + 1.6vmin);
   border-radius: 14px;
-  background: linear-gradient(180deg, #FAE9CA, var(--birch));
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .32' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .3 0 0 0 0 .15 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)' opacity='.16'/%3E%3C/svg%3E"), linear-gradient(180deg, #FAE9CA, var(--birch));
   box-shadow: var(--ply);
   font-size: clamp(1rem, 2.6vmin, 1.9rem);
 }
@@ -552,15 +560,15 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
   background: linear-gradient(160deg, var(--paper) 55%, #F2EFF6);
   border: 2.5px solid var(--ink);
   border-radius: .5em;
-  font-size: clamp(1rem, min(2.6vmin, 1.55vw), 1.8rem);
+  font-size: clamp(.95rem, min(2.6vmin, 1.32vw), 1.8rem);
   line-height: 1.1;
   box-shadow: var(--depth-1);
 }
 .tag::before { content: ""; position: absolute; top: -.3em; left: 50%; width: .48em; height: .48em; margin-left: -.24em; border: 2px solid var(--ink); border-radius: 50%; background: var(--birch-lo); }
 .tag.won::after { content: ""; position: absolute; top: -2.5px; right: -2.5px; width: 1.05em; height: 1.05em; border-top-right-radius: .5em; background: linear-gradient(225deg, var(--sun) 0 48%, var(--ink) 48% 54%, transparent 54%); }
-.tag .nm { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tag .nm { min-width: 0; white-space: nowrap; overflow: hidden; }
 .tag .rest { flex: none; margin-left: auto; padding: .04em .35em; border: 2px solid var(--ink-soft); border-radius: 999px; color: var(--ink-soft); font-size: .7em; }
-.disc { flex: none; width: 1.55em; height: 1.55em; display: grid; place-items: center; border: 2px solid var(--ink); border-radius: 50%; background: var(--c); }
+.disc { flex: none; width: 1.45em; height: 1.45em; display: grid; place-items: center; border: 2px solid var(--ink); border-radius: 50%; background: var(--c); }
 .disc svg { width: 80%; height: 80%; overflow: visible; }
 .cubby.away .tag { background: transparent; border-style: dashed; box-shadow: none; }
 .cubby.away .tag > * { visibility: hidden; }
@@ -608,7 +616,8 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
 .r-row select { width: 100%; }
 .r-row input[type="text"] { width: 100%; min-width: 0; }
 .r-abs { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
-.sheet input[type="checkbox"] { width: 24px; height: 24px; accent-color: var(--berry-deep); }
+.sheet input[type="checkbox"] { width: 28px; height: 28px; accent-color: var(--berry); }
+.sheet select { -webkit-appearance: none; appearance: none; padding-right: 34px; background: var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' fill='none' stroke='%2334264A' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center / 16px; }
 .r-seat, .ghost-btn { min-height: 44px; padding: 4px 12px; border: 2.5px solid var(--ink); border-radius: 999px; background: var(--paper); white-space: nowrap; }
 .r-seat:active, .ghost-btn:active { transform: translateY(2px); }
 .opts { display: grid; gap: 10px; }
@@ -663,6 +672,12 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
   .r-row input[type="text"] { flex: 1 1 9em; width: auto; }
   .r-row select { flex: 1 1 7em; width: auto; }
 }
+@media (hover: hover) and (pointer: fine) {
+  .spin-btn:hover, .big-btn:hover { filter: brightness(1.07); }
+  .knob:hover { transform: translateY(-1px); }
+  .doll:hover .doll-art { transform: translateY(-4%); }
+  .r-seat:hover, .ghost-btn:hover, .swap:hover { background: #FFF4DC; }
+}
 @media (prefers-reduced-motion: reduce) {
   .hand, .doll-art, .b-doll, .bulb, .shout, .banner { animation: none !important; }
 }
@@ -673,12 +688,12 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
   <header class="rail">
     <div class="plaque"><span class="plaque-hole" aria-hidden="true"></span><span id="class-name">새들1반</span></div>
     <h1 class="sign" aria-label="인형뽑기 가게">
-      <span class="cut" aria-hidden="true" style="--p:#FFC83D;--t:-4deg">인</span>
-      <span class="cut" aria-hidden="true" style="--p:#74C4F2;--t:3deg">형</span>
-      <span class="cut" aria-hidden="true" style="--p:#FF94B8;--t:-2deg">뽑</span>
-      <span class="cut" aria-hidden="true" style="--p:#86CF6E;--t:4deg">기</span>
-      <span class="cut space" aria-hidden="true" style="--p:#BBA3F5;--t:-3deg">가</span>
-      <span class="cut" aria-hidden="true" style="--p:#FF8A5C;--t:2deg">게</span>
+      <span class="cut" aria-hidden="true" style="--p:#FFC83D;--t:-4deg;--cutr:.14em .32em .2em .28em / .3em .18em .34em .22em">인</span>
+      <span class="cut" aria-hidden="true" style="--p:#74C4F2;--t:3deg;--cutr:.3em .16em .28em .2em / .2em .32em .18em .3em">형</span>
+      <span class="cut" aria-hidden="true" style="--p:#FF94B8;--t:-2deg;--cutr:.22em .26em .12em .32em / .34em .22em .26em .16em">뽑</span>
+      <span class="cut" aria-hidden="true" style="--p:#86CF6E;--t:4deg;--cutr:.28em .14em .3em .2em / .18em .3em .2em .34em">기</span>
+      <span class="cut space" aria-hidden="true" style="--p:#BBA3F5;--t:-3deg;--cutr:.16em .3em .26em .18em / .32em .2em .3em .24em">가</span>
+      <span class="cut" aria-hidden="true" style="--p:#FF8A5C;--t:2deg;--cutr:.26em .2em .16em .3em / .22em .34em .2em .3em">게</span>
     </h1>
     <div class="knobs">
       <button class="knob" id="btn-full" type="button" aria-label="크게 보기">
@@ -721,7 +736,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
         <button class="spin-btn" id="spin" type="button">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></svg>
           <span id="spin-label">돌림판 돌리기!</span>
-          <svg class="hand hand-spin" viewBox="0 0 60 74" aria-hidden="true"><path d="M13 3h34v12H13z" fill="#FFC83D" stroke="#34264A" stroke-width="3" stroke-linejoin="round"/><path d="M15 15h30q4 0 4 4v15q0 6-4.5 8.5L38 46v19q0 6-6 6t-6-6V46l-7-3.5Q15 40 15 34z" fill="#fff" stroke="#34264A" stroke-width="3" stroke-linejoin="round"/><path d="M23 30v7M30.5 30v7M38 30v6" stroke="#34264A" stroke-width="2.4" stroke-linecap="round"/></svg>
+          <svg class="hand hand-spin" viewBox="0 0 60 78" aria-hidden="true"><path d="M15 3h30v11H15z" fill="#FFC83D" stroke="#34264A" stroke-width="3" stroke-linejoin="round"/><path d="M13 22q-7 3-6 12 1 7 8 6" fill="#fff" stroke="#34264A" stroke-width="3" stroke-linejoin="round"/><rect x="13" y="13" width="35" height="31" rx="11" fill="#fff" stroke="#34264A" stroke-width="3"/><path d="M31 44q0 6 5 6t5-6M40 43q0 5 4.5 5t4.5-6" fill="#fff" stroke="#34264A" stroke-width="3" stroke-linejoin="round"/><rect x="17" y="36" width="12" height="38" rx="6" fill="#fff" stroke="#34264A" stroke-width="3"/><rect x="19.6" y="60" width="6.8" height="9" rx="3.2" fill="#FFE3EC" stroke="#34264A" stroke-width="1.6"/><path d="M22 28h18" stroke="#34264A" stroke-width="2.4" stroke-linecap="round" opacity=".5"/></svg>
         </button>
         <div class="guest" id="guest">
           <span class="disc" id="g-disc"></span>
@@ -739,6 +754,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
     </section>
 
     <section class="hole machine-hole" id="machine-hole" aria-label="인형뽑기 기계">
+      <svg class="mat" aria-hidden="true"><defs><pattern id="mat-tiles" width="160" height="64" patternUnits="userSpaceOnUse"><rect width="80" height="64" fill="#FFC83D"/><rect x="80" width="80" height="64" fill="#74C4F2"/><path d="M80 22A10 10 0 0 1 80 42Z" fill="#FFC83D"/><path d="M0 22A10 10 0 0 1 0 42Z" fill="#74C4F2"/><path d="M80 0V22A10 10 0 0 1 80 42V64M0 0V22A10 10 0 0 1 0 42V64" fill="none" stroke="#34264A" stroke-width="2.5"/><circle cx="40" cy="16" r="2" fill="#34264A" opacity=".18"/><circle cx="120" cy="46" r="2" fill="#34264A" opacity=".18"/></pattern></defs><rect width="100%" height="100%" fill="url(#mat-tiles)"/><rect width="100%" height="3" fill="#34264A"/></svg>
       <div class="machine" id="machine">
         <svg class="crown" viewBox="0 0 400 70" aria-hidden="true">
           <path d="M6 70V38Q6 6 40 6H360Q394 6 394 38V70Z" fill="#FFF3E3" stroke="#34264A" stroke-width="4" stroke-linejoin="round"/>
@@ -777,7 +793,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
               </div>
             </div>
             <div id="dolls"></div>
-            <svg class="hand hand-glass" viewBox="0 0 60 74" aria-hidden="true"><path d="M13 3h34v12H13z" fill="#FFC83D" stroke="#34264A" stroke-width="3" stroke-linejoin="round"/><path d="M15 15h30q4 0 4 4v15q0 6-4.5 8.5L38 46v19q0 6-6 6t-6-6V46l-7-3.5Q15 40 15 34z" fill="#fff" stroke="#34264A" stroke-width="3" stroke-linejoin="round"/><path d="M23 30v7M30.5 30v7M38 30v6" stroke="#34264A" stroke-width="2.4" stroke-linecap="round"/></svg>
+            <svg class="hand hand-glass" viewBox="0 0 60 78" aria-hidden="true"><path d="M15 3h30v11H15z" fill="#FFC83D" stroke="#34264A" stroke-width="3" stroke-linejoin="round"/><path d="M13 22q-7 3-6 12 1 7 8 6" fill="#fff" stroke="#34264A" stroke-width="3" stroke-linejoin="round"/><rect x="13" y="13" width="35" height="31" rx="11" fill="#fff" stroke="#34264A" stroke-width="3"/><path d="M31 44q0 6 5 6t5-6M40 43q0 5 4.5 5t4.5-6" fill="#fff" stroke="#34264A" stroke-width="3" stroke-linejoin="round"/><rect x="17" y="36" width="12" height="38" rx="6" fill="#fff" stroke="#34264A" stroke-width="3"/><rect x="19.6" y="60" width="6.8" height="9" rx="3.2" fill="#FFE3EC" stroke="#34264A" stroke-width="1.6"/><path d="M22 28h18" stroke="#34264A" stroke-width="2.4" stroke-linecap="round" opacity=".5"/></svg>
             <div class="chute" aria-hidden="true">
               <span class="chute-tag">출구<svg viewBox="0 0 24 24" fill="none" stroke="#34264A" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v15M6 13l6 6 6-6"/></svg></span>
             </div>
@@ -1166,6 +1182,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
       machine.style.setProperty('--mw', mw + 'px');
     }
     layoutGlass();
+    fitNames($('cubbies'));
   }
   function layoutGlass() {
     const W = glass.clientWidth, H = glass.clientHeight;
@@ -1239,6 +1256,8 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
       b.style.zIndex = String(d.z + 2);
       b.innerHTML = `<span class="doll-art">${dollSVG(d.kind)}</span>`;
       b.addEventListener('click', () => pick(d, b));
+      b.addEventListener('pointerdown', () => b.classList.add('pressed'));
+      ['pointerup', 'pointerleave', 'pointercancel'].forEach((t) => b.addEventListener(t, () => b.classList.remove('pressed')));
       d.el = b;
       dollsEl.appendChild(b);
       placeDoll(d);
@@ -1334,7 +1353,10 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
       }
     });
   }
-  async function spin() {
+  const mod = (a, m = 360) => ((a % m) + m) % m;
+  // A tap spins about six turns; a flick throws the wheel in its direction, and the spin
+  // starts at the finger's own speed (ease-out-quart starts at 4·distance/duration).
+  async function spin(flick) {
     if (run.phase !== 'idle') return;
     const ids = run.wheelIds;
     if (!ids.length) { ledForPhase(); return; }
@@ -1347,8 +1369,13 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
     const w = Math.floor(Math.random() * n);
     const jitter = (Math.random() - 0.5) * seg * 0.6;
     const start = run.wheelAngle;
-    const base = ((-(w * seg) + jitter) % 360 + 360) % 360;
-    const end = start - (start % 360) + 360 * (reduce ? 2 : 6) + base;
+    const dir = flick && flick.v < 0 ? -1 : 1;
+    const speed = flick ? Math.abs(flick.v) : 0;
+    const base = mod(-(w * seg) + jitter);
+    const turns = reduce ? 2 : flick ? Math.min(9, Math.max(3, Math.round((speed * 1.3) / 360))) : 6;
+    const delta = dir > 0 ? mod(base - start) + 360 * turns : -(mod(start - base) + 360 * turns);
+    const end = start + delta;
+    const duration = reduce ? 2200 : flick ? Math.min(7000, Math.max(2600, (4 * Math.abs(delta)) / (speed / 1000))) : 5200;
     const labelsG = $('wheel-labels');
     labelsG.classList.add('fading');
     await wait(140);
@@ -1356,7 +1383,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
     labelsG.classList.remove('fading');
     const pointer = $('pointer');
     let lastK = Math.floor((start + seg / 2) / seg);
-    await tween(reduce ? 2200 : 5200, (p) => {
+    await tween(duration, (p) => {
       run.wheelAngle = lerp(start, end, p);
       setWheelAngle(run.wheelAngle);
       const k = Math.floor((run.wheelAngle + seg / 2) / seg);
@@ -1428,7 +1455,14 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
     const label = `${name(i)} 사물함${shown.length ? `, 인형 ${shown.length}개` : ''}${st.absent[i] ? ', 오늘 쉬어요' : ''}`;
     return `<div class="${cls.join(' ')}" data-i="${i}" style="--back:${BINS[i % BINS.length].b}" role="img" aria-label="${esc(label)}"><div class="prize">${art}${shown.length > 1 ? `<span class="count">×${shown.length}</span>` : ''}</div>${tagHTML(i, shown.length > 0)}</div>`;
   }
-  function renderCubbies() { $('cubbies').innerHTML = st.names.map((_, i) => cubbyHTML(i)).join(''); }
+  function fitNames(root) {
+    (root || document).querySelectorAll('.tag .nm').forEach((n) => {
+      n.style.fontSize = '';
+      let size = 1;
+      while (n.scrollWidth > n.clientWidth + 1 && size > 0.62) { size -= 0.06; n.style.fontSize = size.toFixed(2) + 'em'; }
+    });
+  }
+  function renderCubbies() { $('cubbies').innerHTML = st.names.map((_, i) => cubbyHTML(i)).join(''); fitNames($('cubbies')); }
   function renderCubby(i) {
     const old = cubbyEl(i);
     if (!old) return null;
@@ -1436,6 +1470,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
     holder.innerHTML = cubbyHTML(i);
     const el = holder.firstElementChild;
     old.replaceWith(el);
+    fitNames(el);
     return el;
   }
 
@@ -1611,6 +1646,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
       sub.textContent = '친구들이 응원해서 성공했네요!';
       btn.textContent = '내 사물함에 넣기!';
       sfx.win();
+      try { if (navigator.vibrate) navigator.vibrate([40, 60, 40]); } catch (e) { /* ignore */ }
       announce(`성공! ${name(who)} 손님이 ${josa(KINDS[kind], '을', '를')} 뽑았어요. 친구들이 응원해서 성공했네요!`);
     } else if (mode === 'miss') {
       dollBox.className = 'b-doll';
@@ -1636,7 +1672,10 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
     const mode = run.bannerMode;
     if (!mode) return;
     run.bannerMode = null;
-    $('banner').hidden = true;
+    const sign = $('banner');
+    await animate(sign, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(14px) scale(.96)' }], { duration: 180, easing: 'cubic-bezier(0.23, 1, 0.32, 1)', fill: 'forwards' });
+    sign.hidden = true;
+    sign.getAnimations().forEach((a) => a.cancel());
     if (mode === 'ok') { await stow(); return; }
     if (mode === 'miss') { run.phase = 'ready'; refresh(); return; }
     run.phase = 'idle';
@@ -1875,8 +1914,59 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
     lockTried = true;
     try { if (navigator.wakeLock) navigator.wakeLock.request('screen').catch(() => {}); } catch (e) { /* ignore */ }
   });
-  spinBtn.addEventListener('click', spin);
-  $('wheel').addEventListener('click', spin);
+  spinBtn.addEventListener('click', () => spin());
+
+  /* ---------- the wheel follows the finger, and a flick throws it ---------- */
+  const wheelSvg = $('wheel');
+  function wheelAngleAt(e) {
+    const m = wheelSvg.getScreenCTM();
+    if (!m) return 0;
+    const cx = m.a * WC.cx + m.c * WC.cy + m.e, cy = m.b * WC.cx + m.d * WC.cy + m.f;
+    return (Math.atan2(e.clientX - cx, -(e.clientY - cy)) * 180) / Math.PI;
+  }
+  let drag = null;
+  wheelSvg.addEventListener('pointerdown', (e) => {
+    if (run.phase !== 'idle' || !run.wheelIds.length || drag) return;
+    audio();
+    try { wheelSvg.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+    const seg = 360 / run.wheelIds.length;
+    drag = { id: e.pointerId, last: wheelAngleAt(e), moved: 0, seg, lastK: Math.floor((run.wheelAngle + seg / 2) / seg), hist: [{ t: performance.now(), a: run.wheelAngle }] };
+  });
+  wheelSvg.addEventListener('pointermove', (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const a = wheelAngleAt(e);
+    let d = a - drag.last;
+    if (d > 180) d -= 360;
+    if (d < -180) d += 360;
+    drag.last = a;
+    drag.moved += Math.abs(d);
+    run.wheelAngle += d;
+    setWheelAngle(run.wheelAngle);
+    const k = Math.floor((run.wheelAngle + drag.seg / 2) / drag.seg);
+    if (k !== drag.lastK && run.wheelIds.length > 1) {
+      drag.lastK = k;
+      sfx.tick();
+      const pointer = $('pointer');
+      pointer.classList.add('flick');
+      requestAnimationFrame(() => pointer.classList.remove('flick'));
+    }
+    const now = performance.now();
+    drag.hist.push({ t: now, a: run.wheelAngle });
+    while (drag.hist.length > 2 && now - drag.hist[0].t > 120) drag.hist.shift();
+  });
+  function endDrag(e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    const dr = drag;
+    drag = null;
+    if (dr.moved < 6) { spin(); return; }
+    const first = dr.hist[0], last = dr.hist[dr.hist.length - 1];
+    const dt = Math.max(16, last.t - first.t);
+    let v = ((last.a - first.a) / dt) * 1000;
+    if (Math.abs(v) < 300) v = (Math.sign(v) || 1) * 700;
+    spin({ v });
+  }
+  wheelSvg.addEventListener('pointerup', endDrag);
+  wheelSvg.addEventListener('pointercancel', (e) => { if (drag && e.pointerId === drag.id) drag = null; });
 
   /* ---------- start ---------- */
   $('bulbs').innerHTML = (() => {
