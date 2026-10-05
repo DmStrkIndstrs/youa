@@ -1,0 +1,23 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "bounce-easing",
+        "value": "cubic-bezier(.2, 1.4, .4, 1)",
+        "createdAt": "2026-10-05T12:32:15.301Z",
+        "reason": "Claude: toy-like pop for a claw-machine game for 6-year-olds; playful overshoot is the subject"
+      },
+      {
+        "rule": "pulsing-dot",
+        "value": "*",
+        "files": [
+          "claw-machine/index.html"
+        ],
+        "createdAt": "2026-10-05T12:32:15.316Z",
+        "reason": "Claude: literal marquee bulbs on an arcade claw machine, not a status indicator"
+      }
+    ]
+  }
+}
