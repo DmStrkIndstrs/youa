@@ -1191,7 +1191,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
           Rp(560, 290, 140, 30, '#FFC83D', 8, 5) + P('M690 300 Q760 300 820 470 Q880 660 1000 690 L1000 720 Q860 710 800 520 Q760 360 690 330Z', '#FF94B8', 5) +
           `<g id="slider">${doll('cinnamoroll', 600, 180, 120)}</g>` + glowRect(550, 170, 470, 560));
         s += thing('easel', '그림판', `<path d="M1330 720 L1400 260 M1520 720 L1450 260 M1425 300 V720" stroke="#B9805A" stroke-width="12" stroke-linecap="round"/>` + Rp(1290, 270, 270, 220, '#fff', 8, 5) + `<g id="art">${artSVG(0)}</g>` + glowRect(1280, 250, 290, 480));
-        s += thing('teacher', '선생님', doll('purin', 1080, 470, 220) + glowRect(1080, 450, 220, 260));
+        s += thing('teacher', '박상현 선생님', doll('purin', 1080, 450, 220) + Rp(1085, 676, 210, 54, '#fff', 12, 4) + T(1190, 714, 30, '박상현 선생님', '#2E8A3A') + glowRect(1076, 430, 228, 310));
         return s;
       },
       things: {
@@ -1199,7 +1199,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
         blocks: { act: 'stack' },
         slide: { say: ['슝~ 미끄럼틀 재밌다!'], sfx: 'slide', act: 'slide' },
         easel: { say: ['알록달록 그림을 그려요.', '이번엔 무지개를 그렸어요!', '해님도 그려 볼까요?'], sfx: 'pop', act: 'art' },
-        teacher: { say: ['새들1반 친구들, 오늘도 즐겁게 놀아요!', '친구와 사이좋게 지내요.'], sfx: 'hello' },
+        teacher: { say: ['안녕하세요! 저는 박상현 선생님이에요.', '새들1반 친구들, 오늘도 즐겁게 놀아요!', '친구와 사이좋게 지내요.'], sfx: 'hello' },
       },
     },
     salon: {
