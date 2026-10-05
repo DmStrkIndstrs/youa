@@ -472,12 +472,13 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
   padding: calc(var(--mw) * .05) calc(var(--mw) * .05) calc(var(--mw) * .045);
   background: #FFFDF8;
   border: 3.5px solid var(--ink);
-  border-radius: calc(var(--mw) * .025) calc(var(--mw) * .05) calc(var(--mw) * .03) calc(var(--mw) * .045) / calc(var(--mw) * .045) calc(var(--mw) * .025) calc(var(--mw) * .05) calc(var(--mw) * .03);
+  border-radius: calc(var(--mw) * .012) calc(var(--mw) * .07) calc(var(--mw) * .02) calc(var(--mw) * .09) / calc(var(--mw) * .08) calc(var(--mw) * .015) calc(var(--mw) * .06) calc(var(--mw) * .02);
   box-shadow: var(--depth-2);
   text-align: center;
   animation: banner-in 320ms var(--ease-out);
 }
 @keyframes banner-in { from { opacity: 0; transform: translateY(14px) scale(.96); } }
+.banner::after { content: ""; position: absolute; right: -3.5px; bottom: -3.5px; width: calc(var(--mw) * .1); height: calc(var(--mw) * .1); border-top-left-radius: calc(var(--mw) * .02); background: linear-gradient(135deg, #EDE6DA 0 47%, var(--ink) 47% 53%, var(--back, #E8DEFF) 53%); }
 .tape { position: absolute; top: calc(var(--mw) * -.028); width: calc(var(--mw) * .2); height: calc(var(--mw) * .056); background: rgba(255, 200, 61, .78); }
 .tape.l { left: 8%; transform: rotate(-7deg); }
 .tape.r { right: 8%; transform: rotate(6deg); }
@@ -560,7 +561,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
   background: linear-gradient(160deg, var(--paper) 55%, #F2EFF6);
   border: 2.5px solid var(--ink);
   border-radius: .5em;
-  font-size: clamp(.95rem, min(2.6vmin, 1.32vw), 1.8rem);
+  font-size: clamp(1rem, min(2.6vmin, 1.55vw), 1.8rem);
   line-height: 1.1;
   box-shadow: var(--depth-1);
 }
