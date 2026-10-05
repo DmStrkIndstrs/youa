@@ -415,29 +415,38 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
 @keyframes led-in { from { opacity: .2; } }
 .deck-actions { display: flex; align-items: center; justify-content: center; gap: calc(var(--mw) * .03); }
 .deck-actions:empty { display: none; }
-.coin-slot { width: calc(var(--mw) * .05); height: calc(var(--mw) * .11); flex: none; display: grid; place-items: center; background: #120B1B; border-radius: 7px; }
-.coin-slot::before { content: ""; width: 22%; height: 66%; border-radius: 3px; background: #000; box-shadow: 0 0 0 2px var(--sun); }
-.coin {
-  width: calc(var(--mw) * .13);
-  height: calc(var(--mw) * .13);
-  min-width: 48px;
-  min-height: 48px;
+.bill-slot { flex: none; width: calc(var(--mw) * .2); height: max(16px, calc(var(--mw) * .05)); display: grid; place-items: center; background: #120B1B; border-radius: 6px; }
+.bill-slot::before { content: ""; width: 80%; height: 4px; border-radius: 2px; background: #000; box-shadow: 0 0 0 2px var(--sun); }
+.bill {
   flex: none;
-  display: grid;
-  place-content: center;
-  padding: 0;
-  border: 3px solid var(--ink);
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #FFF0B0, var(--sun) 55%, #E9A92A);
-  box-shadow: inset 0 0 0 4px rgba(255, 255, 255, .45), var(--depth-1);
-  font-size: calc(var(--mw) * .04);
+  min-width: 96px;
+  min-height: 44px;
+  width: calc(var(--mw) * .27);
+  height: calc(var(--mw) * .11);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .3em;
+  padding: 0 .55em;
+  border: 2.5px solid var(--ink);
+  border-radius: 6px;
+  background: linear-gradient(160deg, #E2F1FB 0%, #B9DDF4 60%, #A4D1EF 100%);
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .55), var(--depth-1);
+  color: #24557A;
+  font-size: max(1rem, calc(var(--mw) * .042));
   line-height: 1;
+  white-space: nowrap;
 }
-.coin small { font-size: .62em; }
-.coin.shake, .spin-btn.shake { animation: shake .45s; }
+.bill b { font-weight: 400; }
+.bill small { font-size: .7em; }
+.bill i { flex: none; width: 1.3em; height: 1.3em; border-radius: 50%; border: 2px solid #24557A; background: radial-gradient(circle at 50% 38%, #F3E3C6 0 34%, #7FB6DB 36%); }
+.bill.shake, .spin-btn.shake { animation: shake .45s; }
 @keyframes shake { 20%, 60% { transform: translateX(-7px); } 40%, 80% { transform: translateX(7px); } }
-.coin-fly { position: fixed; z-index: 90; pointer-events: none; }
-.paid { color: var(--led); font-size: calc(var(--mw) * .042); }
+.bill-fly { position: fixed; z-index: 90; pointer-events: none; }
+.paid { color: var(--led); font-size: max(1rem, calc(var(--mw) * .04)); white-space: nowrap; }
+.deck.paying { flex-basis: max(150px, calc(var(--mw) * .31)); }
+.deck.paying .led-1 { font-size: calc(var(--mw) * .047); }
+.deck.paying .led-2 { font-size: max(.9rem, calc(var(--mw) * .034)); }
 .restock-btn {
   min-height: 44px;
   padding: .25em .9em;
@@ -860,7 +869,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
       </label>
       <label><input type="checkbox" id="opt-sure"> 다시 도전하면 꼭 성공하기</label>
       <label><input type="checkbox" id="opt-skip"> 성공한 친구는 돌림판에서 빼기</label>
-      <label><input type="checkbox" id="opt-coin"> 동전 넣고 시작하기</label>
+      <label><input type="checkbox" id="opt-coin"> 1000원 넣고 시작하기</label>
       <label><input type="checkbox" id="opt-sound"> 소리 켜기</label>
     </div>
     <div class="sheet-actions">
@@ -1169,7 +1178,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
     if (run.phase === 'ready') {
       const nm = name(st.turn);
       if (!st.dolls.length) return setLED('인형이 다 떨어졌어요', '가게 주인님, 인형을 채워 주세요!');
-      if (st.coinOn && !run.paid) return setLED(`${nm} 손님!`, '100원을 넣어 주세요');
+      if (st.coinOn && !run.paid) return setLED(`${nm} 손님!`, '1000원을 넣어 주세요');
       return setLED(`${nm} 손님!`, run.tries ? '다시 도전! 인형을 콕 눌러요' : '갖고 싶은 인형을 콕 눌러요');
     }
     return undefined;
@@ -1518,14 +1527,16 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
     const box = $('deck-actions');
     const parts = [];
     if (st.coinOn && (run.phase === 'ready' || run.phase === 'play')) {
-      parts.push('<div class="coin-slot" id="coin-slot" aria-hidden="true"></div>');
-      parts.push(run.paid ? '<span class="paid">동전 넣었어요</span>' : '<button class="coin" id="coin" type="button" aria-label="100원 동전 넣기">100<small>원</small></button>');
+      parts.push('<div class="bill-slot" id="coin-slot" aria-hidden="true"></div>');
+      parts.push(run.paid ? '<span class="paid">1000원 넣었어요</span>' : '<button class="bill" id="coin" type="button" aria-label="1000원 지폐 넣기"><b>1000<small>원</small></b><i aria-hidden="true"></i></button>');
     }
     if (st.dolls.length <= 3 && (run.phase === 'idle' || run.phase === 'ready')) {
       parts.push('<button class="restock-btn" id="restock" type="button">인형 채우기</button>');
     }
     const html = parts.join('');
     if (box.innerHTML !== html) box.innerHTML = html;
+    const deck = box.closest('.deck');
+    if (deck.classList.contains('paying') !== parts.length > 0) { deck.classList.toggle('paying', parts.length > 0); queueLayout(); }
     const coin = $('coin');
     if (coin) coin.onclick = payCoin;
     const rs = $('restock');
@@ -1537,7 +1548,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
     const from = coin.getBoundingClientRect(), to = $('coin-slot').getBoundingClientRect();
     const flyCoin = coin.cloneNode(true);
     flyCoin.removeAttribute('id');
-    flyCoin.className = 'coin coin-fly';
+    flyCoin.className = 'bill bill-fly';
     flyCoin.setAttribute('aria-hidden', 'true');
     Object.assign(flyCoin.style, { left: from.left + 'px', top: from.top + 'px', width: from.width + 'px', height: from.height + 'px' });
     document.body.appendChild(flyCoin);
@@ -1546,10 +1557,10 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
     const dx = to.left + to.width / 2 - (from.left + from.width / 2), dy = to.top + to.height / 2 - (from.top + from.height / 2);
     animate(flyCoin, [
       { transform: 'translate(0, 0) scale(1)' },
-      { transform: `translate(${dx * 0.6}px, ${dy - 40}px) scale(.8)`, offset: 0.55 },
-      { transform: `translate(${dx}px, ${dy}px) scaleX(.12) scaleY(.7)`, opacity: 0.2 },
-    ], { duration: 620, easing: 'ease-in' }).then(() => { flyCoin.remove(); sfx.coin(); });
-    announce('동전을 넣었어요. 인형을 골라요.');
+      { transform: `translate(${dx}px, ${dy - 6}px) scale(.8)`, offset: 0.5 },
+      { transform: `translate(${dx}px, ${dy}px) scaleX(.8) scaleY(.06)`, opacity: 0.4 },
+    ], { duration: 700, easing: 'cubic-bezier(0.77, 0, 0.175, 1)' }).then(() => { flyCoin.remove(); sfx.coin(); });
+    announce('1000원을 넣었어요. 인형을 골라요.');
   }
 
   /* ---------- phase bookkeeping ---------- */
@@ -1576,7 +1587,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
       return;
     }
     if (run.phase !== 'ready') return;
-    if (st.coinOn && !run.paid) { nudge($('coin')); setLED(`${name(st.turn)} 손님!`, '먼저 100원을 넣어 주세요'); sfx.tap(); return; }
+    if (st.coinOn && !run.paid) { nudge($('coin')); setLED(`${name(st.turn)} 손님!`, '먼저 1000원을 넣어 주세요'); sfx.tap(); return; }
     run.phase = 'play';
     refresh();
     const who = st.turn, dn = KINDS[d.kind];
