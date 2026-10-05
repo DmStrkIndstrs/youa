@@ -685,6 +685,11 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
 </style>
 </head>
 <body data-phase="idle">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <radialGradient id="pl-light" cx=".34" cy=".26" r=".7"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+  <radialGradient id="pl-edge" cx=".46" cy=".42" r=".62"><stop offset=".6" stop-color="#34264A" stop-opacity="0"/><stop offset="1" stop-color="#34264A" stop-opacity=".26"/></radialGradient>
+  <pattern id="pl-fuzz" width="3.2" height="3.2" patternUnits="userSpaceOnUse"><circle cx=".8" cy=".8" r=".55" fill="#fff" opacity=".22"/><circle cx="2.4" cy="2.3" r=".5" fill="#34264A" opacity=".08"/></pattern>
+</defs></svg>
 <div class="unit">
   <header class="rail">
     <div class="plaque"><span class="plaque-hole" aria-hidden="true"></span><span id="class-name">새들1반</span></div>
@@ -922,7 +927,7 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
   const symbolSVG = (k) => `<svg viewBox="0 0 40 40" aria-hidden="true">${symbolInner(k)}</svg>`;
 
   function dollSVG(kind) {
-    const s = `stroke="${INK}" stroke-width="3"`;
+    const s = `stroke="${INK}" stroke-width="2.6"`;
     const eye = (x, y, c = INK, rx = 4, ry = 4.6) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${c}"/><circle cx="${x + 1.3}" cy="${y - 1.6}" r="1.4" fill="#fff"/>`;
     const blush = (y = 55, c = '#FF8FA3') => `<ellipse cx="30" cy="${y}" rx="5.5" ry="3.2" fill="${c}" opacity=".7"/><ellipse cx="70" cy="${y}" rx="5.5" ry="3.2" fill="${c}" opacity=".7"/>`;
     const smile = (y = 56) => `<path d="M46 ${y} Q50 ${y + 4} 54 ${y}" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linecap="round"/>`;
@@ -984,12 +989,22 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
         break;
     }
     limbs = limbs || body; feet = feet || limbs;
-    return `<svg viewBox="-8 -14 116 128" aria-hidden="true">${behind}` +
-      `<ellipse cx="38" cy="104" rx="9" ry="6" fill="${feet}" ${s}/><ellipse cx="62" cy="104" rx="9" ry="6" fill="${feet}" ${s}/>` +
-      `<ellipse cx="50" cy="86" rx="25" ry="20" fill="${body}" ${s}/>` +
-      (belly ? `<ellipse cx="50" cy="90" rx="15" ry="12.5" fill="${belly}"/>` : '') +
-      `<ellipse cx="27" cy="83" rx="7" ry="10.5" fill="${limbs}" ${s} transform="rotate(28 27 83)"/><ellipse cx="73" cy="83" rx="7" ry="10.5" fill="${limbs}" ${s} transform="rotate(-28 73 83)"/>` +
-      `${head}<ellipse cx="37" cy="30" rx="10" ry="5" fill="#fff" opacity=".24" transform="rotate(-28 37 30)"/>${front}${face}</svg>`;
+    // Plush finish: each fabric piece gets a soft top-left highlight, a darker rolled edge and a fine fuzz;
+    // stitched seams and a sewn-in tag say "stuffed toy" rather than "sticker".
+    const plush = (m) => { const shape = m.replace(/ fill="[^"]*"/, '').replace(/ stroke(-width|-linejoin)?="[^"]*"/g, ''); return shape.replace('/>', ' fill="url(#pl-edge)"/>') + shape.replace('/>', ' fill="url(#pl-light)"/>') + shape.replace('/>', ' fill="url(#pl-fuzz)"/>'); };
+    const bodyM = `<ellipse cx="50" cy="86" rx="25" ry="20" fill="${body}" ${s}/>`;
+    const armL = `<ellipse cx="27" cy="83" rx="7" ry="10.5" fill="${limbs}" ${s} transform="rotate(28 27 83)"/>`;
+    const armR = `<ellipse cx="73" cy="83" rx="7" ry="10.5" fill="${limbs}" ${s} transform="rotate(-28 73 83)"/>`;
+    const footL = `<ellipse cx="38" cy="104" rx="9" ry="6" fill="${feet}" ${s}/>`, footR = `<ellipse cx="62" cy="104" rx="9" ry="6" fill="${feet}" ${s}/>`;
+    const seam = (d) => `<path d="${d}" fill="none" stroke="${INK}" stroke-width="1.3" stroke-dasharray="2.4 2.2" stroke-linecap="round" opacity=".38"/>`;
+    return `<svg viewBox="-8 -14 116 128" aria-hidden="true"><ellipse cx="50" cy="110" rx="27" ry="4" fill="${INK}" opacity=".14"/>${behind}` +
+      footL + plush(footL) + footR + plush(footR) +
+      bodyM + plush(bodyM) +
+      (belly ? `<ellipse cx="50" cy="90" rx="15" ry="12.5" fill="${belly}"/>` + seam('M36.5 90a13.5 11 0 0 0 27 0') : '') +
+      seam('M50 68.5V104') +
+      `<g transform="rotate(-12 69 99)"><rect x="66" y="94" width="7" height="10" rx="1.2" fill="#fff" stroke="${INK}" stroke-width="1.2" opacity=".95"/><path d="M67.6 97.5h3.8M67.6 100h3.8" stroke="#EF4F7A" stroke-width="1" opacity=".8"/></g>` +
+      armL + plush(armL) + armR + plush(armR) +
+      `${head}${plush(head)}` + seam('M33 26Q50 16 67 26') + `${front}${face}</svg>`;
   }
   const GHOST = `<svg viewBox="-8 -14 116 128" aria-hidden="true"><g fill="none" stroke="${INK}" stroke-width="3" stroke-dasharray="7 7" opacity=".3"><circle cx="25" cy="18" r="10"/><circle cx="75" cy="18" r="10"/><circle cx="50" cy="44" r="31"/><ellipse cx="50" cy="88" rx="25" ry="19"/></g></svg>`;
 
