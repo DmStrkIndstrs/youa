@@ -281,18 +281,21 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
 @keyframes swing { 0% { transform: rotate(0); } 20% { transform: rotate(18deg); } 40% { transform: rotate(-14deg); } 60% { transform: rotate(9deg); } 80% { transform: rotate(-4deg); } 100% { transform: rotate(0); } }
 .pull { transform-box: fill-box; transform-origin: 50% 100%; transition: transform .3s var(--ease-spring); }
 .out .pull { transform: translateY(-34px) rotate(-6deg); }
-.glow { opacity: 0; transition: opacity .25s var(--ease-out); }
-.lit .glow { opacity: 1; }
-.resident { opacity: 0; transform-box: fill-box; transform-origin: 50% 100%; transform: translateY(26px); transition: opacity .2s var(--ease-out), transform .38s var(--ease-spring); }
-.lit .resident { opacity: 1; transform: translateY(0); }
-.curtain { transition: transform .32s var(--ease-out); transform-box: fill-box; }
-.lit .curtain.l { transform-origin: 0 50%; transform: scaleX(.28); }
-.lit .curtain.r { transform-origin: 100% 50%; transform: scaleX(.28); }
+.door { transform-box: fill-box; transform-origin: 0 50%; transition: transform .38s var(--ease-out); }
+.open .door { transform: scaleX(.14); }
+.night { opacity: 0; transition: opacity .5s var(--ease-out); }
+.is-night .night { opacity: .55; }
+.stars { opacity: 0; transition: opacity .5s var(--ease-out); }
+.is-night .stars { opacity: 1; }
+.is-night .sun, .is-night .lamp-light { opacity: 0; }
+.hopping .hop { animation: hop 1.1s var(--ease-out); }
+.hop { transform-box: fill-box; transform-origin: 50% 100%; }
+@keyframes hop { 0%, 100% { transform: translateY(0); } 20% { transform: translateY(-50px); } 40% { transform: translateY(0); } 58% { transform: translateY(-26px); } 74% { transform: translateY(0); } 86% { transform: translateY(-8px); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .bulb, .beckon, .flash .lamp-a, .flash .lamp-b, .spraying .spray circle, .ring .swing, .boing, .bubble { animation: none; }
+  .bulb, .beckon, .flash .lamp-a, .flash .lamp-b, .spraying .spray circle, .ring .swing, .boing, .bubble, .hopping .hop { animation: none; }
   .flash .lamp, .spraying .spray circle { opacity: 1; }
-  .bld, .pull, .resident, .curtain, .glow { transition: none; }
+  .bld, .pull, .door, .night, .stars { transition: none; }
 }
 </style>
 </head>
@@ -847,48 +850,71 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   // every thing gets a generous transparent hit box (small fingers) and a focus ring
   const glowRect = (x, y, w, h) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="transparent"/><rect class="focus-ring" x="${x}" y="${y}" width="${w}" height="${h}" rx="18"/>`;
 
-  function aptRoom(b, o) {
-    let s = `<rect x="-1200" y="-600" width="4000" height="2100" fill="#CDEAFB"/>` + C(1460, 120, 56, '#FFE07A', 0) +
-      `<path d="M-1200 850 H0 Q400 820 800 850 T1600 840 H2800 V1500 H-1200Z" fill="#86CF6E"/>`;
-    s += tree(140, 860, 1.6) + tree(1470, 860, 1.5, '#5DB85A') + tree(250, 870, 1.1, '#5DB85A');
-    const bx = 300, bw = 1000, top = 150, bottom = 870;
-    const bodyM = `<rect x="${bx}" y="${top}" width="${bw}" height="${bottom - top}" rx="10" fill="${o.body}" ${S(5)}/>`;
-    s += bodyM;
-    if (o.stripes) {
-      const sh = (bottom - top) / o.stripes.length;
-      s += `<clipPath id="room-clip"><rect x="${bx}" y="${top}" width="${bw}" height="${bottom - top}" rx="10"/></clipPath><g clip-path="url(#room-clip)">${o.stripes.map((c, i) => `<rect x="${bx}" y="${top + i * sh}" width="${bw}" height="${sh + 1}" fill="${c}" opacity=".85"/>`).join('')}</g>`;
-    }
-    s += tex(bodyM) + `<rect x="${bx}" y="${top}" width="${bw}" height="${bottom - top}" rx="10" fill="none" ${S(5)}/>`;
-    if (o.crown) s += P('M760 50 L748 6 L776 28 L800 -6 L824 28 L852 6 L840 50Z', '#FFC83D', 4);
-    s += Rp(bx + 160, 40, bw - 320, 96, '#fff', 18, 5) + T(800, 112, 64, b.name);
-    const rows = 4, cols = 4, ww = 180, wh = 118, gx = (bw - cols * ww) / (cols + 1), rowH = 148;
-    let n = 0;
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        const x = bx + gx + c * (ww + gx), y = top + 22 + r * rowH;
-        const floor = rows + 1 - r;
-        const kind = KINDS[(r * cols + c + o.seed) % KINDS.length];
-        const k = `w${r}${c}`;
-        RES[k] = { floor, kind };
-        s += thing(k, `${floor}층 창문`,
-          `<rect x="${x}" y="${y}" width="${ww}" height="${wh}" rx="8" fill="#3E4A6E" ${S(4)}/>` +
-          `<rect class="glow" x="${x + 3}" y="${y + 3}" width="${ww - 6}" height="${wh - 6}" rx="6" fill="#FFE9A0"/>` +
-          `<g class="resident">${doll(kind, x + ww / 2 - 46, y + wh - 102, 92)}</g>` +
-          `<rect class="curtain l" x="${x + 4}" y="${y + 4}" width="${ww / 2 - 4}" height="${wh - 8}" fill="${o.curtain}" opacity=".95"/>` +
-          `<rect class="curtain r" x="${x + ww / 2}" y="${y + 4}" width="${ww / 2 - 4}" height="${wh - 8}" fill="${o.curtain}" opacity=".95"/>` +
-          `<rect x="${x}" y="${y}" width="${ww}" height="${wh}" rx="8" fill="none" ${S(5)}/>` +
-          `<rect x="${x - 10}" y="${y + wh}" width="${ww + 20}" height="12" rx="4" fill="#fff" ${S(3)}/>` +
-          glowRect(x - 8, y - 8, ww + 16, wh + 30));
-        n++;
-      }
-    }
-    // entrance with intercom
-    s += Rp(700, 760, 200, 110, '#CDEFFF', 8, 5) + `<path d="M800 764V868" stroke="${INK}" stroke-width="4" opacity=".6"/>` + Rp(670, 740, 260, 22, o.trim, 6, 4);
-    s += thing('bell', '초인종', Rp(940, 770, 64, 84, '#E8E4F0', 10, 4) + C(972, 796, 12, '#74C4F2', 3) + Rp(954, 820, 36, 22, '#fff', 4, 3) + glowRect(930, 760, 84, 104));
-    s += thing('mail', '우편함', Rp(470, 780, 150, 80, '#FF8A5C', 8, 4) + [0, 1, 2].map((i) => Rp(484 + i * 46, 794, 34, 22, '#fff', 3, 3)).join('') + glowRect(460, 770, 170, 100));
+  // An apartment opened up like a dollhouse: kitchen, living room and bedroom side by side.
+  function aptHome(b, o) {
+    const [cook, host, sleeper] = o.kinds;
+    let s = `<rect x="-1200" y="-600" width="4000" height="2100" fill="#CDEAFB"/><rect x="-1200" y="868" width="4000" height="700" fill="#86CF6E"/>`;
+    s += R(20, 26, 1560, 860, o.body, 18, 6);
+    [[60, '부엌', o.walls[0]], [560, '거실', o.walls[1]], [1060, '내 방', o.walls[2]]].forEach(([x, label, c]) => {
+      s += Rp(x, 66, 480, 700, c, 6, 4) + `<rect x="${x}" y="66" width="480" height="624" fill="url(#crayon)" opacity=".6"/>` +
+        `<rect x="${x + 2}" y="690" width="476" height="74" fill="#E8C79A"/><rect x="${x + 2}" y="690" width="476" height="74" fill="url(#planks)"/><path d="M${x} 690h480" stroke="${INK}" stroke-width="4" opacity=".5"/>` +
+        Rp(x + 18, 84, 120, 48, '#fff', 10, 3) + T(x + 78, 118, 28, label);
+    });
+    s += Rp(560, 790, 480, 70, '#fff', 14, 4) + T(800, 838, 34, `${o.floor}층 우리 집`);
+
+    /* kitchen */
+    s += Rp(250, 150, 270, 100, '#fff', 8, 4) + [0, 1, 2].map((i) => C(296 + i * 88, 200, 28, ['#FF94B8', '#74C4F2', '#FFC83D'][i], 3)).join('');
+    s += thing('fridge', '냉장고',
+      Rp(80, 320, 150, 370, '#EAF6FF', 12, 5) + `<path d="M86 440h138M86 560h138" stroke="${INK}" stroke-width="4" opacity=".5"/>` +
+      ITEM_AT('milk', 88, 336, 60) + ITEM_AT('apple', 152, 350, 56) + ITEM_AT('egg', 88, 462, 64) + ITEM_AT('berry', 156, 470, 54) + ITEM_AT('bread', 96, 584, 76) +
+      `<g class="door">${Rp(80, 320, 150, 370, '#fff', 12, 5)}<rect x="80" y="320" width="150" height="370" rx="12" fill="url(#crayon)"/><path d="M80 470h150" stroke="${INK}" stroke-width="4"/>${Rp(198, 380, 14, 60, '#B9C6D2', 7, 3)}${Rp(198, 500, 14, 80, '#B9C6D2', 7, 3)}${C(120, 360, 10, '#FF94B8', 3)}${C(150, 390, 9, '#86CF6E', 3)}</g>` +
+      glowRect(70, 310, 170, 390));
+    s += thing('cook', NAMES[cook], doll(cook, 404, 446, 130) + glowRect(396, 438, 146, 130));
+    s += Rp(244, 560, 290, 130, '#F5DDB3', 8, 5) + Rp(236, 546, 306, 24, '#D6AE72', 6, 5);
+    s += thing('pot', '냄비',
+      `<g class="spray">${Array.from({ length: 8 }, (_, i) => `<circle cx="${300 + (i % 3) * 18}" cy="470" r="${12 + (i % 3) * 4}" fill="#fff" stroke="#E2E7EE" stroke-width="3" style="--i:${i};--dx:${(i % 3 - 1) * 24}px;--dy:${-130 - i * 12}px"/>`).join('')}</g>` +
+      Rp(262, 478, 116, 70, '#F0544F', 16, 5) + Rp(250, 466, 140, 20, '#E8434B', 10, 4) + Rp(304, 448, 32, 20, '#FFC83D', 8, 3) + Rp(236, 490, 30, 14, '#E8434B', 7, 3) + Rp(374, 490, 30, 14, '#E8434B', 7, 3) +
+      glowRect(230, 400, 180, 160));
+
+    /* living room */
+    s += thing('tv', 'TV', Rp(670, 150, 260, 176, DARK, 16, 6) + `<g id="tv">${tvSVG(1)}</g>` + `<path d="M760 326 L740 360 M840 326 L860 360" stroke="${INK}" stroke-width="6" stroke-linecap="round"/>` + glowRect(660, 140, 280, 230));
+    s += Rp(590, 520, 360, 70, '#74C4F2', 24, 5) + `<rect x="590" y="520" width="360" height="70" rx="24" fill="url(#crayon)"/>`;
+    s += thing('host', NAMES[host], doll(host, 690, 440, 160) + glowRect(680, 430, 180, 200));
+    s += Rp(580, 586, 380, 70, '#74C4F2', 20, 5) + Rp(570, 560, 44, 110, '#5AAFE0', 18, 5) + Rp(926, 560, 44, 110, '#5AAFE0', 18, 5) + `<rect x="580" y="586" width="380" height="70" rx="20" fill="url(#crayon)"/>` +
+      `<path d="M600 656v34M940 656v34" stroke="${INK}" stroke-width="8" stroke-linecap="round"/>`;
+    s += thing('plant', '화분', `<g id="plant">${plantSVG(0)}</g>` + Rp(974, 610, 56, 80, '#FF8A5C', 8, 4) + glowRect(964, 380, 76, 316));
+
+    /* bedroom */
+    s += Rp(1100, 160, 210, 170, '#CDEAFB', 10, 5) + `<g class="stars">${C(1150, 210, 6, '#FFE07A', 0)}${C(1220, 250, 5, '#FFE07A', 0)}${C(1270, 200, 6, '#FFE07A', 0)}${P('M1270 280 a28 28 0 1 0 22 -40 a22 22 0 1 1 -22 40Z', '#FFE07A', 3)}</g>` +
+      `<g class="sun">${C(1250, 220, 30, '#FFE07A', 3)}</g><path d="M1205 162V328M1102 245H1308" stroke="${INK}" stroke-width="5"/>`;
+    s += thing('toy', '장난감', Rp(1340, 290, 180, 20, '#B9805A', 4, 4) + `<g class="hop">${ITEM_AT('ball', 1360, 214, 76)}</g>` + doll('bear', 1446, 210, 70) + glowRect(1330, 196, 200, 124));
+    s += thing('bed', '침대',
+      Rp(1090, 520, 30, 170, '#B9805A', 8, 5) + Rp(1360, 570, 30, 120, '#B9805A', 8, 5) + Rp(1100, 600, 280, 50, '#fff', 10, 5) + Rp(1112, 556, 92, 44, '#fff', 16, 4) +
+      `<g transform="rotate(-90 1170 560)">${doll(sleeper, 1104, 486, 120)}</g>` + Rp(1196, 566, 180, 50, o.blanket, 18, 5) + `<rect x="1196" y="566" width="180" height="50" rx="18" fill="url(#crayon)"/>` + glowRect(1080, 480, 320, 216));
+    s += thing('lamp', '스탠드', `<circle class="lamp-light" cx="1470" cy="470" r="70" fill="#FFF3B0" opacity=".6"/>` + `<path d="M1470 470V680" stroke="${INK}" stroke-width="8"/>` + Rp(1436, 674, 68, 16, '#B9805A', 8, 4) + P('M1430 470 L1446 410 H1494 L1510 470Z', '#FFC83D', 5) + glowRect(1416, 396, 108, 300));
+    s += `<rect class="night" x="1062" y="68" width="476" height="696" fill="#1C1640" pointer-events="none"/>`;
     return s;
   }
-  const RES = {};
+  function tvSVG(ch) {
+    const x = 686, y = 166, w = 228, h = 144;
+    const scr = (c) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="${c}"/>`;
+    return [
+      scr('#2E2733') + `<path d="M${x + 20} ${y + 40} L${x + 60} ${y + 12}" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".25"/>`,
+      scr('#FFE6A3') + doll('pochacco', x + 64, y + 6, 104),
+      scr('#D9F1CE') + doll('keroppi', x + 30, y + 14, 80) + doll('bear', x + 118, y + 14, 80),
+      scr('#CDEAFB') + C(x + 80, y + 64, 32, '#FFC83D', 3) + P(`M${x + 120} ${y + 110} a22 22 0 0 1 20 -34 a28 28 0 0 1 52 8 a18 18 0 0 1 4 26Z`, '#fff', 3),
+    ][ch % 4];
+  }
+  function plantSVG(n) {
+    const hgt = 70 + n * 60;
+    let s = `<path d="M1002 610 V${610 - hgt}" stroke="#3E9A3A" stroke-width="7" stroke-linecap="round"/>`;
+    for (let i = 0; i <= n; i++) {
+      const y = 600 - i * 55;
+      s += P(`M1002 ${y} q-30 -6 -34 -30 q26 0 34 30Z`, '#5DB85A', 3) + P(`M1002 ${y - 20} q30 -6 34 -30 q-26 0 -34 30Z`, '#86CF6E', 3);
+    }
+    if (n >= 3) s += [0, 72, 144, 216, 288].map((a) => `<ellipse cx="1002" cy="${610 - hgt - 14}" rx="10" ry="16" transform="rotate(${a} 1002 ${610 - hgt})" fill="#FF94B8" ${S(2.6)}/>`).join('') + C(1002, 610 - hgt, 10, '#FFC83D', 3);
+    return s;
+  }
 
   const ROOMS = {
     hospital: {
@@ -1077,10 +1103,10 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     mart: { wall: '#FFF0DC', shop: { items: ['apple', 'banana', 'carrot', 'milk', 'bread', 'grape', 'melon', 'egg'], names: ['사과', '바나나', '당근', '우유', '빵', '포도', '수박', '달걀'], clerk: 'purin', money: false } },
     fruit: { wall: '#EEF7DF', shop: { items: ['apple', 'banana', 'grape', 'melon', 'berry', 'orange'], names: ['사과', '바나나', '포도', '수박', '딸기', '귤'], clerk: 'keroppi', money: false, crates: true } },
     daiso: { wall: '#FDE8E8', shop: { items: ['pencil', 'note', 'balloon', 'pin', 'cup', 'ball'], names: ['연필', '공책', '풍선', '머리핀', '컵', '공'], clerk: 'pochacco', money: true } },
-    hansung: { wall: '#CDEAFB', apt: { body: '#BBA3F5', curtain: '#FFD8E6', trim: '#FFC83D', seed: 0 } },
-    gold: { wall: '#CDEAFB', apt: { body: '#F6C744', curtain: '#E5DBFD', trim: '#fff', seed: 3, crown: true } },
-    kangsin: { wall: '#CDEAFB', apt: { body: '#8FD0F2', curtain: '#FFE6A3', trim: '#FF94B8', seed: 5 } },
-    onette: { wall: '#CDEAFB', apt: { body: '#fff', curtain: '#fff', trim: '#fff', seed: 6, stripes: ['#F0544F', '#FF8A3D', '#FFD84D', '#86CF6E', '#74C4F2', '#6C7FE0', '#BBA3F5'] } },
+    hansung: { wall: '#CDEAFB', apt: { body: '#BBA3F5', walls: ['#FFF1D6', '#E5DBFD', '#FFE0EC'], kinds: ['purin', 'cinnamoroll', 'pochacco'], blanket: '#FF94B8', floor: 5 } },
+    onette: { wall: '#CDEAFB', apt: { body: '#FF9A5C', walls: ['#FFF6CC', '#DDF3E4', '#E5F1FF'], kinds: ['melody', 'kuromi', 'keroppi'], blanket: '#86CF6E', floor: 3 } },
+    gold: { wall: '#CDEAFB', apt: { body: '#F6C744', walls: ['#FFF1D6', '#FBE7C6', '#E8DEFF'], kinds: ['bear', 'kitty', 'cinnamoroll'], blanket: '#BBA3F5', floor: 12 } },
+    kangsin: { wall: '#CDEAFB', apt: { body: '#8FD0F2', walls: ['#EAF6FF', '#FFF0DC', '#E2F5DA'], kinds: ['keroppi', 'pochacco', 'kuromi'], blanket: '#FFC83D', floor: 8 } },
   };
 
   const STYLES = [
@@ -1148,9 +1174,9 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     const b = byId[id], def = ROOMS[id];
     current = id;
     state = { n: 0, picked: [], sig: 0, blocks: 1, art: 0, lines: {} };
-    for (const k in RES) delete RES[k];
     let svg;
-    if (def.apt) svg = aptRoom(b, def.apt);
+    roomSvg.classList.remove('is-night');
+    if (def.apt) svg = aptHome(b, def.apt);
     else if (def.shop) svg = shopRoom(b, def.shop);
     else svg = def.draw();
     roomSvg.innerHTML = svg;
@@ -1295,14 +1321,39 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     if (t.say) say(nextLine(k, t.say), el);
   }
 
+  const TV_LINES = ['TV를 껐어요. 너무 오래 보면 눈이 아파요.', '만화 시간이에요! 하하하.', '동물 친구들이 나와요. 개굴개굴!', '날씨 예보: 내일은 맑고 구름 조금!'];
   function useApt(el, k) {
-    if (k === 'bell') { sfx.ding(); say(nextLine(k, ['띵동! 누구세요?', `${byId[current].name}에 놀러 왔어요!`]), el); return; }
-    if (k === 'mail') { sfx.pop(); say(nextLine(k, ['편지가 왔어요! 누구에게 온 걸까요?', '우체부 아저씨가 편지를 넣어 줬어요.']), el); return; }
-    const r = RES[k]; if (!r) return;
-    const lit = !el.classList.contains('lit');
-    el.classList.toggle('lit', lit);
-    if (lit) { sfx.on(); say(`${r.floor}층에 사는 ${josa(NAMES[r.kind], '이에요', '예요')}. 안녕!`, el); }
-    else { sfx.off(); say(`${josa(NAMES[r.kind], '이', '가')} 잘 자요~`, el); }
+    const o = ROOMS[current].apt;
+    const [cook, host, sleeper] = o.kinds;
+    switch (k) {
+      case 'fridge': {
+        const open = !el.classList.contains('open');
+        el.classList.toggle('open', open);
+        sfx[open ? 'on' : 'off']();
+        say(open ? '냉장고 안에 우유, 사과, 달걀, 딸기가 있어요!' : '냉장고 문은 꼭 닫아요.', el);
+        return;
+      }
+      case 'pot': pulse(el, 'spraying', 2200); sfx.water(); say('보글보글~ 맛있는 국을 끓여요. 뜨거우니까 조심!', el); return;
+      case 'cook': sfx.hello(); say(nextLine(k, [`${josa(NAMES[cook], '이', '가')} 맛있는 밥을 만들어요!`, '손 씻고 밥 먹자!']), el); return;
+      case 'tv': state.tv = ((state.tv == null ? 1 : state.tv) + 1) % 4; $('tv').innerHTML = tvSVG(state.tv); sfx.tap(); say(TV_LINES[state.tv], el); return;
+      case 'host': sfx.hello(); say(nextLine(k, [`안녕! 나는 ${josa(NAMES[host], '이야', '야')}. 우리 집에 잘 왔어!`, `${o.floor}층 우리 집에 놀러 와 줘서 고마워!`]), el); return;
+      case 'plant': {
+        state.plant = ((state.plant || 0) + 1) % 4;
+        $('plant').innerHTML = plantSVG(state.plant);
+        sfx.pop();
+        say(['화분에 새싹이 났어요. 다시 키워 볼까요?', '물을 주었어요. 쑥쑥!', '조금 더 자랐어요. 쑥쑥쑥!', '와, 예쁜 꽃이 피었어요!'][state.plant], el);
+        return;
+      }
+      case 'bed': sfx.tap(); say(`쉿! ${josa(NAMES[sleeper], '이', '가')} 자고 있어요. 쿨쿨~`, el); return;
+      case 'lamp': {
+        const night = !roomSvg.classList.contains('is-night');
+        roomSvg.classList.toggle('is-night', night);
+        sfx[night ? 'off' : 'on']();
+        say(night ? '불을 껐어요. 이제 잘 시간! 잘 자요~' : '불을 켰어요. 좋은 아침!', el);
+        return;
+      }
+      case 'toy': pulse(el, 'hopping', 1200); sfx.block(); say('통통통! 공놀이 할까요?', el); return;
+    }
   }
 
   function useShop(el, k, o) {
