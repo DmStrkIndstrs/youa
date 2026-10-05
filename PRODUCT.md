@@ -36,6 +36,9 @@ delegated: static single-file HTML/CSS/JS with no build step, so the teacher can
 - The site opens on a map redrawn from the class's "우리동네최고" bulletin board (root `index.html`, built from `town/src/app.html`).
 - Its 14 places are the ones the user listed: 병원, 인형뽑기 가게, 도서관, 경찰서, 소방서, 문정유치원, 광신프로그레스 아파트, 골드클래스 아파트, 한성아파트, 오네뜨아파트 (next to 한성), 다이소, 마트, 과일가게 and 미용실.
 - Tapping a place opens its inside (each apartment opens as a cut-away home: kitchen, living room and bedroom), where everything can be tapped and answers in a speech bubble. Some things count up as they are tapped: the 마트 cart counts items; 다이소 items cost 1000–5000원 and the child pays at the counter by tapping 1000원 bills until the total is met.
+- Every speech bubble is also read aloud in the device's own Korean voice (slower and a little brighter, for pre-readers); a header button turns the voice off.
+- A pedestrian light by the slanted road opens a 횡단보도 game: cars drive past on red; on green they stop at the line and the child crosses with a raised hand.
+- 마트, 과일가게 and 다이소 all price their goods (1000–5000원) and the child pays at the counter with 1000원 bills.
 - The 인형뽑기 가게 opens the claw game. The game shows a 우리동네 button only when it was opened from the map.
 
 ## Positioning
