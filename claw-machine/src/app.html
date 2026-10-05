@@ -556,7 +556,7 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
   box-shadow: var(--depth-1);
 }
 .flip::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 2px; background: rgba(52, 38, 74, .22); }
-.cubbies { min-height: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(4, minmax(0, 1fr)); }
+.cubbies { min-height: 0; display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); grid-template-rows: repeat(var(--rows, 4), minmax(0, 1fr)); }
 .cubby { display: grid; grid-template-rows: minmax(0, 1fr) auto; padding: calc(var(--ring) + .7vmin) calc(var(--ring) + .7vmin) calc(var(--ring) + .5vmin); }
 .cubby.off { filter: saturate(.3); }
 .prize { position: relative; min-height: 0; }
@@ -622,7 +622,10 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
   font: inherit;
 }
 .roster { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
-.r-row { display: grid; grid-template-columns: 2em 2.6em 7.5em minmax(7em, 1fr) auto auto; align-items: center; gap: 10px; }
+.r-row { display: grid; grid-template-columns: 2em 2.6em 7.5em minmax(7em, 1fr) auto auto auto; align-items: center; gap: 10px; }
+.r-del.armed { background: var(--berry-deep); color: var(--paper); }
+.r-add { justify-self: start; margin-top: 4px; }
+.r-del:disabled, .r-add:disabled { opacity: .4; cursor: default; }
 .r-no { text-align: right; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
 .r-sym .disc { width: 2.2em; height: 2.2em; }
 .r-row select { width: 100%; }
@@ -630,8 +633,8 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
 .r-abs { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
 .sheet input[type="checkbox"] { width: 28px; height: 28px; accent-color: var(--berry); }
 .sheet select { -webkit-appearance: none; appearance: none; padding-right: 34px; background: var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' fill='none' stroke='%2334264A' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center / 16px; }
-.r-seat, .ghost-btn { min-height: 44px; padding: 4px 12px; border: 2.5px solid var(--ink); border-radius: 999px; background: var(--paper); white-space: nowrap; }
-.r-seat:active, .ghost-btn:active { transform: translateY(2px); }
+.r-seat, .r-del, .ghost-btn { min-height: 44px; padding: 4px 12px; border: 2.5px solid var(--ink); border-radius: 999px; background: var(--paper); white-space: nowrap; }
+.r-seat:active, .r-del:active, .ghost-btn:active { transform: translateY(2px); }
 .opts { display: grid; gap: 10px; }
 .opts label { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .sheet-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; justify-content: flex-end; margin-top: 6px; }
@@ -645,7 +648,7 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
 /* ---------- smaller landscape screens ---------- */
 @media (max-width: 1199px) {
   .wheel-hole { padding: calc(var(--ring) + 1.4vmin); }
-  .cubbies { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(6, minmax(0, 1fr)); }
+  .cubbies { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(var(--rows2, 6), minmax(0, 1fr)); }
 }
 
 
@@ -861,8 +864,9 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
     </div>
     <label class="field">반 이름 <input type="text" id="class-input" maxlength="12" autocomplete="off"></label>
     <h3>친구 이름과 그림 표시</h3>
-    <p class="hint">그림 표시는 글자를 아직 못 읽는 친구가 자기 차례와 사물함을 알아보는 표시예요. 반에서 쓰는 표시로 바꿔 주세요. 결석한 친구는 돌림판에서 빠져요.</p>
+    <p class="hint">그림 표시는 글자를 아직 못 읽는 친구가 자기 차례와 사물함을 알아보는 표시예요. 반에서 쓰는 표시로 바꿔 주세요. 결석한 친구는 돌림판에서 빠져요. 반을 옮긴 친구는 "빼기"로 지우고, 새 친구는 아래 버튼으로 넣어요.</p>
     <div class="roster" id="roster"></div>
+    <button class="ghost-btn r-add" id="r-add" type="button">+ 친구 추가</button>
     <h3>놀이 방법</h3>
     <div class="opts">
       <label>꽝이 나오는 정도
@@ -904,6 +908,7 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
   ];
   const CLASS = ['강하율', '권민석', '김다연', '김연우', '김온유', '김주원', '박소윤', '백시안', '변정현', '서로희', '진하성', '한윤재'];
   const N = CLASS.length;
+  const MAX = 30; // largest class the cubbies and the wheel are laid out for
   const SYMBOLS = { apple: '사과', strawberry: '딸기', sun: '해', star: '별', heart: '하트', butterfly: '나비', fish: '물고기', car: '자동차', flower: '꽃', rainbow: '무지개', cloud: '구름', moon: '달', leaf: '나뭇잎', umbrella: '우산', ball: '공' };
   const SYM_KEYS = Object.keys(SYMBOLS);
   const KINDS = { cinnamoroll: '시나모롤', kuromi: '쿠로미', melody: '마이멜로디', purin: '폼폼푸린', kitty: '헬로키티', pochacco: '포차코', keroppi: '케로피', bear: '곰돌이' };
@@ -1035,9 +1040,10 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
 
   /* ---------- state ---------- */
   const KEY = 'claw-shop-v3';
-  const defaults = () => ({
-    className: '새들1반', names: CLASS.slice(), symbols: SYM_KEYS.slice(0, N), absent: Array(N).fill(false),
-    prizes: Array.from({ length: N }, () => []), turn: null,
+  const defaults = (n = N) => ({
+    className: '새들1반', names: Array.from({ length: n }, (_, i) => CLASS[i] || `친구 ${i + 1}`),
+    symbols: Array.from({ length: n }, (_, i) => SYM_KEYS[i % SYM_KEYS.length]), absent: Array(n).fill(false),
+    prizes: Array.from({ length: n }, () => []), turn: null,
     coinOn: false, soundOn: true, miss: 'some', sure: true, skipDone: true, dolls: null,
   });
   function load() {
@@ -1051,11 +1057,12 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
         }
       } catch (e) { /* ignore */ }
     }
-    const d = defaults();
+    const size = s && Array.isArray(s.names) && s.names.length >= 1 && s.names.length <= MAX ? s.names.length : N;
+    const d = defaults(size);
     const out = Object.assign(d, s || {});
-    const listOk = (v) => Array.isArray(v) && v.length === N;
+    const listOk = (v) => Array.isArray(v) && v.length === size;
     if (!listOk(out.names)) out.names = d.names;
-    out.names = out.names.map((n, i) => (typeof n === 'string' && n.trim() ? n.trim().slice(0, 10) : CLASS[i]));
+    out.names = out.names.map((n, i) => (typeof n === 'string' && n.trim() ? n.trim().slice(0, 10) : d.names[i]));
     if (!listOk(out.symbols)) out.symbols = d.symbols;
     out.symbols = out.symbols.map((k, i) => (SYMBOLS[k] ? k : SYM_KEYS[i % SYM_KEYS.length]));
     if (!listOk(out.absent)) out.absent = d.absent;
@@ -1065,7 +1072,7 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
     if (typeof out.className !== 'string' || !out.className.trim()) out.className = d.className;
     if (!MISS_P.hasOwnProperty(out.miss)) out.miss = 'some';
     ['coinOn', 'soundOn', 'sure', 'skipDone'].forEach((k) => { out[k] = Boolean(out[k]); });
-    if (!(Number.isInteger(out.turn) && out.turn >= 0 && out.turn < N && !out.absent[out.turn])) out.turn = null;
+    if (!(Number.isInteger(out.turn) && out.turn >= 0 && out.turn < size && !out.absent[out.turn])) out.turn = null;
     if (!Array.isArray(out.dolls) || !out.dolls.length || out.dolls.some((x) => !x || !KINDS[x.kind])) out.dolls = null;
     return out;
   }
@@ -1333,7 +1340,8 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
         const [px, py] = wpt(i * seg - seg / 2, WC.r - 9);
         pegs += `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="5.5" fill="#FFF1C2" stroke="${INK}" stroke-width="2"/>`;
       }
-      const chars = Array.from(name(id).slice(0, 4)).map(() => '<text class="lbl-ch" text-anchor="middle" dominant-baseline="central"></text>').join('');
+      const fs = n <= 14 ? 25 : Math.max(15, Math.round(25 * 14 / n));
+      const chars = Array.from(name(id).slice(0, 4)).map(() => `<text class="lbl-ch" style="font-size:${fs}px" text-anchor="middle" dominant-baseline="central"></text>`).join('');
       labels += `<g class="lbl" data-i="${i}" data-id="${id}">${chars}<g class="lbl-sym">${symbolInner(st.symbols[id])}</g></g>`;
     });
     $('wheel-slices').innerHTML = slices;
@@ -1504,7 +1512,15 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
       while (n.scrollWidth > n.clientWidth + 1 && size > 0.62) { size -= 0.06; n.style.fontSize = size.toFixed(2) + 'em'; }
     });
   }
-  function renderCubbies() { $('cubbies').innerHTML = st.names.map((_, i) => cubbyHTML(i)).join(''); fitNames($('cubbies')); }
+  function renderCubbies() {
+    const box = $('cubbies'), n = st.names.length;
+    const cols = n <= 12 ? 3 : n <= 20 ? 4 : 5;
+    box.style.setProperty('--cols', cols);
+    box.style.setProperty('--rows', Math.ceil(n / cols));
+    box.style.setProperty('--rows2', Math.ceil(n / 2));
+    box.innerHTML = st.names.map((_, i) => cubbyHTML(i)).join('');
+    fitNames(box);
+  }
   function renderCubby(i) {
     const old = cubbyEl(i);
     if (!old) return null;
@@ -1851,36 +1867,76 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
 
   /* ---------- settings ---------- */
   const resetBtn = $('btn-reset');
-  function buildRoster() {
-    const opts = SYM_KEYS.map((k) => `<option value="${k}">${SYMBOLS[k]}</option>`).join('');
-    $('roster').innerHTML = st.names.map((_, i) => `
-      <div class="r-row">
-        <span class="r-no">${i + 1}</span>
-        <span class="r-sym" id="symprev-${i + 1}"></span>
-        <select id="sym-${i + 1}" aria-label="${i + 1}번 그림 표시">${opts}</select>
-        <input type="text" id="name-${i + 1}" maxlength="10" autocomplete="off" aria-label="${i + 1}번 이름">
-        <label class="r-abs"><input type="checkbox" id="abs-${i + 1}"> 결석</label>
-        <button class="r-seat" type="button" data-i="${i}">지금 차례</button>
-      </div>`).join('');
-    st.names.forEach((nm, i) => {
-      $(`name-${i + 1}`).value = nm;
-      const sel = $(`sym-${i + 1}`);
-      sel.value = st.symbols[i];
-      const prev = () => { $(`symprev-${i + 1}`).innerHTML = `<span class="disc" style="--c:${BINS[i % BINS.length].c}">${symbolSVG(sel.value)}</span>`; };
-      sel.addEventListener('change', prev);
-      prev();
-      $(`abs-${i + 1}`).checked = st.absent[i];
-    });
-    $('roster').querySelectorAll('.r-seat').forEach((b) => b.addEventListener('click', () => {
-      const i = +b.dataset.i;
+  // The roster is edited as rows in the sheet; nothing changes until 저장. Each row remembers which
+  // child it came from (data-src) so prizes and the current turn follow the child, not the position.
+  function rosterRow(src, nm, sym, absent) {
+    const row = document.createElement('div');
+    row.className = 'r-row';
+    row.dataset.src = src;
+    row.innerHTML = `<span class="r-no"></span><span class="r-sym"></span>
+      <select class="r-symsel">${SYM_KEYS.map((k) => `<option value="${k}">${SYMBOLS[k]}</option>`).join('')}</select>
+      <input type="text" class="r-name" maxlength="10" autocomplete="off" placeholder="이름">
+      <label class="r-abs"><input type="checkbox" class="r-absbox"> 결석</label>
+      <button class="r-seat" type="button">지금 차례</button>
+      <button class="r-del" type="button">빼기</button>`;
+    row.querySelector('.r-name').value = nm;
+    const sel = row.querySelector('.r-symsel');
+    sel.value = sym;
+    sel.addEventListener('change', () => paintRow(row));
+    row.querySelector('.r-absbox').checked = absent;
+    row.querySelector('.r-seat').addEventListener('click', () => {
+      row.querySelector('.r-absbox').checked = false;
       applySettings();
-      $(`abs-${i + 1}`).checked = false;
-      st.absent[i] = false;
+      const i = row.dataset.newIndex == null ? -1 : +row.dataset.newIndex;
       closeSettings();
       afterSettings();
-      teacherSeat(i);
-    }));
+      if (i >= 0) teacherSeat(i);
+    });
+    const del = row.querySelector('.r-del');
+    del.addEventListener('click', () => {
+      if (!del.classList.contains('armed')) {
+        del.classList.add('armed');
+        del.textContent = '정말 뺄까요?';
+        clearTimeout(del._t);
+        del._t = setTimeout(() => { del.classList.remove('armed'); del.textContent = '빼기'; }, 3000);
+        return;
+      }
+      row.remove();
+      renumberRoster();
+    });
+    return row;
   }
+  function paintRow(row) {
+    const i = [...row.parentNode.children].indexOf(row);
+    row.querySelector('.r-sym').innerHTML = `<span class="disc" style="--c:${BINS[i % BINS.length].c}">${symbolSVG(row.querySelector('.r-symsel').value)}</span>`;
+  }
+  function renumberRoster() {
+    const rows = [...$('roster').children];
+    rows.forEach((row, i) => {
+      row.querySelector('.r-no').textContent = i + 1;
+      row.querySelector('.r-symsel').setAttribute('aria-label', `${i + 1}번 그림 표시`);
+      row.querySelector('.r-name').setAttribute('aria-label', `${i + 1}번 이름`);
+      row.querySelector('.r-del').disabled = rows.length <= 1;
+      paintRow(row);
+    });
+    $('r-add').disabled = rows.length >= MAX;
+  }
+  function buildRoster() {
+    const box = $('roster');
+    box.innerHTML = '';
+    st.names.forEach((nm, i) => box.appendChild(rosterRow(i, nm, st.symbols[i], st.absent[i])));
+    renumberRoster();
+  }
+  $('r-add').addEventListener('click', () => {
+    const box = $('roster');
+    if (box.children.length >= MAX) return;
+    const used = new Set([...box.querySelectorAll('.r-symsel')].map((x) => x.value));
+    const sym = SYM_KEYS.find((k) => !used.has(k)) || SYM_KEYS[box.children.length % SYM_KEYS.length];
+    const row = rosterRow(-1, '', sym, false);
+    box.appendChild(row);
+    renumberRoster();
+    row.querySelector('.r-name').focus();
+  });
   function openSettings() {
     if (!['idle', 'ready'].includes(run.phase)) return;
     $('class-input').value = st.className;
@@ -1898,9 +1954,30 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
   function closeSettings() { $('settings').hidden = true; $('btn-settings').focus({ preventScroll: true }); }
   function applySettings() {
     st.className = $('class-input').value.trim().slice(0, 12) || '우리 반';
-    st.names = st.names.map((old, i) => $(`name-${i + 1}`).value.trim().slice(0, 10) || old);
-    st.symbols = st.symbols.map((old, i) => $(`sym-${i + 1}`).value || old);
-    st.absent = st.absent.map((_, i) => $(`abs-${i + 1}`).checked);
+    const next = { names: [], symbols: [], absent: [], prizes: [] };
+    let turn = null;
+    [...$('roster').children].forEach((row) => {
+      const src = +row.dataset.src;
+      const nm = row.querySelector('.r-name').value.trim().slice(0, 10) || (src >= 0 ? st.names[src] : '');
+      delete row.dataset.newIndex;
+      if (!nm) return; // a new row left empty is dropped
+      row.dataset.newIndex = next.names.length;
+      if (src >= 0 && src === st.turn) turn = next.names.length;
+      next.names.push(nm);
+      next.symbols.push(row.querySelector('.r-symsel').value);
+      next.absent.push(row.querySelector('.r-absbox').checked);
+      next.prizes.push(src >= 0 ? st.prizes[src] : []);
+    });
+    if (next.names.length) {
+      const hadTurn = st.turn !== null;
+      Object.assign(st, next);
+      st.turn = turn;
+      if (hadTurn && turn === null) {
+        slot.classList.remove('seated');
+        guest.classList.remove('in');
+        if (run.phase === 'ready') run.phase = 'idle';
+      }
+    }
     st.miss = $('opt-miss').value;
     st.sure = $('opt-sure').checked;
     st.skipDone = $('opt-skip').checked;
@@ -1931,7 +2008,7 @@ a.knob { text-decoration: none; -webkit-user-select: none; user-select: none; to
       return;
     }
     applySettings();
-    st.prizes = defaults().prizes;
+    st.prizes = st.names.map(() => []);
     st.turn = null; run.paid = false; run.tries = 0; run.stow = null;
     run.phase = 'idle';
     slot.classList.remove('seated');

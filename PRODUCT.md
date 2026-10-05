@@ -63,7 +63,7 @@ delegated: static single-file HTML/CSS/JS with no build step, so the teacher can
 - **Turn picking:** a name wheel picks the turn. Children who already succeeded leave the wheel. A child marked absent (name cleared) is left out.
 - **The grab:** tap a doll, the claw carries it to the chute, and it comes out of the prize door.
 - **Outcomes:** success shows "성공~~~!" and a miss shows "꽝~~!" (user's wording). The retry is guaranteed to succeed by default. The miss rate can be set.
-- **Teacher-only settings:** names, absences, miss rate, guaranteed retry, skip-winners, optional coin step, sound, restock, and a two-step reset.
+- **Teacher-only settings:** names (add or remove friends, 1–30), absences, miss rate, guaranteed retry, skip-winners, optional coin step, sound, restock, and a two-step reset.
 - **Characters:** the dolls are hand-drawn tributes to characters the children love, chosen by the user: Cinnamoroll, Kuromi, My Melody, Pompompurin, Hello Kitty, Pochacco and Keroppi, plus a bear. They are not official artwork.
 - **Persistence:** state is saved in the browser's localStorage on that device only.
 - **Not decided:** the device model and screen size, and whether the coin step is used in class.
