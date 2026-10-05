@@ -142,6 +142,26 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   white-space: nowrap;
 }
 .plaque-hole { flex: none; width: .5em; height: .5em; border: 2px solid var(--ink); border-radius: 50%; background: var(--birch-lo); }
+.hint {
+  position: absolute;
+  right: calc(clamp(10px, 1.8vmin, 24px) + 2 * clamp(44px, 5.4vmin, 60px) + 3 * clamp(8px, 1.2vmin, 14px));
+  top: 50%;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: .35em;
+  padding: .3em .7em .34em .5em;
+  background: #FFF3B0;
+  border: 3px solid var(--ink);
+  border-radius: 10px;
+  font-size: clamp(1rem, 2.4vmin, 1.7rem);
+  line-height: 1.1;
+  white-space: nowrap;
+  box-shadow: var(--depth-1);
+  transform: translateY(-30%) rotate(2deg);
+}
+.hint svg { width: 1.1em; height: 1.4em; }
+@media (max-width: 1180px) { .hint { display: none; } }
 .knobs { position: absolute; right: clamp(10px, 1.8vmin, 24px); top: 50%; transform: translateY(-30%); display: flex; gap: clamp(8px, 1.2vmin, 14px); }
 .knob {
   width: clamp(44px, 5.4vmin, 60px);
@@ -316,6 +336,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       <div class="bunting" id="bunting" aria-hidden="true"></div>
       <div class="plaque"><span class="plaque-hole" aria-hidden="true"></span><span>새들1반</span></div>
       <h1 class="title" id="title" aria-label="우리동네 최고"></h1>
+      <p class="hint"><svg viewBox="0 0 48 64" aria-hidden="true"><path d="M14 2c3 0 5 2 5 5v14l3-1c3-1 6 1 6 4v4l3-1c3-1 6 1 6 4v3l2-.5c3-.6 5 1.5 5 4.5v6c0 9-7 16-16 16h-4c-6 0-10-3-13-8L3 37c-1.6-2.6 0-6 3-6.2 1.6 0 3 .8 4 2l-1-1V7c0-3 2-5 5-5z" fill="#fff" stroke="#34264A" stroke-width="3" stroke-linejoin="round"/></svg>건물을 눌러 보세요!</p>
       <div class="knobs">
         <button class="knob" id="btn-sound" type="button" aria-label="소리" aria-pressed="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="#34264A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="#34264A"/><path class="on" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="off" d="M16 9.5l5 5M21 9.5l-5 5"/></svg>
@@ -584,7 +605,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   const DRAW = {
     hansung: (w, h) => apt(w, h, { id: 'hansung', name: '한성', body: '#BBA3F5', win: '#E8F7FF', floors: 6, cols: 3, seed: 1, trim: '#FFC83D' }),
     gold: (w, h) => apt(w, h, { id: 'gold', name: '골드클래스', body: '#F6C744', win: '#4A5A8C', floors: 4, cols: 3, seed: 3, crown: true, trim: '#fff' }),
-    kangsin: (w, h) => apt(w, h, { id: 'kangsin', name: '강신프로그레그', body: '#8FD0F2', win: '#FFFFFF', floors: 8, cols: 3, seed: 2, balcony: true, trim: '#FF94B8' }),
+    gwangsin: (w, h) => apt(w, h, { id: 'gwangsin', name: '광신프로그레스', body: '#8FD0F2', win: '#FFFFFF', floors: 8, cols: 3, seed: 2, balcony: true, trim: '#FF94B8' }),
     onette: (w, h) => apt(w, h, { id: 'onette', name: '오네뜨', body: '#fff', stripes: ['#F0544F', '#FF8A3D', '#FFD84D', '#86CF6E', '#74C4F2', '#6C7FE0', '#BBA3F5'], win: '#FFFFFF', floors: 6, cols: 3, seed: 4, trim: '#fff' }),
     hospital(w, h) {
       let s = R(0, 46, w, h - 46, '#FFF8EC', 6);
@@ -642,7 +663,8 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       s += C(w / 2, 62, 20, '#FFE07A', 3) + [0, 45, 90, 135, 180, 225, 270, 315].map((a) => { const r = a * Math.PI / 180; return `<path d="M${w / 2 + Math.cos(r) * 25} ${62 + Math.sin(r) * 25}L${w / 2 + Math.cos(r) * 31} ${62 + Math.sin(r) * 31}" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>`; }).join('');
       s += R(0, 92, w, h - 92, '#86CF6E', 6);
       s += Rp(14, 102, w - 28, 42, '#fff', 8, 3) + T(w / 2, 134, Math.min(28, (w - 34) / 5), '문정유치원', '#2E8A3A');
-      ['#FF94B8', '#FFC83D', '#74C4F2', '#BBA3F5'].forEach((c, i) => { s += C(w * (i + .5) / 4, 172, Math.min(15, w / 11), c, 3); });
+      ['#FF94B8', '#FFC83D', '#74C4F2', '#BBA3F5'].forEach((c, i) => { s += C(w * (i + .5) / 4, 172, Math.min(15, w / 11), c, 3); if (h > 280) s += C(w * (i + .5) / 4, 216, Math.min(15, w / 11), ['#86CF6E', '#FF8A5C', '#FFE07A', '#9ED8F5'][i], 3); });
+      if (h > 280) s += Rp(w / 2 - 54, 244, 108, 34, '#FFF3B0', 8, 3) + T(w / 2, 270, 22, '새들1반', '#2E8A3A');
       s += P(`M${w / 2 - 26} ${h} V${h - 30} A26 26 0 0 1 ${w / 2 + 26} ${h - 30} V${h}Z`, '#FF8A5C', 3);
       return s;
     },
@@ -716,17 +738,17 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     { id: 'hansung', name: '한성아파트', x: 16, y: 60, w: 138, h: 276, rot: -1.5, pin: '#FFC83D' },
     { id: 'onette', name: '오네뜨아파트', x: 164, y: 40, w: 124, h: 296, rot: 1.2, pin: '#74C4F2' },
     { id: 'mart', name: '마트', x: 298, y: 150, w: 160, h: 186, rot: 1.2, pin: '#74C4F2' },
-    { id: 'kinder', name: '문정유치원', x: 470, y: 112, w: 172, h: 222, rot: -1, pin: '#EF4F7A' },
+    { id: 'salon', name: '미용실', x: 474, y: 136, w: 166, h: 198, rot: -1, pin: '#FFC83D' },
     { id: 'hospital', name: '병원', x: 700, y: 92, w: 160, h: 220, rot: 1.5, pin: '#86CF6E' },
     { id: 'fire', name: '소방서', x: 905, y: 68, w: 220, h: 206, rot: -1.2, pin: '#FFC83D', pinX: 33 },
     { id: 'gold', name: '골드클래스 아파트', x: 1212, y: 36, w: 176, h: 202, rot: 1, pin: '#EF4F7A', pinY: 4 },
+    { id: 'fruit', name: '과일가게', x: 1414, y: 36, w: 164, h: 178, rot: -1, pin: '#74C4F2' },
     { id: 'police', name: '경찰서', x: 30, y: 466, w: 170, h: 318, rot: 1, pin: '#FFC83D' },
     { id: 'daiso', name: '다이소', x: 224, y: 548, w: 156, h: 238, rot: -1.5, pin: '#74C4F2', pinY: 38 },
     { id: 'claw', name: '인형뽑기 가게', x: 498, y: 462, w: 300, h: 324, rot: -.6, pin: '#FFC83D' },
     { id: 'library', name: '도서관', x: 852, y: 446, w: 268, h: 340, rot: 1, pin: '#EF4F7A' },
-    { id: 'kangsin', name: '강신프로그레그 아파트', x: 1238, y: 356, w: 170, h: 430, rot: -1, pin: '#86CF6E' },
-    { id: 'salon', name: '미용실', x: 1428, y: 330, w: 158, h: 200, rot: 1.2, pin: '#FFC83D' },
-    { id: 'fruit', name: '과일가게', x: 1428, y: 566, w: 158, h: 220, rot: -1, pin: '#EF4F7A' },
+    { id: 'gwangsin', name: '광신프로그레스 아파트', x: 1238, y: 356, w: 170, h: 430, rot: -1, pin: '#86CF6E' },
+    { id: 'kinder', name: '문정유치원', x: 1426, y: 440, w: 160, h: 346, rot: 1, pin: '#EF4F7A' },
   ];
   const byId = Object.fromEntries(BUILDINGS.map((b) => [b.id, b]));
 
@@ -762,11 +784,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   }
   function drawDecor() {
     let s = '';
-    // a sticky note that tells the children what to do
-    s += `<g transform="translate(1440 18) rotate(3)"><rect x="4" y="6" width="150" height="128" fill="${INK}" opacity=".16"/><rect width="150" height="128" fill="#FFF3B0" ${S(3)}/>${pin(75, 10, '#74C4F2')}` +
-      T(75, 48, 26, '건물을') + T(75, 80, 26, '눌러 보세요!') +
-      `<g transform="translate(104 86) scale(.66)"><path d="M14 2c3 0 5 2 5 5v14l3-1c3-1 6 1 6 4v4l3-1c3-1 6 1 6 4v3l2-.5c3-.6 5 1.5 5 4.5v6c0 9-7 16-16 16h-4c-6 0-10-3-13-8L3 37c-1.6-2.6 0-6 3-6.2 1.6 0 3 .8 4 2l-1-1V7c0-3 2-5 5-5z" fill="#fff" ${S(2.6)}/></g></g>`;
-    s += tree(1468, 214, .9) + tree(1574, 200, .8, '#5DB85A') + tree(1104, 384, .55, '#5DB85A') + tree(830, 410, .5);
+    s += tree(1104, 384, .55, '#5DB85A') + tree(830, 410, .5);
     $('decor').innerHTML = s;
   }
 
@@ -791,13 +809,39 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     `M2300 ${(364 - 0.134 * 1660).toFixed(1)} L640 364 H420 Q404 364 404 380 V830 Q404 846 420 846 H2300`,
     `M2300 814 H1212 Q1196 814 1196 798 V${(roadY(1196) + 34).toFixed(1)} L2300 ${(396 - 0.134 * 1660).toFixed(1)}`,
   ];
-  const CAR_COLORS = ['#6C4BC7', '#4FB35A', '#FF8A3D', '#3B6FCB', '#FF94B8', '#FFD84D'];
-  const CAR_WORDS = ['택시', '', '구급차', '', '', '버스'];
-  function carSVG(c, word) {
-    const body = `<path d="M-46 10 V-4 Q-45 -12 -36 -12 H-22 L-12 -28 H18 L30 -12 H38 Q47 -10 47 0 V10 Z" fill="${c}" ${S(3.5)}/>`;
-    return body + tex(body) + `<path d="M-8 -24 H14 L22 -14 H-15 Z" fill="#DDF3FF" ${S(2.4)}/>` +
-      (word ? `<g class="word">${T(0, 6, 15, word, INK)}</g>` : '') +
-      `<circle cx="-24" cy="12" r="9" fill="${DARK}" ${S(3)}/><circle cx="-24" cy="12" r="3" fill="#ddd"/><circle cx="26" cy="12" r="9" fill="${DARK}" ${S(3)}/><circle cx="26" cy="12" r="3" fill="#ddd"/>`;
+  // what drives each lane: 구급차, 택시, 버스, 승용차, 경찰차, 소방차
+  const VEHICLES = ['ambulance', 'taxi', 'bus', 'car', 'police', 'fire'];
+  const VEHICLE_NAMES = { ambulance: '구급차', taxi: '택시', bus: '버스', car: '자동차', police: '경찰차', fire: '소방차' };
+  const EMERGENCY = { ambulance: 1, police: 1, fire: 1 };
+  // words stay readable when a car is mirrored to drive left
+  const word = (x, y, size, str, fill) => `<g class="word" data-x="${x}">${T(x, y, size, str, fill)}</g>`;
+  const wheel = (x) => `<circle cx="${x}" cy="12" r="9" fill="${DARK}" ${S(3)}/><circle cx="${x}" cy="12" r="3" fill="#ddd"/>`;
+  const lights = (x, y, w) => Rp(x, y, w, 9, '#fff', 3, 2.4) + `<rect class="lamp lamp-a" x="${x + 1.5}" y="${y + 1.5}" width="${w / 2 - 1.5}" height="6" rx="2" fill="#FF3B3B"/><rect class="lamp lamp-b" x="${x + w / 2}" y="${y + 1.5}" width="${w / 2 - 1.5}" height="6" rx="2" fill="#3B7BFF"/>`;
+  function vehicleSVG(type) {
+    const sedan = (c) => { const m = `<path d="M-46 10 V-4 Q-45 -12 -36 -12 H-22 L-12 -28 H18 L30 -12 H38 Q47 -10 47 0 V10 Z" fill="${c}" ${S(3.5)}/>`; return m + tex(m) + `<path d="M-8 -24 H14 L22 -14 H-15 Z" fill="#DDF3FF" ${S(2.4)}/>`; };
+    switch (type) {
+      case 'taxi': return sedan('#FF9A2E') + Rp(-14, -38, 30, 11, '#FFE07A', 3, 2.4) + word(1, -29.5, 9, '택시', INK) + `<path d="M-46 0H47" stroke="#fff" stroke-width="3" stroke-dasharray="6 5"/>` + wheel(-24) + wheel(26);
+      case 'police': return sedan('#fff') + `<rect x="-45" y="-6" width="91" height="9" fill="#2B4C9B"/>` + word(2, 2, 9, '경찰', '#fff') + lights(-10, -36, 26) + wheel(-24) + wheel(26);
+      case 'ambulance': {
+        const m = `<path d="M-54 12 V-26 Q-54 -32 -48 -32 H22 Q28 -32 31 -27 L45 -8 Q54 -6 54 2 V12 Z" fill="#fff" ${S(3.5)}/>`;
+        return m + `<path d="M24 -27 L38 -9 H18 V-27 Z" fill="#DDF3FF" ${S(2.4)}/>` + `<rect x="-52" y="-2" width="104" height="7" fill="#E8434B"/>` +
+          `<rect x="-35" y="-27" width="8" height="22" fill="#E8434B"/><rect x="-42" y="-20" width="22" height="8" fill="#E8434B"/>` +
+          word(-2, -13, 13, '119', '#E8434B') + lights(-16, -41, 30) + wheel(-32) + wheel(32);
+      }
+      case 'fire': {
+        const body = `<rect x="-74" y="-24" width="104" height="36" rx="5" fill="#E8434B" ${S(3.5)}/>`;
+        const cab = `<path d="M28 12 V-30 Q28 -34 32 -34 H48 L64 -12 Q72 -10 72 -2 V12 Z" fill="#E8434B" ${S(3.5)}/>`;
+        return body + tex(body) + cab + tex(cab) + `<path d="M36 -29 H47 L58 -13 H36 Z" fill="#DDF3FF" ${S(2.4)}/>` +
+          `<rect x="-72" y="-2" width="144" height="5" fill="#fff"/>` + Rp(-70, -36, 92, 9, '#B9C6D2', 3, 2.4) + [-60, -46, -32, -18, -4, 10].map((x) => `<path d="M${x} -35V-28" stroke="${INK}" stroke-width="2"/>`).join('') +
+          word(-22, -6, 18, '119', '#fff') + lights(32, -44, 24) + wheel(-50) + wheel(-24) + wheel(50);
+      }
+      case 'bus': {
+        const m = `<rect x="-76" y="-40" width="152" height="52" rx="10" fill="#4FB35A" ${S(3.5)}/>`;
+        return m + tex(m) + [-64, -38, -12, 14].map((x) => Rp(x, -32, 20, 16, '#DDF3FF', 3, 2.2)).join('') + Rp(42, -32, 24, 38, '#DDF3FF', 3, 2.2) +
+          `<rect x="-74" y="-10" width="112" height="6" fill="#FFE07A"/>` + word(-14, 8, 12, '버스', '#fff') + wheel(-48) + wheel(48);
+      }
+      default: return sedan('#6C4BC7') + wheel(-24) + wheel(26);
+    }
   }
   const cars = [];
   function setupCars() {
@@ -807,9 +851,10 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       const path = $('lane' + i);
       const len = path.getTotalLength();
       const el = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      el.innerHTML = `<g class="car-in" role="button" aria-label="자동차">${carSVG(CAR_COLORS[i], CAR_WORDS[i])}</g>`;
+      const type = VEHICLES[i];
+      el.innerHTML = `<g class="car-in" data-type="${type}" role="button" aria-label="${VEHICLE_NAMES[type]}">${vehicleSVG(type)}</g>`;
       g.appendChild(el);
-      cars.push({ path, len, el, word: el.querySelector('.word'), flip: false, d: (len * (0.15 + i * 0.37)) % len, v: 90 + (i % 3) * 16 });
+      cars.push({ path, len, el, words: [...el.querySelectorAll('.word')], flip: false, d: (len * (0.15 + i * 0.37)) % len, v: 90 + (i % 3) * 16 });
     });
     placeCars(0);
   }
@@ -822,7 +867,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       const flip = Math.abs(a) > 90;
       if (flip) a = a > 0 ? a - 180 : a + 180;
       c.el.setAttribute('transform', `translate(${p.x.toFixed(1)} ${(p.y - 4).toFixed(1)}) rotate(${a.toFixed(1)})${flip ? ' scale(-1 1)' : ''}`);
-      if (c.word && flip !== c.flip) c.word.setAttribute('transform', flip ? 'scale(-1 1)' : '');
+      if (flip !== c.flip) c.words.forEach((w) => w.setAttribute('transform', flip ? `matrix(-1 0 0 1 ${2 * w.dataset.x} 0)` : ''));
       c.flip = flip;
     }
   }
@@ -926,7 +971,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
         s += thing('amb', '구급차',
           Rp(1110, 230, 330, 170, '#fff', 18, 5) + Rp(1340, 270, 100, 130, '#fff', 14, 5) + win(1356, 286, 66, 52, '#BFE6FF', 4) +
           `<rect x="1110" y="320" width="330" height="22" fill="#E8434B"/><rect x="1110" y="320" width="330" height="22" fill="none" ${S(3)}/>` +
-          `<rect x="1196" y="252" width="20" height="56" fill="#E8434B"/><rect x="1178" y="270" width="56" height="20" fill="#E8434B"/>` +
+          `<rect x="1156" y="252" width="20" height="56" fill="#E8434B"/><rect x="1138" y="270" width="56" height="20" fill="#E8434B"/>` + T(1262, 302, 42, '119', '#E8434B') +
           Rp(1240, 206, 80, 26, '#fff', 8, 4) + `<rect class="lamp lamp-a" x="1244" y="210" width="36" height="18" rx="5" fill="#FF3B3B"/><rect class="lamp lamp-b" x="1280" y="210" width="36" height="18" rx="5" fill="#3B7BFF"/>` +
           C(1170, 404, 30, DARK, 5) + C(1170, 404, 11, '#ccc', 0) + C(1380, 404, 30, DARK, 5) + C(1380, 404, 11, '#ccc', 0) + glowRect(1096, 196, 360, 246));
         s += thing('cab', '약 상자', Rp(640, 120, 250, 220, '#fff', 14, 5) + `<rect x="745" y="150" width="40" height="110" rx="6" fill="#E8434B"/><rect x="710" y="185" width="110" height="40" rx="6" fill="#E8434B"/>` + Rp(668, 280, 70, 40, '#FFE07A', 6, 3) + Rp(792, 280, 70, 40, '#FFC9D9', 6, 3) + glowRect(628, 108, 274, 244));
@@ -1106,7 +1151,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     hansung: { wall: '#CDEAFB', apt: { body: '#BBA3F5', walls: ['#FFF1D6', '#E5DBFD', '#FFE0EC'], kinds: ['purin', 'cinnamoroll', 'pochacco'], blanket: '#FF94B8', floor: 5 } },
     onette: { wall: '#CDEAFB', apt: { body: '#FF9A5C', walls: ['#FFF6CC', '#DDF3E4', '#E5F1FF'], kinds: ['melody', 'kuromi', 'keroppi'], blanket: '#86CF6E', floor: 3 } },
     gold: { wall: '#CDEAFB', apt: { body: '#F6C744', walls: ['#FFF1D6', '#FBE7C6', '#E8DEFF'], kinds: ['bear', 'kitty', 'cinnamoroll'], blanket: '#BBA3F5', floor: 12 } },
-    kangsin: { wall: '#CDEAFB', apt: { body: '#8FD0F2', walls: ['#EAF6FF', '#FFF0DC', '#E2F5DA'], kinds: ['keroppi', 'pochacco', 'kuromi'], blanket: '#FFC83D', floor: 8 } },
+    gwangsin: { wall: '#CDEAFB', apt: { body: '#8FD0F2', walls: ['#EAF6FF', '#FFF0DC', '#E2F5DA'], kinds: ['keroppi', 'pochacco', 'kuromi'], blanket: '#FFC83D', floor: 8 } },
   };
 
   const STYLES = [
@@ -1443,7 +1488,12 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     const el = e.target.closest('.bld');
     if (el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); enter(el); }
   });
-  $('cars').addEventListener('click', (e) => { const el = e.target.closest('.car-in'); if (el) { boing(el); sfx.honk(); } });
+  $('cars').addEventListener('click', (e) => {
+    const el = e.target.closest('.car-in');
+    if (!el) return;
+    boing(el);
+    if (EMERGENCY[el.dataset.type]) { pulse(el, 'flash', 2600); sfx.siren(); } else sfx.honk();
+  });
   roomSvg.addEventListener('click', (e) => { const el = e.target.closest('.thing'); if (el) useThing(el); });
   roomSvg.addEventListener('keydown', (e) => {
     const el = e.target.closest('.thing');
