@@ -349,12 +349,17 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
 @keyframes bag-in { from { opacity: 0; transform: translateY(90px) scale(.3); } }
 #room-svg .fade-in, #mart-top .fade-in { animation: fade-in .4s var(--ease-out) both; }
 @keyframes fade-in { from { opacity: 0; } }
+/* the teacher at the counter breathes and leans in a little, so the photo feels alive */
+#room-svg .teacher-idle { transform-box: fill-box; transform-origin: 50% 100%; animation: teacher-idle 3.2s ease-in-out infinite; }
+@keyframes teacher-idle { 0%, 100% { transform: rotate(0) scale(1); } 30% { transform: rotate(-1.2deg) scale(1.01, .995); } 65% { transform: rotate(1deg) scale(.995, 1.008); } }
+#room-svg .boing .teacher-idle { animation: teacher-nod .6s ease-out; }
+@keyframes teacher-nod { 30% { transform: translateY(6px) rotate(-2deg); } 60% { transform: translateY(-4px) rotate(1deg); } }
 #room-svg .blinking { animation: blink-green .5s steps(1) infinite; }
 @keyframes blink-green { 50% { opacity: .25; } }
 @keyframes hop { 0%, 100% { transform: translateY(0); } 20% { transform: translateY(-50px); } 40% { transform: translateY(0); } 58% { transform: translateY(-26px); } 74% { transform: translateY(0); } 86% { transform: translateY(-8px); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .toast, #room-svg .cut-in, #room-svg .sparkle, #room-svg .wobble, #mart-people .bobw, #mart-people .tag-pop, #mart-people.pulse-tags .num, #mart-top .cut-in, #mart-top .sparkle, #mart-top .wobble, #mart-top .shake, #mart-top .bag-in, #mart-top .fade-in, #mart-top .beckon, #room-svg .shake, #room-svg .bag-in, #room-svg .fade-in, .bulb, .beckon, .flash .lamp-a, .flash .lamp-b, .spraying .spray circle, .ring .swing, .boing, .bubble, .hopping .hop { animation: none; }
+  .toast, #room-svg .teacher-idle, #room-svg .cut-in, #room-svg .sparkle, #room-svg .wobble, #mart-people .bobw, #mart-people .tag-pop, #mart-people.pulse-tags .num, #mart-top .cut-in, #mart-top .sparkle, #mart-top .wobble, #mart-top .shake, #mart-top .bag-in, #mart-top .fade-in, #mart-top .beckon, #room-svg .shake, #room-svg .bag-in, #room-svg .fade-in, .bulb, .beckon, .flash .lamp-a, .flash .lamp-b, .spraying .spray circle, .ring .swing, .boing, .bubble, .hopping .hop { animation: none; }
   .flash .lamp, .spraying .spray circle { opacity: 1; }
   .bld, .pull, .door, .night, .stars { transition: none; }
 }
@@ -1929,9 +1934,12 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       `<g id="pile"></g>` + Rp(1060, 380, 140, 76, '#fff', 14, 5) + T(1130, 435, 52, '0', INK, 't', 'id="cart-n"') + glowRect(930, 370, 380, 360));
     // counter
     // at 건강한 마트 the teacher (cut-out photo) stands at the counter; other shops keep a plush clerk
-    const clerkArt = o.teacher ? `<image href="town/kids/teacher.webp" x="1312" y="238" width="256" height="324" preserveAspectRatio="xMidYMax meet"/>` : doll(o.clerk, 1350, 300, 210, HAT.apron);
-    s += thing('pay', '계산대', clerkArt + Rp(1300, 520, 280, 200, '#FFC83D', 12, 6) + Rp(1340, 470, 120, 60, DARK, 8, 5) + Rp(1352, 480, 96, 30, '#9ED8F5', 4, 3) +
-      (o.teacher ? T(1440, 586, 30, '계산대') + Rp(1318, 612, 244, 66, '#fff', 12, 4) + T(1440, 658, 34, o.teacher, '#2E8A3A') : T(1430, 640, 40, '계산대')) + glowRect(1290, 290, 300, 440));
+    const clerkArt = o.teacher ? `<g class="teacher-idle"><image href="town/kids/teacher.webp" x="1336" y="238" width="256" height="324" preserveAspectRatio="xMidYMax meet"/></g>` : doll(o.clerk, 1350, 300, 210, HAT.apron);
+    // with the teacher behind the counter the till sits low on the counter front, clear of her arms
+    const till = o.teacher ? Rp(1500, 532, 66, 40, DARK, 6, 4) + Rp(1506, 538, 54, 18, '#9ED8F5', 3, 2)
+      : Rp(1340, 470, 120, 60, DARK, 8, 5) + Rp(1352, 480, 96, 30, '#9ED8F5', 4, 3);
+    s += thing('pay', '계산대', clerkArt + Rp(1300, 520, 280, 200, '#FFC83D', 12, 6) + till +
+      (o.teacher ? T(1405, 586, 30, '계산대') + Rp(1318, 612, 244, 66, '#fff', 12, 4) + T(1440, 658, 34, o.teacher, '#2E8A3A') : T(1430, 640, 40, '계산대')) + glowRect(1290, 290, 300, 440));
     return s;
   }
 
