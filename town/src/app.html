@@ -1277,7 +1277,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       },
     },
     cross: { wall: '#CDEAFB', cross: true },
-    mart: { wall: '#FFF0DC', title: '건강한 마트', intro: true, shop: { items: ['apple', 'banana', 'carrot', 'milk', 'bread', 'grape', 'melon', 'egg'], names: ['사과', '바나나', '당근', '우유', '빵', '포도', '수박', '달걀'], clerk: 'purin', money: true, prices: [1000, 2000, 1000, 2000, 3000, 3000, 5000, 3000] } },
+    mart: { wall: '#FFF0DC', title: '건강한 마트', intro: true, shop: { items: ['apple', 'banana', 'carrot', 'milk', 'bread', 'grape', 'melon', 'egg'], names: ['사과', '바나나', '당근', '우유', '빵', '포도', '수박', '달걀'], clerk: 'purin', money: true, teacher: '박상현 선생님', prices: [1000, 2000, 1000, 2000, 3000, 3000, 5000, 3000] } },
     fruit: { wall: '#EEF7DF', shop: { items: ['apple', 'banana', 'grape', 'melon', 'berry', 'orange'], names: ['사과', '바나나', '포도', '수박', '딸기', '귤'], clerk: 'keroppi', money: true, prices: [1000, 2000, 3000, 5000, 3000, 1000], crates: true } },
     daiso: { wall: '#FDE8E8', shop: { items: ['pencil', 'note', 'balloon', 'pin', 'cup', 'ball'], names: ['연필', '공책', '풍선', '머리핀', '컵', '공'], clerk: 'pochacco', money: true, basket: true, prices: [1000, 2000, 1000, 2000, 3000, 5000] } },
     hansung: { wall: '#CDEAFB', apt: { body: '#BBA3F5', walls: ['#FFF1D6', '#E5DBFD', '#FFE0EC'], kinds: ['purin', 'cinnamoroll', 'pochacco'], blanket: '#FF94B8', floor: 5 } },
@@ -1389,7 +1389,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   const SVGNS = 'http://www.w3.org/2000/svg';
   const SHOP_STAGE = 9, DONE_STAGE = 10;
   // baskets: what each numbered customer bought, { "3": { items: ['apple', ...], total: 3000 } }
-  const MART = { stage: 0, turn: 1, count: 12, raf: 0, last: 0, walkers: [], extras: [], timers: [], baskets: {}, order: null, bagOn: false, view: { k: 1, ox: 0, oy: 0 } };
+  const MART = { stage: 0, turn: 1, count: 12, raf: 0, last: 0, walkers: [], extras: [], timers: [], baskets: {}, order: null, bagOn: false, retry: false, resume: null, ending: false, view: { k: 1, ox: 0, oy: 0 } };
   try {
     const m = JSON.parse(sessionStorage.getItem('town-mart') || '{}');
     ['stage', 'turn', 'count'].forEach((k) => { if (Number.isInteger(m[k])) MART[k] = m[k]; });
@@ -1429,7 +1429,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     rule: '이제부터 시장바구니를 들고 장을 봐 주세요. 1번부터 나와 주시고, 계산이 끝나면 다음 손님이 장을 봐 주세요.',
     done: '모든 손님이 장을 다 봤어요! 건강한 마트에 와 주셔서 고맙습니다!',
     bye: '안녕히 가세요!',
-    takeBag: '시장바구니를 눌러 주세요!',
+    missed: '아직 장을 못 본 친구가 있어요. 다시 와서 장을 볼까요?',
     gotBag: '시장바구니를 들었어요! 사고 싶은 물건을 눌러 주세요.',
     needBag: '먼저 시장바구니를 눌러 주세요!',
     soldOut: '어머나! 오늘 준비한 물건이 다 팔렸어요. 기다려 주신 손님들, 다음에 또 와 주세요. 안녕히 가세요!',
@@ -1589,17 +1589,23 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   const showTags = (on) => MART.walkers.forEach((w) => w.g.querySelector('.num').setAttribute('visibility', on ? 'visible' : 'hidden'));
   const bagOf = (w, on) => w.g.querySelector('.bagged').setAttribute('visibility', on ? 'visible' : 'hidden');
   const showBags = (on) => MART.walkers.forEach((w) => bagOf(w, on));
+  // who stands in the queue: normally everyone after the current number; when calling someone back,
+  // everyone who still has not shopped. Anyone who already shopped (or was passed over) has left.
   function shoppingSpots(snap) {
-    const n = MART.count, size = walkerSize(n), waiting = n - MART.turn;
-    const sp = Math.min(100, 700 / Math.max(1, waiting));
-    MART.walkers.forEach((w, i) => bagOf(w, i + 1 < MART.turn || (i + 1 === MART.turn && MART.bagOn)));
+    const n = MART.count, size = walkerSize(n);
+    const queue = [];
+    for (let num = 1; num <= n; num++) if (num !== MART.turn && !MART.baskets[num] && (MART.retry || num > MART.turn)) queue.push(num);
+    const sp = Math.min(100, 700 / Math.max(1, queue.length));
+    MART.walkers.forEach((w, i) => bagOf(w, !!MART.baskets[i + 1] || (i + 1 === MART.turn && MART.bagOn)));
     walkersTo((i) => {
       const num = i + 1;
-      if (num < MART.turn) return { x: 1800, y: 885 - size * 1.1 };
-      if (num === MART.turn) return { x: 800, y: 885 - size * 1.1 };
-      return { x: 40 + (num - MART.turn - 1) * sp, y: 885 - size * 1.1 };
+      if (num === MART.turn && !(ending())) return { x: 800, y: 885 - size * 1.1 };
+      const q = queue.indexOf(num);
+      if (q >= 0) return { x: 40 + q * sp, y: 885 - size * 1.1 };
+      return { x: 1800, y: 885 - size * 1.1 };
     }, snap);
   }
+  const ending = () => MART.ending && !MART.retry;
   function hudSVG() {
     if (MART.stage !== SHOP_STAGE) return '';
     return `<g class="fade-in">${Rp(380, 16, 300, 112, '#fff', 20, 5)}${T(480, 84, 34, '지금 손님')}${C(612, 72, 46, '#FFE07A', 5)}${T(612, 92, 56, MART.turn)}</g>`;
@@ -1640,6 +1646,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     MART.timers.forEach(clearTimeout);
     MART.timers = [];
     MART.stage = n;
+    if (n < SHOP_STAGE) { MART.retry = false; MART.resume = null; MART.ending = false; }
     saveMart();
     const over = $('mart-over');
     over.innerHTML = '';
@@ -1716,7 +1723,6 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
         over.innerHTML = ecoBagSVG();
         sfx.ding();
         say(callLine(MART.turn), $('mart-hud').firstElementChild || clerk);
-        afterSpeech(() => { if (!MART.bagOn) say(MART_LINES.takeBag, martTop.querySelector('[data-k="ecobag"]') || clerk); }, 1200, 800);
         break;
       case DONE_STAGE:
         // the class has gone home with their shopping; the plush friends queueing behind find the shelves empty
@@ -1749,7 +1755,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     $('mc-prev').textContent = n >= SHOP_STAGE ? '◀ 소개 다시 보기' : '◀ 이전';
     $('mc-next').textContent = n === DONE_STAGE ? '처음부터 ▶' : n === SHOP_STAGE ? '다음 손님 ▶' : '다음 ▶';
     $('mc-skip').hidden = n >= SHOP_STAGE;
-    $('mc-bask').hidden = !Object.keys(MART.baskets).length;
+    $('mc-bask').hidden = !(n >= SHOP_STAGE || Object.keys(MART.baskets).length);
   }
   // after paying: thank, put the basket aside, wave goodbye, then call the next number
   function customerPaid() {
@@ -1758,14 +1764,44 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       say(MART_LINES.bye, clerkEl());
       if (w) { w.mode = 'place'; w.tx = 1800; }
       paintMartControls();
-      afterSpeech(advanceTurn, 1500, 800);
+      afterSpeech(MART.retry ? finishRetry : advanceTurn, 1500, 800);
     }, 500, 1500);
   }
+  const unshopped = () => { const a = []; for (let num = 1; num <= MART.count; num++) if (!MART.baskets[num]) a.push(num); return a; };
   function advanceTurn() {
-    if (MART.turn >= MART.count) { martStage(DONE_STAGE); return; }
+    if (MART.turn >= MART.count) { endRun(); return; }
     MART.turn++;
     saveMart();
     martStage(SHOP_STAGE);
+  }
+  // the last number has been called: anyone who was passed over gets another chance before the ending
+  function endRun() {
+    if (!unshopped().length) { martStage(DONE_STAGE); return; }
+    showMissed();
+  }
+  function showMissed() {
+    MART.ending = true; MART.retry = false; MART.turn = MART.count;
+    shoppingSpots(false);
+    paintMartControls();
+    $('mart-hud').innerHTML = '';
+    openBaskets();
+    say(MART_LINES.missed, $('bask-title'));
+  }
+  // call a child who has not shopped back to the counter
+  function callBack(num) {
+    MART.resume = (MART.stage === SHOP_STAGE && !MART.ending) ? MART.turn : null;
+    MART.retry = true;
+    MART.turn = num;
+    $('mart-pop').innerHTML = '';
+    martStage(SHOP_STAGE);
+  }
+  function finishRetry() {
+    MART.retry = false;
+    if (MART.resume != null) { MART.turn = MART.resume; MART.resume = null; martStage(SHOP_STAGE); return; }
+    if (unshopped().length) { showMissed(); return; }
+    martStage(DONE_STAGE, true);
+    openBaskets();
+    say(MART_LINES.peek, $('bask-title'));
   }
   function nextCustomer() {
     if (MART.stage !== SHOP_STAGE) return;
@@ -1773,7 +1809,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     if (leaving) { leaving.mode = 'place'; leaving.tx = 1800; }
     MART.timers.forEach(clearTimeout);
     MART.timers = [];
-    martLater(700, advanceTurn);
+    martLater(700, MART.retry ? finishRetry : advanceTurn);
   }
   function restartMart() { MART.turn = 1; MART.baskets = {}; MART.order = null; MART.count = classCount(); makeWalkers(); saveMart(); }
   $('mc-next').addEventListener('click', () => {
@@ -1794,26 +1830,39 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   function openBaskets() {
     const n = MART.count, cols = n <= 12 ? 4 : n <= 20 ? 5 : 6, rows = Math.ceil(n / cols);
     const gx = 16, gy = 14, cw = (1400 - (cols - 1) * gx) / cols, ch = Math.min(210, (600 - (rows - 1) * gy) / rows);
+    const canCall = (num) => !MART.baskets[num] && (MART.stage === DONE_STAGE || MART.ending || num < MART.turn);
+    const missed = unshopped().filter(canCall).length;
     let s = `<g id="bask-panel" class="fade-in"><rect x="-1200" y="-600" width="4000" height="2100" fill="${INK}" opacity=".45"/>` +
       Rp(60, 150, 1480, 735, '#FFF7EA', 30, 6) + `<g id="bask-title">${T(800, 222, 50, '우리 반 장바구니')}</g>` +
       thing('bclose', '닫기', Rp(1360, 170, 150, 60, '#fff', 30, 4) + T(1435, 212, 30, '닫기') + glowRect(1354, 164, 162, 72));
+    if (missed && MART.ending) s += thing('bend', '그대로 끝내기', Rp(100, 170, 240, 60, '#E5DBFD', 30, 4) + T(220, 212, 28, '그대로 끝내기') + glowRect(94, 164, 252, 72));
     for (let i = 0; i < n; i++) {
       const x = 100 + (i % cols) * (cw + gx), y = 262 + Math.floor(i / cols) * (ch + gy);
-      const b = MART.baskets[i + 1];
+      const num = i + 1, b = MART.baskets[num], call = canCall(num);
       const size = ch * .5;
       const { fig, foot } = figureSVG(i, size);
       const figW = ch * .5, per = 4, isz = Math.min(80, (cw - figW - 36) / per);
       let items = '';
       (b ? b.items : []).forEach((k, j) => { items += ITEM_AT(k, x + figW + 22 + (j % per) * isz, y + 14 + Math.floor(j / per) * isz, isz * .92); });
-      const tx = x + figW + 22 + (cw - figW - 36) / 2;
-      s += thing('bk' + (i + 1), `${i + 1}번 손님 장바구니`,
-        Rp(x, y, cw, ch, b ? '#fff' : '#F3EEE6', 18, 4) +
-        `<g transform="translate(${x + figW / 2 - size / 2} ${y + ch - foot - 8})">${fig}</g>` +
-        `<g transform="translate(${x + 26} ${y + 26})"><circle r="20" fill="#FFF3B0" ${S(3)}/>${T(0, 8, 22, i + 1)}</g>` + items +
-        T(tx, y + ch - 16, 26, b ? `모두 ${b.total}원` : '아직 안 샀어요', b ? '#B8285A' : '#8A7F96') +
+      const ix = x + figW + 22, iw = cw - figW - 36;
+      // the number sits in the bottom row beside the total, clear of the child's photo
+      s += thing('bk' + num, `${num}번 손님 장바구니`,
+        Rp(x, y, cw, ch, b ? '#fff' : call ? '#FFF6D6' : '#F3EEE6', 18, 4) +
+        `<g transform="translate(${x + figW / 2 - size / 2} ${y + ch - foot - 8})">${fig}</g>` + items +
+        `<g transform="translate(${ix + 20} ${y + ch - 30})"><circle r="19" fill="#FFF3B0" ${S(3)}/>${T(0, 8, 22, num)}</g>` +
+        (call ? Rp(ix + 48, y + ch - 52, iw - 48, 44, '#FFC83D', 22, 3) + T(ix + 48 + (iw - 48) / 2, y + ch - 21, 26, '장보러 오기') :
+          T(ix + 48, y + ch - 21, 26, b ? `모두 ${b.total}원` : '아직 안 샀어요', b ? '#B8285A' : '#8A7F96', 't', 'style="text-anchor:start"')) +
         glowRect(x - 4, y - 4, cw + 8, ch + 8));
     }
     $('mart-pop').innerHTML = s + '</g>';
+  }
+  // spoken in recorded pieces: "N번 손님은" + "당근," + "사과를 샀어요!" + "모두 삼천 원."
+  function basketSpeech(num) {
+    const b = MART.baskets[num];
+    if (!b || !b.items.length) return [`${num}번 손님은`, '아직 장을 보지 않았어요.'];
+    const o = martShop(), names = b.items.map((k) => o.names[o.items.indexOf(k)]);
+    const last = names[names.length - 1];
+    return [`${num}번 손님은`, ...names.slice(0, -1).map((x) => `${x},`), `${josa(last, '을', '를')} 샀어요!`, `모두 ${wonWord(b.total)}.`];
   }
   function basketLine(num) {
     const b = MART.baskets[num];
@@ -1871,7 +1920,8 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
         : P('M980 470 H1290 L1260 650 H1010Z', '#B9C6D2', 6) + `<path d="M940 430 H980 L1010 650" fill="none" stroke="${INK}" stroke-width="8" stroke-linecap="round"/>` + C(1040, 700, 26, DARK, 5) + C(1230, 700, 26, DARK, 5)) +
       `<g id="pile"></g>` + Rp(1060, 380, 140, 76, '#fff', 14, 5) + T(1130, 435, 52, '0', INK, 't', 'id="cart-n"') + glowRect(930, 370, 380, 360));
     // counter
-    s += thing('pay', '계산대', doll(o.clerk, 1350, 300, 210, HAT.apron) + Rp(1300, 520, 280, 200, '#FFC83D', 12, 6) + Rp(1340, 470, 120, 60, DARK, 8, 5) + Rp(1352, 480, 96, 30, '#9ED8F5', 4, 3) + T(1430, 640, 40, '계산대') + glowRect(1290, 290, 300, 440));
+    s += thing('pay', '계산대', doll(o.clerk, 1350, 300, 210, HAT.apron) + Rp(1300, 520, 280, 200, '#FFC83D', 12, 6) + Rp(1340, 470, 120, 60, DARK, 8, 5) + Rp(1352, 480, 96, 30, '#9ED8F5', 4, 3) +
+      (o.teacher ? T(1440, 586, 30, '계산대') + Rp(1318, 612, 244, 66, '#fff', 12, 4) + T(1440, 658, 34, o.teacher, '#2E8A3A') : T(1430, 640, 40, '계산대')) + glowRect(1290, 290, 300, 440));
     return s;
   }
 
@@ -2079,7 +2129,12 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     const cartEl = roomSvg.querySelector('[data-k="cart"]');
     if (k === 'pclose') { closePay(); sfx.back(); return; }
     if (k === 'bclose') { $('mart-pop').innerHTML = ''; hideBubble(); sfx.back(); return; }
-    if (k.startsWith('bk')) { sfx.tap(); say(basketLine(+k.slice(2)), el); return; }
+    if (k === 'bend') { $('mart-pop').innerHTML = ''; hideBubble(); martStage(DONE_STAGE); return; }
+    if (k.startsWith('bk')) {
+      const num = +k.slice(2);
+      if (!MART.baskets[num] && (MART.stage === DONE_STAGE || MART.ending || num < MART.turn)) { sfx.ding(); callBack(num); return; }
+      sfx.tap(); say(basketLine(num), el, basketSpeech(num)); return;
+    }
     if (k === 'ecobag') {
       MART.bagOn = true;
       el.remove();
@@ -2099,6 +2154,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     }
     if (k[0] === 'm') return payBill(el, o);
     if (k === 'pay') {
+      if (o.teacher && !state.hi && !state.n) { state.hi = true; sfx.hello(); say('안녕하세요! 저는 박상현 선생님이에요.', el); return; }
       if (!state.n) { sfx.hello(); say(o.money ? '갖고 싶은 물건을 골라 보세요. 가격표를 잘 보세요!' : '무엇을 살까요? 먹고 싶은 것을 골라 보세요.', el); return; }
       if (o.money) { sfx.hello(); openPay(); say(`모두 ${state.total}원이에요. 돈을 내 주세요!`, el, `모두 ${wonWord(state.total)}이에요. 돈을 내 주세요!`); return; }
       sfx.pay();
@@ -2122,32 +2178,46 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     flyTo(el, cartEl, o.items[i], () => renderCart(o));
   }
   // a 1000-won bill, like the one the claw game takes
-  function bill(x, y, w = 170, h = 86) {
-    // the real note: photo ngdawa / Numista (CC BY-NC-SA) via Wikimedia Commons; note © 한국은행
-    return `<image href="town/art/won1000.webp" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="none"/><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="none" stroke="${INK}" stroke-width="2" opacity=".5"/>`;
+  function bill(x, y, w, h, d = 1000) {
+    // the real notes: photos ngdawa / Numista (CC BY-NC-SA) via Wikimedia Commons; notes © 한국은행
+    return `<image href="town/art/won${d}.webp" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="none"/><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="none" stroke="${INK}" stroke-width="2" opacity=".5"/>`;
   }
+  const NOTE_SIZE = { 1000: [128, 63], 5000: [140, 67], 10000: [140, 63] };
+  const NOTE_OF = (k) => (k === 'm10' ? 5000 : k === 'm11' ? 10000 : 1000);
   function openPay() {
-    state.paid = 0;
+    state.paid = 0; state.tx = 350; state.ty = 200;
     let s = `<g id="paypanel" class="fade-in"><rect x="-1200" y="-600" width="4000" height="2100" fill="${INK}" opacity=".4"/>` +
       Rp(250, 60, 1100, 790, '#fff', 30, 6) + T(800, 140, 56, `모두 ${state.total}원이에요`) +
-      Rp(330, 180, 940, 250, '#FFF3B0', 18, 4) + `<g id="tray"></g>` + T(800, 490, 46, '낸 돈: 0원', INK, 't', 'id="paid-n"') +
-      T(800, 545, 28, '지갑에서 1000원을 하나씩 눌러 내요', '#5B4D6E') + T(800, 872, 17, '지폐 사진: ngdawa / Numista (CC BY-NC-SA), Wikimedia Commons · 지폐: 한국은행', '#fff');
-    for (let i = 0; i < 10; i++) s += thing('m' + i, '1000원', bill(330 + (i % 5) * 190, 580 + Math.floor(i / 5) * 116) + glowRect(324 + (i % 5) * 190, 574 + Math.floor(i / 5) * 116, 182, 98));
+      Rp(330, 180, 940, 250, '#FFF3B0', 18, 4) + `<g id="tray"></g>` + T(800, 482, 46, '낸 돈: 0원', INK, 't', 'id="paid-n"') +
+      T(800, 535, 30, '지갑에서 돈을 눌러 내요', '#5B4D6E', 't', 'id="pay-hint"') +
+      T(800, 872, 17, '지폐 사진: ngdawa / Numista (CC BY-NC-SA), Wikimedia Commons · 지폐: 한국은행', '#fff');
+    for (let i = 0; i < 10; i++) s += thing('m' + i, '1000원', bill(280 + (i % 5) * 162, 585 + Math.floor(i / 5) * 90, 150, 74) + glowRect(274 + (i % 5) * 162, 579 + Math.floor(i / 5) * 90, 162, 86));
+    s += thing('m10', '5000원', bill(1110, 570, 210, 100, 5000) + glowRect(1104, 564, 222, 112));
+    s += thing('m11', '10000원', bill(1110, 690, 210, 95, 10000) + glowRect(1104, 684, 222, 107));
     s += thing('pclose', '그만하기', Rp(1166, 80, 160, 56, '#E5DBFD', 28, 4) + T(1246, 118, 28, '그만하기') + glowRect(1160, 74, 172, 68));
     (current === 'mart' ? martTop : roomSvg).insertAdjacentHTML('beforeend', s + '</g>');
   }
   function closePay() { const p = $('paypanel'); if (p) p.remove(); state.paying = false; }
+  const WON_FIN = (n) => (n >= 1000 && n <= 10000 && n % 1000 === 0 ? `${WON[n / 1000]} 원` : `${n}원`);
   function payBill(el, o) {
     if (state.paid >= state.total) return;
-    state.paid += 1000;
-    const j = state.paid / 1000 - 1;
+    const d = NOTE_OF(el.dataset.k), [w, h] = NOTE_SIZE[d];
+    state.paid += d;
     el.style.visibility = 'hidden';
-    $('tray').insertAdjacentHTML('beforeend', bill(350 + (j % 5) * 182, 196 + Math.floor(j / 5) * 116));
+    if (state.tx + w > 1250) { state.tx = 350; state.ty += 76; }
+    $('tray').insertAdjacentHTML('beforeend', bill(state.tx, state.ty, w, h, d));
+    state.tx += w + 12;
     $('paid-n').textContent = `낸 돈: ${state.paid}원`;
     tone(1320, 0.08, { type: 'square', vol: 0.05 });
-    if (state.paid < state.total) { say(`${WON[state.paid / 1000]} 원!`, el); return; }
+    const anchor = $('paid-n');
+    if (state.paid < state.total) { say(`${WON_FIN(state.paid)}!`, anchor); return; }
     sfx.pay();
-    say(`${WON[state.paid / 1000]} 원! 딱 맞게 냈어요. 고맙습니다!`, $('tray').parentNode.querySelector('#paid-n') || el, [`${WON[state.paid / 1000]} 원!`, '딱 맞게 냈어요. 고맙습니다!']);
+    const change = state.paid - state.total;
+    if (change === 0) say(`${WON_FIN(state.paid)}! 딱 맞게 냈어요. 고맙습니다!`, anchor, [`${WON_FIN(state.paid)}!`, '딱 맞게 냈어요. 고맙습니다!']);
+    else {
+      $('pay-hint').textContent = `거스름돈 ${change}원을 받았어요`;
+      say(`${WON_FIN(state.paid)}! 거스름돈 ${WON_FIN(change)}이에요. 고맙습니다!`, anchor, [`${WON_FIN(state.paid)}!`, `거스름돈 ${WON_FIN(change)}이에요.`, '고맙습니다!']);
+    }
     if (current === 'mart' && MART.stage === SHOP_STAGE) {
       // keep this customer's shopping, then thank them, see them off and call the next number
       MART.baskets[MART.turn] = { items: state.picked.slice(), total: state.total };
