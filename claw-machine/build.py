@@ -39,6 +39,12 @@ VOICE_DIR = HERE.parent / 'town' / 'voices'
 VOICE_EXTS = ('.mp3', '.m4a', '.wav', '.ogg', '.webm')
 
 
+def won_uri():
+    """The 1000원 note photo, inlined so the claw game still works as a single file."""
+    data = base64.b64encode((HERE.parent / 'town' / 'art' / 'won1000.webp').read_bytes()).decode('ascii')
+    return 'data:image/webp;base64,' + data
+
+
 def voices():
     """Map each line in town/voices/lines.csv to its recording, if one has been added.
 
@@ -64,7 +70,7 @@ def main():
         src = src_path.read_text(encoding='utf-8')
         if marker not in src:
             raise SystemExit('font marker missing from %s' % src_path)
-        out = src.replace(marker, faces)
+        out = src.replace(marker, faces).replace('@@WON1000@@', won_uri())
         if voice_marker in out:
             out = out.replace(voice_marker, json.dumps(recorded, ensure_ascii=False))
             print('voices: %d recorded lines' % len(recorded))

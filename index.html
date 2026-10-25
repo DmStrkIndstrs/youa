@@ -2123,15 +2123,15 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   }
   // a 1000-won bill, like the one the claw game takes
   function bill(x, y, w = 170, h = 86) {
-    return Rp(x, y, w, h, '#8EC3F0', 8, 4) + `<rect x="${x + 7}" y="${y + 7}" width="${w - 14}" height="${h - 14}" rx="5" fill="none" stroke="#fff" stroke-width="3" opacity=".8"/>` +
-      C(x + h * .32, y + h / 2, h * .2, '#DDEEFB', 3) + T(x + w * .62, y + h * .62, h * .3, '1000원', INK);
+    // the real note: photo ngdawa / Numista (CC BY-NC-SA) via Wikimedia Commons; note © 한국은행
+    return `<image href="town/art/won1000.webp" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="none"/><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="none" stroke="${INK}" stroke-width="2" opacity=".5"/>`;
   }
   function openPay() {
     state.paid = 0;
     let s = `<g id="paypanel" class="fade-in"><rect x="-1200" y="-600" width="4000" height="2100" fill="${INK}" opacity=".4"/>` +
       Rp(250, 60, 1100, 790, '#fff', 30, 6) + T(800, 140, 56, `모두 ${state.total}원이에요`) +
       Rp(330, 180, 940, 250, '#FFF3B0', 18, 4) + `<g id="tray"></g>` + T(800, 490, 46, '낸 돈: 0원', INK, 't', 'id="paid-n"') +
-      T(800, 545, 28, '지갑에서 1000원을 하나씩 눌러 내요', '#5B4D6E');
+      T(800, 545, 28, '지갑에서 1000원을 하나씩 눌러 내요', '#5B4D6E') + T(800, 872, 17, '지폐 사진: ngdawa / Numista (CC BY-NC-SA), Wikimedia Commons · 지폐: 한국은행', '#fff');
     for (let i = 0; i < 10; i++) s += thing('m' + i, '1000원', bill(330 + (i % 5) * 190, 580 + Math.floor(i / 5) * 116) + glowRect(324 + (i % 5) * 190, 574 + Math.floor(i / 5) * 116, 182, 98));
     s += thing('pclose', '그만하기', Rp(1166, 80, 160, 56, '#E5DBFD', 28, 4) + T(1246, 118, 28, '그만하기') + glowRect(1160, 74, 172, 68));
     (current === 'mart' ? martTop : roomSvg).insertAdjacentHTML('beforeend', s + '</g>');
