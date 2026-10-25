@@ -1397,6 +1397,16 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   } catch (e) { /* ignore */ }
   const saveMart = () => { try { sessionStorage.setItem('town-mart', JSON.stringify({ stage: MART.stage, turn: MART.turn, count: MART.count, baskets: MART.baskets })); } catch (e) { /* ignore */ } };
   const martLater = (ms, fn) => MART.timers.push(setTimeout(fn, ms));
+  // run fn once the current line (recording or device voice) has finished, plus a short breath
+  const speaking = () => (clip && !clip.paused && !clip.ended) || (synth && synth.speaking);
+  function afterSpeech(fn, gap = 600, minMs = 400) {
+    const t0 = performance.now();
+    const check = () => {
+      if (performance.now() - t0 < minMs || speaking()) { martLater(150, check); return; }
+      martLater(gap, fn);
+    };
+    martLater(150, check);
+  }
   // as many customers as children present in the claw game's class list (same site), else 12
   function classCount() {
     try {
@@ -1652,7 +1662,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
         people.classList.add('still');
         over.innerHTML = thoughtSVG(false);
         say(MART_LINES.wait, clerk);
-        martLater(3600, () => { over.innerHTML = thoughtSVG(true); sfx.on(); say(MART_LINES.aha, clerk); });
+        afterSpeech(() => { over.innerHTML = thoughtSVG(true); sfx.on(); say(MART_LINES.aha, clerk); }, 900, 1500);
         break;
       case 3:
         line();
@@ -1697,7 +1707,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
         over.innerHTML = ecoBagSVG();
         sfx.ding();
         say(callLine(MART.turn), $('mart-hud').firstElementChild || clerk);
-        martLater(3200, () => { if (!MART.bagOn) say(MART_LINES.takeBag, martTop.querySelector('[data-k="ecobag"]') || clerk); });
+        afterSpeech(() => { if (!MART.bagOn) say(MART_LINES.takeBag, martTop.querySelector('[data-k="ecobag"]') || clerk); }, 1200, 800);
         break;
       case DONE_STAGE:
         // the class has gone home with their shopping; the plush friends queueing behind find the shelves empty
@@ -1735,12 +1745,12 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   // after paying: thank, put the basket aside, wave goodbye, then call the next number
   function customerPaid() {
     const w = MART.walkers[MART.turn - 1];
-    martLater(3600, () => {
+    afterSpeech(() => {
       say(MART_LINES.bye, clerkEl());
       if (w) { w.mode = 'place'; w.tx = 1800; }
       paintMartControls();
-    });
-    martLater(6400, advanceTurn);
+      afterSpeech(advanceTurn, 1500, 800);
+    }, 500, 1500);
   }
   function advanceTurn() {
     if (MART.turn >= MART.count) { martStage(DONE_STAGE); return; }
