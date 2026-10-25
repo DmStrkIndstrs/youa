@@ -1389,13 +1389,14 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   const SVGNS = 'http://www.w3.org/2000/svg';
   const SHOP_STAGE = 9, DONE_STAGE = 10;
   // baskets: what each numbered customer bought, { "3": { items: ['apple', ...], total: 3000 } }
-  const MART = { stage: 0, turn: 1, count: 12, raf: 0, last: 0, walkers: [], extras: [], timers: [], baskets: {}, bagOn: false, view: { k: 1, ox: 0, oy: 0 } };
+  const MART = { stage: 0, turn: 1, count: 12, raf: 0, last: 0, walkers: [], extras: [], timers: [], baskets: {}, order: null, bagOn: false, view: { k: 1, ox: 0, oy: 0 } };
   try {
     const m = JSON.parse(sessionStorage.getItem('town-mart') || '{}');
     ['stage', 'turn', 'count'].forEach((k) => { if (Number.isInteger(m[k])) MART[k] = m[k]; });
     if (m.baskets && typeof m.baskets === 'object') MART.baskets = m.baskets;
+    if (Array.isArray(m.order)) MART.order = m.order;
   } catch (e) { /* ignore */ }
-  const saveMart = () => { try { sessionStorage.setItem('town-mart', JSON.stringify({ stage: MART.stage, turn: MART.turn, count: MART.count, baskets: MART.baskets })); } catch (e) { /* ignore */ } };
+  const saveMart = () => { try { sessionStorage.setItem('town-mart', JSON.stringify({ stage: MART.stage, turn: MART.turn, count: MART.count, baskets: MART.baskets, order: MART.order })); } catch (e) { /* ignore */ } };
   const martLater = (ms, fn) => MART.timers.push(setTimeout(fn, ms));
   // run fn once the current line (recording or device voice) has finished, plus a short breath
   const speaking = () => (clip && !clip.paused && !clip.ended) || (synth && synth.speaking);
@@ -1502,12 +1503,19 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   const KID_PHOTOS = [['kid01.webp', .38], ['kid02.webp', .561], ['kid03.webp', .343], ['kid04.webp', .377], ['kid05.webp', .282], ['kid06.webp', .243], ['kid07.webp', .348], ['kid08.webp', .325], ['kid09.webp', .35], ['kid10.webp', .327], ['kid11.webp', .373]];
   const people = $('mart-people'), martTop = $('mart-top');
   // drawing of customer i (photo, else a plush friend) in the walker's local units
+  // ticket numbers are drawn at random: number i+1 belongs to child MART.order[i]
+  const childOf = (i) => (MART.order && MART.order[i] != null ? MART.order[i] : i);
+  function shuffleOrder() {
+    const a = Array.from({ length: MART.count }, (_, i) => i);
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    MART.order = a;
+  }
   function figureSVG(i, size, plushKind) {
-    const kid = plushKind ? null : KID_PHOTOS[i];
+    const kid = plushKind ? null : KID_PHOTOS[childOf(i)];
     const H = size * 1.75, foot = size * 1.1, top = kid ? foot - H : 0;
     const fig = kid
       ? `<ellipse cx="${size / 2}" cy="${foot - 2}" rx="${size * .32}" ry="${size * .06}" fill="${INK}" opacity=".16"/><image href="town/kids/${kid[0]}" x="${size / 2 - H * kid[1] / 2}" y="${top}" width="${H * kid[1]}" height="${H}"/>`
-      : doll(plushKind || KINDS[i % KINDS.length], 0, 0, size);
+      : doll(plushKind || KINDS[childOf(i) % KINDS.length], 0, 0, size);
     return { fig, top, foot, H, kid };
   }
   function makeWalker(i, opts = {}) {
@@ -1526,6 +1534,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     return w;
   }
   function makeWalkers() {
+    if (!MART.order || MART.order.length !== MART.count) { shuffleOrder(); saveMart(); }
     people.innerHTML = '';
     MART.walkers = [];
     MART.extras = [];
@@ -1607,7 +1616,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     martTop.removeAttribute('hidden');
     people.hidden = false;
     if (MART.stage > DONE_STAGE || MART.stage < 0) { MART.stage = 0; MART.turn = 1; }
-    if (MART.stage === 0) { MART.count = classCount(); MART.baskets = {}; }
+    if (MART.stage === 0) { MART.count = classCount(); MART.baskets = {}; MART.order = null; }
     MART.bagOn = false;
     layoutPeople();
     makeWalkers();
@@ -1766,10 +1775,10 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     MART.timers = [];
     martLater(700, advanceTurn);
   }
-  function restartMart() { MART.turn = 1; MART.baskets = {}; saveMart(); }
+  function restartMart() { MART.turn = 1; MART.baskets = {}; MART.order = null; MART.count = classCount(); makeWalkers(); saveMart(); }
   $('mc-next').addEventListener('click', () => {
     const n = MART.stage;
-    if (n === DONE_STAGE) { restartMart(); MART.count = classCount(); makeWalkers(); martStage(0); return; }
+    if (n === DONE_STAGE) { restartMart(); martStage(0); return; }
     if (n === SHOP_STAGE) { nextCustomer(); return; }
     martStage(n + 1);
   });
