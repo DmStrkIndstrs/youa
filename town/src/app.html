@@ -496,6 +496,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   const VOICES = /*@@VOICES@@*/{};
   let clip = null;
   let speechVersion = 0;
+  let voiceBusy = false; // true from the moment a line starts until its last piece has finished
   const synth = window.speechSynthesis || null;
   let koVoice = null;
   function pickVoice() {
@@ -515,23 +516,27 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     if (!list.length) return;
     hush();
     const version = speechVersion;
+    voiceBusy = true;
+    const done = () => { if (version === speechVersion) voiceBusy = false; };
     const whole = list.join(' ');
-    if (!list.every((t) => VOICES[t])) { deviceVoice(whole); return; }
+    if (!list.every((t) => VOICES[t])) { deviceVoice(whole, done); return; }
     const playFrom = (i) => {
-      if (i >= list.length || version !== speechVersion) return;
+      if (version !== speechVersion) return;
+      if (i >= list.length) { done(); return; }
       try {
         clip = new Audio(VOICES[list[i]]);
         clip.addEventListener('ended', () => playFrom(i + 1));
+        clip.addEventListener('error', done);
         clip.play().catch(() => {
           // A canceled recording must not start speaking after a newer tap or mute.
-          if (version === speechVersion && st.voiceOn) deviceVoice(list.slice(i).join(' '));
+          if (version === speechVersion && st.voiceOn) deviceVoice(list.slice(i).join(' '), done); else done();
         });
-      } catch (e) { deviceVoice(list.slice(i).join(' ')); }
+      } catch (e) { deviceVoice(list.slice(i).join(' '), done); }
     };
     playFrom(0);
   }
-  function deviceVoice(clean) {
-    if (!synth) return;
+  function deviceVoice(clean, done) {
+    if (!synth) { if (done) done(); return; }
     try {
       const u = new SpeechSynthesisUtterance(clean);
       u.lang = 'ko-KR';
@@ -540,11 +545,13 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       u.rate = 0.95;
       u.pitch = 1;
       u.volume = 1;
+      if (done) { u.onend = done; u.onerror = done; }
       synth.speak(u);
-    } catch (e) { /* no voice on this device */ }
+    } catch (e) { if (done) done(); }
   }
   function hush() {
     speechVersion++;
+    voiceBusy = false;
     if (clip) { try { clip.pause(); } catch (e) { /* ignore */ } clip = null; }
     try { if (synth) synth.cancel(); } catch (e) { /* ignore */ }
   }
@@ -1399,11 +1406,12 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   const saveMart = () => { try { sessionStorage.setItem('town-mart', JSON.stringify({ stage: MART.stage, turn: MART.turn, count: MART.count, baskets: MART.baskets, order: MART.order })); } catch (e) { /* ignore */ } };
   const martLater = (ms, fn) => MART.timers.push(setTimeout(fn, ms));
   // run fn once the current line (recording or device voice) has finished, plus a short breath
-  const speaking = () => (clip && !clip.paused && !clip.ended) || (synth && synth.speaking);
-  function afterSpeech(fn, gap = 600, minMs = 400) {
+  const speaking = () => voiceBusy || (clip && !clip.paused && !clip.ended) || (synth && synth.speaking);
+  // `ready` (optional) must also be true, e.g. the checkout panel has closed
+  function afterSpeech(fn, gap = 600, minMs = 400, ready) {
     const t0 = performance.now();
     const check = () => {
-      if (performance.now() - t0 < minMs || speaking()) { martLater(150, check); return; }
+      if (performance.now() - t0 < minMs || speaking() || (ready && !ready() && performance.now() - t0 < 15000)) { martLater(150, check); return; }
       martLater(gap, fn);
     };
     martLater(150, check);
@@ -1765,7 +1773,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       if (w) { w.mode = 'place'; w.tx = 1800; }
       paintMartControls();
       afterSpeech(MART.retry ? finishRetry : advanceTurn, 1500, 800);
-    }, 500, 1500);
+    }, 700, 1500, () => !$('paypanel'));
   }
   const unshopped = () => { const a = []; for (let num = 1; num <= MART.count; num++) if (!MART.baskets[num]) a.push(num); return a; };
   function advanceTurn() {
