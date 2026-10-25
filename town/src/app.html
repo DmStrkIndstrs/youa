@@ -349,17 +349,12 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
 @keyframes bag-in { from { opacity: 0; transform: translateY(90px) scale(.3); } }
 #room-svg .fade-in, #mart-top .fade-in { animation: fade-in .4s var(--ease-out) both; }
 @keyframes fade-in { from { opacity: 0; } }
-/* the teacher at the counter breathes and leans in a little, so the photo feels alive */
-#room-svg .teacher-idle { transform-box: fill-box; transform-origin: 50% 100%; animation: teacher-idle 3.2s ease-in-out infinite; }
-@keyframes teacher-idle { 0%, 100% { transform: rotate(0) scale(1); } 30% { transform: rotate(-1.2deg) scale(1.01, .995); } 65% { transform: rotate(1deg) scale(.995, 1.008); } }
-#room-svg .boing .teacher-idle { animation: teacher-nod .6s ease-out; }
-@keyframes teacher-nod { 30% { transform: translateY(6px) rotate(-2deg); } 60% { transform: translateY(-4px) rotate(1deg); } }
 #room-svg .blinking { animation: blink-green .5s steps(1) infinite; }
 @keyframes blink-green { 50% { opacity: .25; } }
 @keyframes hop { 0%, 100% { transform: translateY(0); } 20% { transform: translateY(-50px); } 40% { transform: translateY(0); } 58% { transform: translateY(-26px); } 74% { transform: translateY(0); } 86% { transform: translateY(-8px); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .toast, #room-svg .teacher-idle, #room-svg .cut-in, #room-svg .sparkle, #room-svg .wobble, #mart-people .bobw, #mart-people .tag-pop, #mart-people.pulse-tags .num, #mart-top .cut-in, #mart-top .sparkle, #mart-top .wobble, #mart-top .shake, #mart-top .bag-in, #mart-top .fade-in, #mart-top .beckon, #room-svg .shake, #room-svg .bag-in, #room-svg .fade-in, .bulb, .beckon, .flash .lamp-a, .flash .lamp-b, .spraying .spray circle, .ring .swing, .boing, .bubble, .hopping .hop { animation: none; }
+  .toast, #room-svg .cut-in, #room-svg .sparkle, #room-svg .wobble, #mart-people .bobw, #mart-people .tag-pop, #mart-people.pulse-tags .num, #mart-top .cut-in, #mart-top .sparkle, #mart-top .wobble, #mart-top .shake, #mart-top .bag-in, #mart-top .fade-in, #mart-top .beckon, #room-svg .shake, #room-svg .bag-in, #room-svg .fade-in, .bulb, .beckon, .flash .lamp-a, .flash .lamp-b, .spraying .spray circle, .ring .swing, .boing, .bubble, .hopping .hop { animation: none; }
   .flash .lamp, .spraying .spray circle { opacity: 1; }
   .bld, .pull, .door, .night, .stars { transition: none; }
 }
@@ -1771,10 +1766,20 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     $('mc-bask').hidden = !(n >= SHOP_STAGE || Object.keys(MART.baskets).length);
   }
   // after paying: thank, put the basket aside, wave goodbye, then call the next number
+  let waveT = 0;
+  function teacherWave() {
+    const w = $('teacher-wave'), idle = $('teacher-idle');
+    if (!w || !idle) return;
+    clearTimeout(waveT);
+    w.setAttribute('href', 'town/kids/teacher-wave.webp?' + Date.now()); // a fresh load restarts the one-shot animation
+    w.setAttribute('visibility', 'visible'); idle.setAttribute('visibility', 'hidden');
+    waveT = setTimeout(() => { w.setAttribute('visibility', 'hidden'); idle.setAttribute('visibility', 'visible'); }, 4300);
+  }
   function customerPaid() {
     const w = MART.walkers[MART.turn - 1];
     afterSpeech(() => {
       say(MART_LINES.bye, clerkEl());
+      teacherWave();
       if (w) { w.mode = 'place'; w.tx = 1800; }
       paintMartControls();
       afterSpeech(MART.retry ? finishRetry : advanceTurn, 1500, 800);
@@ -1934,7 +1939,8 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       `<g id="pile"></g>` + Rp(1060, 380, 140, 76, '#fff', 14, 5) + T(1130, 435, 52, '0', INK, 't', 'id="cart-n"') + glowRect(930, 370, 380, 360));
     // counter
     // at 건강한 마트 the teacher (cut-out photo) stands at the counter; other shops keep a plush clerk
-    const clerkArt = o.teacher ? `<g class="teacher-idle"><image href="town/kids/teacher.webp" x="1336" y="238" width="256" height="324" preserveAspectRatio="xMidYMax meet"/></g>` : doll(o.clerk, 1350, 300, 210, HAT.apron);
+    // the teacher is a short generated video, keyed out: a calm loop, and a wave played once on 안녕히 가세요
+    const clerkArt = o.teacher ? `<g id="teacher-fig"><image id="teacher-idle" href="town/kids/teacher-idle.webp" x="1312" y="212" width="272" height="350" preserveAspectRatio="xMidYMax meet"/><image id="teacher-wave" href="" x="1312" y="212" width="272" height="350" preserveAspectRatio="xMidYMax meet" visibility="hidden"/></g>` : doll(o.clerk, 1350, 300, 210, HAT.apron);
     // with the teacher behind the counter the till sits low on the counter front, clear of her arms
     const till = o.teacher ? Rp(1500, 532, 66, 40, DARK, 6, 4) + Rp(1506, 538, 54, 18, '#9ED8F5', 3, 2)
       : Rp(1340, 470, 120, 60, DARK, 8, 5) + Rp(1352, 480, 96, 30, '#9ED8F5', 4, 3);
@@ -2172,7 +2178,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     }
     if (k[0] === 'm') return payBill(el, o);
     if (k === 'pay') {
-      if (o.teacher && !state.hi && !state.n) { state.hi = true; sfx.hello(); say('안녕하세요! 저는 박상현 선생님이에요.', el); return; }
+      if (o.teacher && !state.hi && !state.n) { state.hi = true; sfx.hello(); teacherWave(); say('안녕하세요! 저는 박상현 선생님이에요.', el); return; }
       if (!state.n) { sfx.hello(); say(o.money ? '갖고 싶은 물건을 골라 보세요. 가격표를 잘 보세요!' : '무엇을 살까요? 먹고 싶은 것을 골라 보세요.', el); return; }
       if (o.money) { sfx.hello(); openPay(); say(`모두 ${state.total}원이에요. 돈을 내 주세요!`, el, `모두 ${wonWord(state.total)}이에요. 돈을 내 주세요!`); return; }
       sfx.pay();
