@@ -322,31 +322,39 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
 .mart-ctl .go { background: var(--sun); }
 .mart-ctl button[hidden] { display: none; }
 .mc-step { padding: .2em .6em; border-radius: 999px; background: rgba(255, 255, 255, .85); border: 2px solid var(--ink-soft); font-size: clamp(.9rem, 2vmin, 1.3rem); color: var(--ink-soft); }
-#room-svg .cut-in { animation: cut-in .6s var(--ease-spring) both; animation-delay: var(--d); transform-box: fill-box; transform-origin: 50% 100%; }
+#room-svg .cut-in, #mart-top .cut-in { animation: cut-in .6s var(--ease-spring) both; animation-delay: var(--d); transform-box: fill-box; transform-origin: 50% 100%; }
 @keyframes cut-in { from { opacity: 0; transform: translateY(-90px) scale(.5) rotate(-14deg); } }
-#room-svg .sparkle { transform-box: fill-box; transform-origin: center; animation: twinkle 1.8s ease-in-out infinite; animation-delay: var(--d); }
+#room-svg .sparkle, #mart-top .sparkle { transform-box: fill-box; transform-origin: center; animation: twinkle 1.8s ease-in-out infinite; animation-delay: var(--d); }
 @keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(.2) rotate(0); } 50% { opacity: 1; transform: scale(1) rotate(45deg); } }
-#room-svg .wobble { transform-box: fill-box; transform-origin: 50% 100%; animation: wobble 2.4s ease-in-out infinite; animation-delay: var(--d); }
+#room-svg .wobble, #mart-top .wobble { transform-box: fill-box; transform-origin: 50% 100%; animation: wobble 2.4s ease-in-out infinite; animation-delay: var(--d); }
 @keyframes wobble { 0%, 100% { transform: rotate(-3deg) translateY(0); } 50% { transform: rotate(3deg) translateY(-8px); } }
-#room-svg .bob { transform-box: fill-box; animation: bob .45s ease-in-out infinite alternate; }
-@keyframes bob { to { transform: translateY(-7px); } }
-#room-svg .still .bob { animation: none; }
-#room-svg .tag-pop { transform-box: fill-box; transform-origin: 50% 100%; animation: tag-pop .45s var(--ease-spring) both; }
+/* Mart customers live in their own HTML layer and move by CSS transform, so walking never
+   repaints the patterned SVG room underneath (that repaint is what made them stutter). */
+#mart-people { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
+#mart-people .walker { position: absolute; left: 0; top: 0; will-change: transform; }
+#mart-people .bobw { animation: bobw .45s ease-in-out infinite alternate; animation-delay: var(--d, 0ms); }
+#mart-people .walker svg { display: block; overflow: visible; }
+@keyframes bobw { to { transform: translateY(-2.5%); } }
+#mart-people.still .bobw, #mart-people .walker.stand .bobw { animation: none; }
+#mart-top { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+#mart-top .thing, #mart-top #mart-block, #mart-top #paypanel, #mart-top #bask-panel { pointer-events: auto; }
+#room-svg .sold { transition: opacity .6s var(--ease-out); opacity: 0; pointer-events: none; }
+#mart-people .tag-pop { transform-box: fill-box; transform-origin: 50% 100%; animation: tag-pop .45s var(--ease-spring) both; }
 @keyframes tag-pop { from { opacity: 0; transform: scale(.2); } }
-#room-svg .pulse-tags .num { transform-box: fill-box; transform-origin: center; animation: pulse-tag 1s ease-in-out infinite; }
+#mart-people.pulse-tags .num { transform-box: fill-box; transform-origin: center; animation: pulse-tag 1s ease-in-out infinite; }
 @keyframes pulse-tag { 50% { transform: scale(1.22); } }
-#room-svg .shake { transform-box: fill-box; transform-origin: 50% 100%; animation: shake .45s ease-in-out infinite; }
+#room-svg .shake, #mart-top .shake { transform-box: fill-box; transform-origin: 50% 100%; animation: shake .45s ease-in-out infinite; }
 @keyframes shake { 25% { transform: rotate(-7deg); } 75% { transform: rotate(7deg); } }
-#room-svg .bag-in { transform-box: fill-box; transform-origin: 50% 100%; animation: bag-in .75s var(--ease-spring) both; }
+#room-svg .bag-in, #mart-top .bag-in { transform-box: fill-box; transform-origin: 50% 100%; animation: bag-in .75s var(--ease-spring) both; }
 @keyframes bag-in { from { opacity: 0; transform: translateY(90px) scale(.3); } }
-#room-svg .fade-in { animation: fade-in .4s var(--ease-out) both; }
+#room-svg .fade-in, #mart-top .fade-in { animation: fade-in .4s var(--ease-out) both; }
 @keyframes fade-in { from { opacity: 0; } }
 #room-svg .blinking { animation: blink-green .5s steps(1) infinite; }
 @keyframes blink-green { 50% { opacity: .25; } }
 @keyframes hop { 0%, 100% { transform: translateY(0); } 20% { transform: translateY(-50px); } 40% { transform: translateY(0); } 58% { transform: translateY(-26px); } 74% { transform: translateY(0); } 86% { transform: translateY(-8px); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .toast, #room-svg .cut-in, #room-svg .sparkle, #room-svg .wobble, #room-svg .bob, #room-svg .tag-pop, #room-svg .pulse-tags .num, #room-svg .shake, #room-svg .bag-in, #room-svg .fade-in, .bulb, .beckon, .flash .lamp-a, .flash .lamp-b, .spraying .spray circle, .ring .swing, .boing, .bubble, .hopping .hop { animation: none; }
+  .toast, #room-svg .cut-in, #room-svg .sparkle, #room-svg .wobble, #mart-people .bobw, #mart-people .tag-pop, #mart-people.pulse-tags .num, #mart-top .cut-in, #mart-top .sparkle, #mart-top .wobble, #mart-top .shake, #mart-top .bag-in, #mart-top .fade-in, #mart-top .beckon, #room-svg .shake, #room-svg .bag-in, #room-svg .fade-in, .bulb, .beckon, .flash .lamp-a, .flash .lamp-b, .spraying .spray circle, .ring .swing, .boing, .bubble, .hopping .hop { animation: none; }
   .flash .lamp, .spraying .spray circle { opacity: 1; }
   .bld, .pull, .door, .night, .stars { transition: none; }
 }
@@ -404,12 +412,15 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   </div>
   <div class="room-stage" id="room-stage">
     <svg id="room-svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet"></svg>
+    <div id="mart-people" hidden></div>
+    <svg id="mart-top" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" hidden></svg>
     <div class="bubble" id="bubble" hidden></div>
     <div class="mart-ctl" id="mart-ctl" hidden>
       <span class="mc-step" id="mc-step"></span>
       <button type="button" id="mc-prev">◀ 이전</button>
       <button type="button" class="go" id="mc-next">다음 ▶</button>
       <button type="button" id="mc-skip">바로 장보기</button>
+      <button type="button" id="mc-bask" hidden>장바구니 보기</button>
     </div>
   </div>
 </section>
@@ -482,7 +493,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
      reads every speech bubble. Bundled recordings take priority over the device voice. */
   // Recorded lines (town/voices/lines.csv → NNN.mp3), filled in by build.py: { "대사": "town/voices/001.mp3" }.
   // A line with a recording plays it; every other line falls back to the device voice.
-  const VOICES = {"병원에 왔어요!": "town/voices/001.mp3", "어디가 아파서 왔나요? 선생님이 봐 줄게요.": "town/voices/002.mp3", "소방서에 왔어요!": "town/voices/003.mp3", "불이 나면 119에 전화해요!": "town/voices/004.mp3", "경찰서에 왔어요!": "town/voices/005.mp3", "길을 잃으면 경찰관에게 도와 달라고 해요.": "town/voices/006.mp3", "도서관에 왔어요!": "town/voices/007.mp3", "쉿! 도서관에서는 작은 목소리로 말해요.": "town/voices/008.mp3", "문정유치원에 왔어요!": "town/voices/009.mp3", "여기는 문정유치원 새들1반이에요!": "town/voices/010.mp3", "미용실에 왔어요!": "town/voices/011.mp3", "어서 오세요! 어떤 머리를 해 줄까요?": "town/voices/012.mp3", "마트에 왔어요!": "town/voices/013.mp3", "갖고 싶은 물건을 골라 보세요. 가격표를 잘 보세요!": "town/voices/014.mp3", "과일가게에 왔어요!": "town/voices/015.mp3", "다이소에 왔어요!": "town/voices/016.mp3", "한성아파트에 왔어요!": "town/voices/017.mp3", "안녕! 나는 시나모롤이야. 우리 집에 잘 왔어!": "town/voices/018.mp3", "오네뜨아파트에 왔어요!": "town/voices/019.mp3", "안녕! 나는 쿠로미야. 우리 집에 잘 왔어!": "town/voices/020.mp3", "골드클래스 아파트에 왔어요!": "town/voices/021.mp3", "안녕! 나는 헬로키티야. 우리 집에 잘 왔어!": "town/voices/022.mp3", "광신프로그레스 아파트에 왔어요!": "town/voices/023.mp3", "안녕! 나는 포차코야. 우리 집에 잘 왔어!": "town/voices/024.mp3", "횡단보도에 왔어요!": "town/voices/025.mp3", "앗, 빨간불이에요! 초록불이 될 때까지 기다려요.": "town/voices/026.mp3", "초록불이 켜졌어요! 차가 멈추면 손을 들고 건너요.": "town/voices/027.mp3", "손을 번쩍 들고, 좌우를 살피며 건너요!": "town/voices/028.mp3", "잘 건넜어요! 최고예요!": "town/voices/029.mp3", "빨간불! 이제 멈춰서 기다려요.": "town/voices/030.mp3", "삐뽀삐뽀! 아픈 사람을 태우러 가요.": "town/voices/031.mp3", "다친 곳에는 밴드를 붙여요.": "town/voices/032.mp3", "약은 어른이 주실 때만 먹어요.": "town/voices/033.mp3", "아 입을 크게 벌려 볼까요?": "town/voices/034.mp3", "손을 깨끗이 씻으면 감기에 안 걸려요!": "town/voices/035.mp3", "쿵쿵, 쿵쿵! 심장 소리가 들려요.": "town/voices/036.mp3", "삐빅! 36.5도, 열이 없어요.": "town/voices/037.mp3", "삐빅! 열을 재 볼게요.": "town/voices/038.mp3", "푹 쉬면 금방 나아요. 쿨쿨": "town/voices/039.mp3", "포차코가 쉬고 있어요. 쉿!": "town/voices/040.mp3", "땡땡땡! 출동!": "town/voices/041.mp3", "소방관 모자는 머리를 지켜 줘요.": "town/voices/042.mp3", "노란 모자는 대장님 거예요!": "town/voices/043.mp3", "쏴아아! 물로 불을 꺼요.": "town/voices/044.mp3", "삐용삐용! 불 끄러 출동해요!": "town/voices/045.mp3", "불이 나면 코와 입을 막고 낮게 나가요.": "town/voices/046.mp3", "우리 동네를 안전하게 지켜요!": "town/voices/047.mp3", "치익- 여기는 우리동네 경찰서!": "town/voices/048.mp3", "치익- 모두 안전합니다!": "town/voices/049.mp3", "노란불! 곧 바뀌어요. 조심!": "town/voices/050.mp3", "초록불! 손 들고 건너요.": "town/voices/051.mp3", "빨간불! 멈춰서 기다려요.": "town/voices/052.mp3", "삐용삐용! 경찰차가 출동해요!": "town/voices/053.mp3", "공룡 그림책이에요. 쿵쾅쿵쾅!": "town/voices/054.mp3", "우주 그림책이에요. 반짝반짝 별나라!": "town/voices/055.mp3", "자동차 그림책이에요. 부릉부릉!": "town/voices/056.mp3", "바다 그림책이에요. 첨벙첨벙!": "town/voices/057.mp3", "곤충 그림책이에요. 무당벌레가 엉금엉금!": "town/voices/058.mp3", "똑딱똑딱, 책 읽는 시간이에요.": "town/voices/059.mp3", "다 읽은 책은 제자리에 꽂아요.": "town/voices/060.mp3", "쾅! 도장 찍고 책을 빌려 가요.": "town/voices/061.mp3", "우리 반 친구들, 안녕!": "town/voices/062.mp3", "블록을 두 개 쌓았어요!": "town/voices/063.mp3", "블록을 세 개 쌓았어요!": "town/voices/064.mp3", "블록을 네 개 쌓았어요!": "town/voices/065.mp3", "블록을 다섯 개 쌓았어요!": "town/voices/066.mp3", "블록을 여섯 개 쌓았어요!": "town/voices/067.mp3", "블록을 일곱 개 쌓았어요!": "town/voices/068.mp3", "슝 미끄럼틀 재밌다!": "town/voices/069.mp3", "알록달록 그림을 그려요.": "town/voices/070.mp3", "이번엔 무지개를 그렸어요!": "town/voices/071.mp3", "해님도 그려 볼까요?": "town/voices/072.mp3", "새들1반 친구들, 오늘도 즐겁게 놀아요!": "town/voices/073.mp3", "친구와 사이좋게 지내요.": "town/voices/074.mp3", "말풍선을 읽어 줄게요.": "town/voices/075.mp3", "와르르! 다시 쌓아 볼까요?": "town/voices/076.mp3", "빙글빙글! 미용실 표시등이에요.": "town/voices/077.mp3", "싹둑싹둑! 리본을 달았어요.": "town/voices/078.mp3", "꽃 머리띠 완성! 예뻐요.": "town/voices/079.mp3", "반짝반짝 왕관을 썼어요!": "town/voices/080.mp3", "뽀글뽀글 파마하는 중이에요!": "town/voices/081.mp3", "처음 모습이에요. 이제 멋을 내 볼까요?": "town/voices/082.mp3", "머리를 감고, 자르고, 말려요.": "town/voices/083.mp3", "위잉 따뜻한 바람으로 머리를 말려요.": "town/voices/084.mp3", "보글보글! 거품으로 머리를 감아요.": "town/voices/085.mp3", "지갑에 돈이 모자라요! 이제 계산대로 가요.": "town/voices/086.mp3", "아직 비어 있어요. 물건을 눌러 담아요!": "town/voices/087.mp3", "냉장고 안에 우유, 사과, 달걀, 딸기가 있어요!": "town/voices/088.mp3", "냉장고 문은 꼭 닫아요.": "town/voices/089.mp3", "폼폼푸린이 맛있는 밥을 만들어요!": "town/voices/090.mp3", "손 씻고 밥 먹자!": "town/voices/091.mp3", "보글보글 맛있는 국을 끓여요. 뜨거우니까 조심!": "town/voices/092.mp3", "동물 친구들이 나와요. 개굴개굴!": "town/voices/093.mp3", "날씨 예보: 내일은 맑고 구름 조금!": "town/voices/094.mp3", "TV를 껐어요. 너무 오래 보면 눈이 아파요.": "town/voices/095.mp3", "만화 시간이에요! 하하하.": "town/voices/096.mp3", "5층 우리 집에 놀러 와 줘서 고마워!": "town/voices/097.mp3", "물을 주었어요. 쑥쑥!": "town/voices/098.mp3", "조금 더 자랐어요. 쑥쑥쑥!": "town/voices/099.mp3", "와, 예쁜 꽃이 피었어요!": "town/voices/100.mp3", "화분에 새싹이 났어요. 다시 키워 볼까요?": "town/voices/101.mp3", "통통통! 공놀이 할까요?": "town/voices/102.mp3", "쉿! 포차코가 자고 있어요. 쿨쿨": "town/voices/103.mp3", "불을 껐어요. 이제 잘 시간! 잘 자요": "town/voices/104.mp3", "불을 켰어요. 좋은 아침!": "town/voices/105.mp3", "마이멜로디가 맛있는 밥을 만들어요!": "town/voices/106.mp3", "3층 우리 집에 놀러 와 줘서 고마워!": "town/voices/107.mp3", "쉿! 케로피가 자고 있어요. 쿨쿨": "town/voices/108.mp3", "곰돌이가 맛있는 밥을 만들어요!": "town/voices/109.mp3", "12층 우리 집에 놀러 와 줘서 고마워!": "town/voices/110.mp3", "쉿! 시나모롤이 자고 있어요. 쿨쿨": "town/voices/111.mp3", "케로피가 맛있는 밥을 만들어요!": "town/voices/112.mp3", "8층 우리 집에 놀러 와 줘서 고마워!": "town/voices/113.mp3", "쉿! 쿠로미가 자고 있어요. 쿨쿨": "town/voices/114.mp3", "빵빵! 차가 지나가요. 조심!": "town/voices/115.mp3", "지금은 초록불이에요. 손을 들고 건너요!": "town/voices/116.mp3", "빵빵! 차는 정지선에서 멈춰요.": "town/voices/117.mp3", "잠깐! 차가 지나가고 있어요. 차가 멈추면 건너요.": "town/voices/118.mp3", "사과는 천 원!": "town/voices/119.mp3", "바나나는 이천 원!": "town/voices/120.mp3", "당근은 천 원!": "town/voices/121.mp3", "우유는 이천 원!": "town/voices/122.mp3", "빵은 삼천 원!": "town/voices/123.mp3", "포도는 삼천 원!": "town/voices/124.mp3", "수박은 오천 원!": "town/voices/125.mp3", "달걀은 삼천 원!": "town/voices/126.mp3", "딸기는 삼천 원!": "town/voices/127.mp3", "귤은 천 원!": "town/voices/128.mp3", "연필은 천 원!": "town/voices/129.mp3", "공책은 이천 원!": "town/voices/130.mp3", "풍선은 천 원!": "town/voices/131.mp3", "머리핀은 이천 원!": "town/voices/132.mp3", "컵은 삼천 원!": "town/voices/133.mp3", "공은 오천 원!": "town/voices/134.mp3", "모두 천 원.": "town/voices/135.mp3", "모두 이천 원.": "town/voices/136.mp3", "모두 삼천 원.": "town/voices/137.mp3", "모두 사천 원.": "town/voices/138.mp3", "모두 오천 원.": "town/voices/139.mp3", "모두 육천 원.": "town/voices/140.mp3", "모두 칠천 원.": "town/voices/141.mp3", "모두 팔천 원.": "town/voices/142.mp3", "모두 구천 원.": "town/voices/143.mp3", "모두 만 원.": "town/voices/144.mp3", "모두 천 원이에요. 돈을 내 주세요!": "town/voices/145.mp3", "모두 이천 원이에요. 돈을 내 주세요!": "town/voices/146.mp3", "모두 삼천 원이에요. 돈을 내 주세요!": "town/voices/147.mp3", "모두 사천 원이에요. 돈을 내 주세요!": "town/voices/148.mp3", "모두 오천 원이에요. 돈을 내 주세요!": "town/voices/149.mp3", "모두 육천 원이에요. 돈을 내 주세요!": "town/voices/150.mp3", "모두 칠천 원이에요. 돈을 내 주세요!": "town/voices/151.mp3", "모두 팔천 원이에요. 돈을 내 주세요!": "town/voices/152.mp3", "모두 구천 원이에요. 돈을 내 주세요!": "town/voices/153.mp3", "모두 만 원이에요. 돈을 내 주세요!": "town/voices/154.mp3", "모두 천 원어치 담았어요!": "town/voices/155.mp3", "모두 이천 원어치 담았어요!": "town/voices/156.mp3", "모두 삼천 원어치 담았어요!": "town/voices/157.mp3", "모두 사천 원어치 담았어요!": "town/voices/158.mp3", "모두 오천 원어치 담았어요!": "town/voices/159.mp3", "모두 육천 원어치 담았어요!": "town/voices/160.mp3", "모두 칠천 원어치 담았어요!": "town/voices/161.mp3", "모두 팔천 원어치 담았어요!": "town/voices/162.mp3", "모두 구천 원어치 담았어요!": "town/voices/163.mp3", "모두 만 원어치 담았어요!": "town/voices/164.mp3", "천 원!": "town/voices/165.mp3", "이천 원!": "town/voices/166.mp3", "삼천 원!": "town/voices/167.mp3", "사천 원!": "town/voices/168.mp3", "오천 원!": "town/voices/169.mp3", "육천 원!": "town/voices/170.mp3", "칠천 원!": "town/voices/171.mp3", "팔천 원!": "town/voices/172.mp3", "구천 원!": "town/voices/173.mp3", "만 원!": "town/voices/174.mp3", "딱 맞게 냈어요. 고맙습니다!": "town/voices/175.mp3", "안녕하세요! 저는 박상현 선생님이에요.": "town/voices/176.mp3", "건강한 마트에 오신 걸 환영합니다!": "town/voices/177.mp3", "우와, 오늘 많은 손님이 장 보러 오셨네요.": "town/voices/178.mp3", "잠깐! 손님이 이렇게 많으면 어떻게 장을 보죠?": "town/voices/179.mp3", "아하! 좋은 생각이 났어요!": "town/voices/180.mp3", "번호표를 받아 주세요": "town/voices/181.mp3", "번호표 순서대로 장을 봐 주세요. 번호를 확인하셨나요?": "town/voices/182.mp3", "장을 보기 전에 우리 마트에 꼭 가지고 오셔야 하는 물건이 있어요. 건강한 우리 동네와 건강한 지구를 지키기 위해 꼭 필요한 물건이에요. 이 물건은 무엇일까요?": "town/voices/183.mp3", "우와! 모두 알고 있나요? 다 같이 말해 주세요!": "town/voices/184.mp3", "정답은 시장바구니! 시장바구니를 쓰면 비닐봉지가 줄어서 지구가 건강해져요.": "town/voices/185.mp3", "이제부터 시장바구니를 들고 장을 봐 주세요. 1번부터 나와 주시고, 계산이 끝나면 다음 손님이 장을 봐 주세요.": "town/voices/186.mp3", "모든 손님이 장을 다 봤어요! 건강한 마트에 와 주셔서 고맙습니다!": "town/voices/187.mp3", "1번 손님, 나와 주세요!": "town/voices/188.mp3", "2번 손님, 나와 주세요!": "town/voices/189.mp3", "3번 손님, 나와 주세요!": "town/voices/190.mp3", "4번 손님, 나와 주세요!": "town/voices/191.mp3", "5번 손님, 나와 주세요!": "town/voices/192.mp3", "6번 손님, 나와 주세요!": "town/voices/193.mp3", "7번 손님, 나와 주세요!": "town/voices/194.mp3", "8번 손님, 나와 주세요!": "town/voices/195.mp3", "9번 손님, 나와 주세요!": "town/voices/196.mp3", "10번 손님, 나와 주세요!": "town/voices/197.mp3", "11번 손님, 나와 주세요!": "town/voices/198.mp3", "12번 손님, 나와 주세요!": "town/voices/199.mp3"};
+  const VOICES = {"병원에 왔어요!": "town/voices/001.mp3", "어디가 아파서 왔나요? 선생님이 봐 줄게요.": "town/voices/002.mp3", "소방서에 왔어요!": "town/voices/003.mp3", "불이 나면 119에 전화해요!": "town/voices/004.mp3", "경찰서에 왔어요!": "town/voices/005.mp3", "길을 잃으면 경찰관에게 도와 달라고 해요.": "town/voices/006.mp3", "도서관에 왔어요!": "town/voices/007.mp3", "쉿! 도서관에서는 작은 목소리로 말해요.": "town/voices/008.mp3", "문정유치원에 왔어요!": "town/voices/009.mp3", "여기는 문정유치원 새들1반이에요!": "town/voices/010.mp3", "미용실에 왔어요!": "town/voices/011.mp3", "어서 오세요! 어떤 머리를 해 줄까요?": "town/voices/012.mp3", "마트에 왔어요!": "town/voices/013.mp3", "갖고 싶은 물건을 골라 보세요. 가격표를 잘 보세요!": "town/voices/014.mp3", "과일가게에 왔어요!": "town/voices/015.mp3", "다이소에 왔어요!": "town/voices/016.mp3", "한성아파트에 왔어요!": "town/voices/017.mp3", "안녕! 나는 시나모롤이야. 우리 집에 잘 왔어!": "town/voices/018.mp3", "오네뜨아파트에 왔어요!": "town/voices/019.mp3", "안녕! 나는 쿠로미야. 우리 집에 잘 왔어!": "town/voices/020.mp3", "골드클래스 아파트에 왔어요!": "town/voices/021.mp3", "안녕! 나는 헬로키티야. 우리 집에 잘 왔어!": "town/voices/022.mp3", "광신프로그레스 아파트에 왔어요!": "town/voices/023.mp3", "안녕! 나는 포차코야. 우리 집에 잘 왔어!": "town/voices/024.mp3", "횡단보도에 왔어요!": "town/voices/025.mp3", "앗, 빨간불이에요! 초록불이 될 때까지 기다려요.": "town/voices/026.mp3", "초록불이 켜졌어요! 차가 멈추면 손을 들고 건너요.": "town/voices/027.mp3", "손을 번쩍 들고, 좌우를 살피며 건너요!": "town/voices/028.mp3", "잘 건넜어요! 최고예요!": "town/voices/029.mp3", "빨간불! 이제 멈춰서 기다려요.": "town/voices/030.mp3", "삐뽀삐뽀! 아픈 사람을 태우러 가요.": "town/voices/031.mp3", "다친 곳에는 밴드를 붙여요.": "town/voices/032.mp3", "약은 어른이 주실 때만 먹어요.": "town/voices/033.mp3", "아 입을 크게 벌려 볼까요?": "town/voices/034.mp3", "손을 깨끗이 씻으면 감기에 안 걸려요!": "town/voices/035.mp3", "쿵쿵, 쿵쿵! 심장 소리가 들려요.": "town/voices/036.mp3", "삐빅! 36.5도, 열이 없어요.": "town/voices/037.mp3", "삐빅! 열을 재 볼게요.": "town/voices/038.mp3", "푹 쉬면 금방 나아요. 쿨쿨": "town/voices/039.mp3", "포차코가 쉬고 있어요. 쉿!": "town/voices/040.mp3", "땡땡땡! 출동!": "town/voices/041.mp3", "소방관 모자는 머리를 지켜 줘요.": "town/voices/042.mp3", "노란 모자는 대장님 거예요!": "town/voices/043.mp3", "쏴아아! 물로 불을 꺼요.": "town/voices/044.mp3", "삐용삐용! 불 끄러 출동해요!": "town/voices/045.mp3", "불이 나면 코와 입을 막고 낮게 나가요.": "town/voices/046.mp3", "우리 동네를 안전하게 지켜요!": "town/voices/047.mp3", "치익- 여기는 우리동네 경찰서!": "town/voices/048.mp3", "치익- 모두 안전합니다!": "town/voices/049.mp3", "노란불! 곧 바뀌어요. 조심!": "town/voices/050.mp3", "초록불! 손 들고 건너요.": "town/voices/051.mp3", "빨간불! 멈춰서 기다려요.": "town/voices/052.mp3", "삐용삐용! 경찰차가 출동해요!": "town/voices/053.mp3", "공룡 그림책이에요. 쿵쾅쿵쾅!": "town/voices/054.mp3", "우주 그림책이에요. 반짝반짝 별나라!": "town/voices/055.mp3", "자동차 그림책이에요. 부릉부릉!": "town/voices/056.mp3", "바다 그림책이에요. 첨벙첨벙!": "town/voices/057.mp3", "곤충 그림책이에요. 무당벌레가 엉금엉금!": "town/voices/058.mp3", "똑딱똑딱, 책 읽는 시간이에요.": "town/voices/059.mp3", "다 읽은 책은 제자리에 꽂아요.": "town/voices/060.mp3", "쾅! 도장 찍고 책을 빌려 가요.": "town/voices/061.mp3", "우리 반 친구들, 안녕!": "town/voices/062.mp3", "블록을 두 개 쌓았어요!": "town/voices/063.mp3", "블록을 세 개 쌓았어요!": "town/voices/064.mp3", "블록을 네 개 쌓았어요!": "town/voices/065.mp3", "블록을 다섯 개 쌓았어요!": "town/voices/066.mp3", "블록을 여섯 개 쌓았어요!": "town/voices/067.mp3", "블록을 일곱 개 쌓았어요!": "town/voices/068.mp3", "슝 미끄럼틀 재밌다!": "town/voices/069.mp3", "알록달록 그림을 그려요.": "town/voices/070.mp3", "이번엔 무지개를 그렸어요!": "town/voices/071.mp3", "해님도 그려 볼까요?": "town/voices/072.mp3", "새들1반 친구들, 오늘도 즐겁게 놀아요!": "town/voices/073.mp3", "친구와 사이좋게 지내요.": "town/voices/074.mp3", "말풍선을 읽어 줄게요.": "town/voices/075.mp3", "와르르! 다시 쌓아 볼까요?": "town/voices/076.mp3", "빙글빙글! 미용실 표시등이에요.": "town/voices/077.mp3", "싹둑싹둑! 리본을 달았어요.": "town/voices/078.mp3", "꽃 머리띠 완성! 예뻐요.": "town/voices/079.mp3", "반짝반짝 왕관을 썼어요!": "town/voices/080.mp3", "뽀글뽀글 파마하는 중이에요!": "town/voices/081.mp3", "처음 모습이에요. 이제 멋을 내 볼까요?": "town/voices/082.mp3", "머리를 감고, 자르고, 말려요.": "town/voices/083.mp3", "위잉 따뜻한 바람으로 머리를 말려요.": "town/voices/084.mp3", "보글보글! 거품으로 머리를 감아요.": "town/voices/085.mp3", "지갑에 돈이 모자라요! 이제 계산대로 가요.": "town/voices/086.mp3", "아직 비어 있어요. 물건을 눌러 담아요!": "town/voices/087.mp3", "냉장고 안에 우유, 사과, 달걀, 딸기가 있어요!": "town/voices/088.mp3", "냉장고 문은 꼭 닫아요.": "town/voices/089.mp3", "폼폼푸린이 맛있는 밥을 만들어요!": "town/voices/090.mp3", "손 씻고 밥 먹자!": "town/voices/091.mp3", "보글보글 맛있는 국을 끓여요. 뜨거우니까 조심!": "town/voices/092.mp3", "동물 친구들이 나와요. 개굴개굴!": "town/voices/093.mp3", "날씨 예보: 내일은 맑고 구름 조금!": "town/voices/094.mp3", "TV를 껐어요. 너무 오래 보면 눈이 아파요.": "town/voices/095.mp3", "만화 시간이에요! 하하하.": "town/voices/096.mp3", "5층 우리 집에 놀러 와 줘서 고마워!": "town/voices/097.mp3", "물을 주었어요. 쑥쑥!": "town/voices/098.mp3", "조금 더 자랐어요. 쑥쑥쑥!": "town/voices/099.mp3", "와, 예쁜 꽃이 피었어요!": "town/voices/100.mp3", "화분에 새싹이 났어요. 다시 키워 볼까요?": "town/voices/101.mp3", "통통통! 공놀이 할까요?": "town/voices/102.mp3", "쉿! 포차코가 자고 있어요. 쿨쿨": "town/voices/103.mp3", "불을 껐어요. 이제 잘 시간! 잘 자요": "town/voices/104.mp3", "불을 켰어요. 좋은 아침!": "town/voices/105.mp3", "마이멜로디가 맛있는 밥을 만들어요!": "town/voices/106.mp3", "3층 우리 집에 놀러 와 줘서 고마워!": "town/voices/107.mp3", "쉿! 케로피가 자고 있어요. 쿨쿨": "town/voices/108.mp3", "곰돌이가 맛있는 밥을 만들어요!": "town/voices/109.mp3", "12층 우리 집에 놀러 와 줘서 고마워!": "town/voices/110.mp3", "쉿! 시나모롤이 자고 있어요. 쿨쿨": "town/voices/111.mp3", "케로피가 맛있는 밥을 만들어요!": "town/voices/112.mp3", "8층 우리 집에 놀러 와 줘서 고마워!": "town/voices/113.mp3", "쉿! 쿠로미가 자고 있어요. 쿨쿨": "town/voices/114.mp3", "빵빵! 차가 지나가요. 조심!": "town/voices/115.mp3", "지금은 초록불이에요. 손을 들고 건너요!": "town/voices/116.mp3", "빵빵! 차는 정지선에서 멈춰요.": "town/voices/117.mp3", "잠깐! 차가 지나가고 있어요. 차가 멈추면 건너요.": "town/voices/118.mp3", "사과는 천 원!": "town/voices/119.mp3", "바나나는 이천 원!": "town/voices/120.mp3", "당근은 천 원!": "town/voices/121.mp3", "우유는 이천 원!": "town/voices/122.mp3", "빵은 삼천 원!": "town/voices/123.mp3", "포도는 삼천 원!": "town/voices/124.mp3", "수박은 오천 원!": "town/voices/125.mp3", "달걀은 삼천 원!": "town/voices/126.mp3", "딸기는 삼천 원!": "town/voices/127.mp3", "귤은 천 원!": "town/voices/128.mp3", "연필은 천 원!": "town/voices/129.mp3", "공책은 이천 원!": "town/voices/130.mp3", "풍선은 천 원!": "town/voices/131.mp3", "머리핀은 이천 원!": "town/voices/132.mp3", "컵은 삼천 원!": "town/voices/133.mp3", "공은 오천 원!": "town/voices/134.mp3", "모두 천 원.": "town/voices/135.mp3", "모두 이천 원.": "town/voices/136.mp3", "모두 삼천 원.": "town/voices/137.mp3", "모두 사천 원.": "town/voices/138.mp3", "모두 오천 원.": "town/voices/139.mp3", "모두 육천 원.": "town/voices/140.mp3", "모두 칠천 원.": "town/voices/141.mp3", "모두 팔천 원.": "town/voices/142.mp3", "모두 구천 원.": "town/voices/143.mp3", "모두 만 원.": "town/voices/144.mp3", "모두 천 원이에요. 돈을 내 주세요!": "town/voices/145.mp3", "모두 이천 원이에요. 돈을 내 주세요!": "town/voices/146.mp3", "모두 삼천 원이에요. 돈을 내 주세요!": "town/voices/147.mp3", "모두 사천 원이에요. 돈을 내 주세요!": "town/voices/148.mp3", "모두 오천 원이에요. 돈을 내 주세요!": "town/voices/149.mp3", "모두 육천 원이에요. 돈을 내 주세요!": "town/voices/150.mp3", "모두 칠천 원이에요. 돈을 내 주세요!": "town/voices/151.mp3", "모두 팔천 원이에요. 돈을 내 주세요!": "town/voices/152.mp3", "모두 구천 원이에요. 돈을 내 주세요!": "town/voices/153.mp3", "모두 만 원이에요. 돈을 내 주세요!": "town/voices/154.mp3", "모두 천 원어치 담았어요!": "town/voices/155.mp3", "모두 이천 원어치 담았어요!": "town/voices/156.mp3", "모두 삼천 원어치 담았어요!": "town/voices/157.mp3", "모두 사천 원어치 담았어요!": "town/voices/158.mp3", "모두 오천 원어치 담았어요!": "town/voices/159.mp3", "모두 육천 원어치 담았어요!": "town/voices/160.mp3", "모두 칠천 원어치 담았어요!": "town/voices/161.mp3", "모두 팔천 원어치 담았어요!": "town/voices/162.mp3", "모두 구천 원어치 담았어요!": "town/voices/163.mp3", "모두 만 원어치 담았어요!": "town/voices/164.mp3", "천 원!": "town/voices/165.mp3", "이천 원!": "town/voices/166.mp3", "삼천 원!": "town/voices/167.mp3", "사천 원!": "town/voices/168.mp3", "오천 원!": "town/voices/169.mp3", "육천 원!": "town/voices/170.mp3", "칠천 원!": "town/voices/171.mp3", "팔천 원!": "town/voices/172.mp3", "구천 원!": "town/voices/173.mp3", "만 원!": "town/voices/174.mp3", "딱 맞게 냈어요. 고맙습니다!": "town/voices/175.mp3", "안녕하세요! 저는 박상현 선생님이에요.": "town/voices/176.mp3", "건강한 마트에 오신 걸 환영합니다!": "town/voices/177.mp3", "우와, 오늘 많은 손님이 장 보러 오셨네요.": "town/voices/178.mp3", "잠깐! 손님이 이렇게 많으면 어떻게 장을 보죠?": "town/voices/179.mp3", "아하! 좋은 생각이 났어요!": "town/voices/180.mp3", "번호표를 받아 주세요": "town/voices/181.mp3", "번호표 순서대로 장을 봐 주세요. 번호를 확인하셨나요?": "town/voices/182.mp3", "장을 보기 전에 우리 마트에 꼭 가지고 오셔야 하는 물건이 있어요. 건강한 우리 동네와 건강한 지구를 지키기 위해 꼭 필요한 물건이에요. 이 물건은 무엇일까요?": "town/voices/183.mp3", "우와! 모두 알고 있나요? 다 같이 말해 주세요!": "town/voices/184.mp3", "정답은 시장바구니! 시장바구니를 쓰면 비닐봉지가 줄어서 지구가 건강해져요.": "town/voices/185.mp3", "이제부터 시장바구니를 들고 장을 봐 주세요. 1번부터 나와 주시고, 계산이 끝나면 다음 손님이 장을 봐 주세요.": "town/voices/186.mp3", "모든 손님이 장을 다 봤어요! 건강한 마트에 와 주셔서 고맙습니다!": "town/voices/187.mp3", "1번 손님, 나와 주세요!": "town/voices/188.mp3", "2번 손님, 나와 주세요!": "town/voices/189.mp3", "3번 손님, 나와 주세요!": "town/voices/190.mp3", "4번 손님, 나와 주세요!": "town/voices/191.mp3", "5번 손님, 나와 주세요!": "town/voices/192.mp3", "6번 손님, 나와 주세요!": "town/voices/193.mp3", "7번 손님, 나와 주세요!": "town/voices/194.mp3", "8번 손님, 나와 주세요!": "town/voices/195.mp3", "9번 손님, 나와 주세요!": "town/voices/196.mp3", "10번 손님, 나와 주세요!": "town/voices/197.mp3", "11번 손님, 나와 주세요!": "town/voices/198.mp3", "12번 손님, 나와 주세요!": "town/voices/199.mp3", "안녕히 가세요!": "town/voices/200.mp3", "시장바구니를 눌러 주세요!": "town/voices/201.mp3", "시장바구니를 들었어요! 사고 싶은 물건을 눌러 주세요.": "town/voices/202.mp3", "먼저 시장바구니를 눌러 주세요!": "town/voices/203.mp3", "어머나! 오늘 준비한 물건이 다 팔렸어요. 기다려 주신 손님들, 다음에 또 와 주세요. 안녕히 가세요!": "town/voices/204.mp3", "우리 반 친구들은 무엇을 샀을까요? 장바구니를 열어 볼까요?": "town/voices/205.mp3"};
   let clip = null;
   let speechVersion = 0;
   const synth = window.speechSynthesis || null;
@@ -1377,9 +1388,14 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
      number order · 10 everyone done. Stage and turn survive leaving the room (and a reload, per tab). */
   const SVGNS = 'http://www.w3.org/2000/svg';
   const SHOP_STAGE = 9, DONE_STAGE = 10;
-  const MART = { stage: 0, turn: 1, count: 12, raf: 0, last: 0, walkers: [], timers: [] };
-  try { const m = JSON.parse(sessionStorage.getItem('town-mart') || '{}'); ['stage', 'turn', 'count'].forEach((k) => { if (Number.isInteger(m[k])) MART[k] = m[k]; }); } catch (e) { /* ignore */ }
-  const saveMart = () => { try { sessionStorage.setItem('town-mart', JSON.stringify({ stage: MART.stage, turn: MART.turn, count: MART.count })); } catch (e) { /* ignore */ } };
+  // baskets: what each numbered customer bought, { "3": { items: ['apple', ...], total: 3000 } }
+  const MART = { stage: 0, turn: 1, count: 12, raf: 0, last: 0, walkers: [], extras: [], timers: [], baskets: {}, bagOn: false, view: { k: 1, ox: 0, oy: 0 } };
+  try {
+    const m = JSON.parse(sessionStorage.getItem('town-mart') || '{}');
+    ['stage', 'turn', 'count'].forEach((k) => { if (Number.isInteger(m[k])) MART[k] = m[k]; });
+    if (m.baskets && typeof m.baskets === 'object') MART.baskets = m.baskets;
+  } catch (e) { /* ignore */ }
+  const saveMart = () => { try { sessionStorage.setItem('town-mart', JSON.stringify({ stage: MART.stage, turn: MART.turn, count: MART.count, baskets: MART.baskets })); } catch (e) { /* ignore */ } };
   const martLater = (ms, fn) => MART.timers.push(setTimeout(fn, ms));
   // as many customers as children present in the claw game's class list (same site), else 12
   function classCount() {
@@ -1401,6 +1417,12 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     answer: '정답은 시장바구니! 시장바구니를 쓰면 비닐봉지가 줄어서 지구가 건강해져요.',
     rule: '이제부터 시장바구니를 들고 장을 봐 주세요. 1번부터 나와 주시고, 계산이 끝나면 다음 손님이 장을 봐 주세요.',
     done: '모든 손님이 장을 다 봤어요! 건강한 마트에 와 주셔서 고맙습니다!',
+    bye: '안녕히 가세요!',
+    takeBag: '시장바구니를 눌러 주세요!',
+    gotBag: '시장바구니를 들었어요! 사고 싶은 물건을 눌러 주세요.',
+    needBag: '먼저 시장바구니를 눌러 주세요!',
+    soldOut: '어머나! 오늘 준비한 물건이 다 팔렸어요. 기다려 주신 손님들, 다음에 또 와 주세요. 안녕히 가세요!',
+    peek: '우리 반 친구들은 무엇을 샀을까요? 장바구니를 열어 볼까요?',
   };
   const callLine = (n) => `${n}번 손님, 나와 주세요!`;
   const clerkEl = () => roomSvg.querySelector('[data-k="pay"]');
@@ -1468,28 +1490,55 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   const queueSlot = (i, n, size) => { const sp = Math.min(118, 1380 / n); return { x: 50 + i * sp, y: 885 - size * 1.1 }; };
   // [file, width / height] — 새들1반 children photographed in class; one child is still to come
   const KID_PHOTOS = [['kid01.webp', .38], ['kid02.webp', .561], ['kid03.webp', .343], ['kid04.webp', .377], ['kid05.webp', .282], ['kid06.webp', .243], ['kid07.webp', .348], ['kid08.webp', .325], ['kid09.webp', .35], ['kid10.webp', .327], ['kid11.webp', .373]];
-  function makeWalkers() {
-    const layer = $('mart-walk');
-    layer.innerHTML = '';
-    MART.walkers = [];
-    const n = MART.count, size = walkerSize(n);
-    for (let i = 0; i < n; i++) {
-      const g = document.createElementNS(SVGNS, 'g');
-      // the class's own children (cut-out photos) shop here; anyone without a photo yet is a plush friend
-      const kid = KID_PHOTOS[i];
-      const H = size * 1.75, foot = size * 1.1, top = kid ? foot - H : 0;
-      const figure = kid
-        ? `<ellipse cx="${size / 2}" cy="${foot - 2}" rx="${size * .32}" ry="${size * .06}" fill="${INK}" opacity=".16"/><image href="town/kids/${kid[0]}" x="${size / 2 - H * kid[1] / 2}" y="${top}" width="${H * kid[1]}" height="${H}"/>`
-        : doll(KINDS[i % KINDS.length], 0, 0, size);
-      g.innerHTML = `<g class="bob" style="animation-delay:${-(i * 137) % 450}ms">${figure}</g>` +
-        `<g class="bagged" visibility="hidden">${bagSVG(size * .62, kid ? foot - H * .5 : size * .62, size * .42)}</g>` +
-        `<g class="num" visibility="hidden"><g transform="translate(${size / 2} ${top - 14})"><circle r="${Math.max(18, size * .22)}" fill="#FFF3B0" ${S(4)}/>${T(0, size * .1, Math.max(20, size * .26), i + 1)}</g></g>`;
-      layer.appendChild(g);
-      const fromRight = i % 2 === 0;
-      MART.walkers.push({ g, size, x: fromRight ? 1700 + i * 40 : -200 - i * 40, y: 885 - size * 1.1 - (i % 3) * 40, tx: 0, ty: 0, mode: 'wander', v: 170 + (i % 5) * 30 });
-      pickWander(MART.walkers[i]);
-    }
+  const people = $('mart-people'), martTop = $('mart-top');
+  // drawing of customer i (photo, else a plush friend) in the walker's local units
+  function figureSVG(i, size, plushKind) {
+    const kid = plushKind ? null : KID_PHOTOS[i];
+    const H = size * 1.75, foot = size * 1.1, top = kid ? foot - H : 0;
+    const fig = kid
+      ? `<ellipse cx="${size / 2}" cy="${foot - 2}" rx="${size * .32}" ry="${size * .06}" fill="${INK}" opacity=".16"/><image href="town/kids/${kid[0]}" x="${size / 2 - H * kid[1] / 2}" y="${top}" width="${H * kid[1]}" height="${H}"/>`
+      : doll(plushKind || KINDS[i % KINDS.length], 0, 0, size);
+    return { fig, top, foot, H, kid };
   }
+  function makeWalker(i, opts = {}) {
+    const n = MART.count, size = opts.size || walkerSize(n);
+    const { fig, top, foot, H, kid } = figureSVG(i, size, opts.plush);
+    const vb = { x: -size * .5, y: top - 64, w: size * 2, h: foot - top + 84 };
+    const el = document.createElement('div');
+    el.className = 'walker';
+    el.innerHTML = `<div class="bobw" style="--d:${-(i * 137) % 450}ms"><svg viewBox="${vb.x} ${vb.y} ${vb.w} ${vb.h}">${fig}` +
+      `<g class="bagged" visibility="hidden">${bagSVG(size * .62, kid ? foot - H * .5 : size * .62, size * .42)}</g>` +
+      (opts.plush ? '' : `<g class="num" visibility="hidden"><g transform="translate(${size / 2} ${top - 14})"><circle r="${Math.max(18, size * .22)}" fill="#FFF3B0" ${S(4)}/>${T(0, size * .1, Math.max(20, size * .26), i + 1)}</g></g>`) +
+      `</svg></div>`;
+    people.appendChild(el);
+    const w = { el, g: el.querySelector('svg'), size, vb, x: opts.x != null ? opts.x : (i % 2 === 0 ? 1700 + i * 40 : -200 - i * 40), y: opts.y != null ? opts.y : 885 - size * 1.1 - (i % 3) * 40, tx: 0, ty: 0, mode: 'wander', v: opts.v || 170 + (i % 5) * 30 };
+    sizeWalker(w);
+    return w;
+  }
+  function makeWalkers() {
+    people.innerHTML = '';
+    MART.walkers = [];
+    MART.extras = [];
+    for (let i = 0; i < MART.count; i++) { const w = makeWalker(i); MART.walkers.push(w); pickWander(w); }
+  }
+  // match the SVG's "meet" letterboxing so walkers sit exactly where the room's units say
+  function layoutPeople() {
+    const r = $('room-stage').getBoundingClientRect();
+    const k = Math.min(r.width / 1600, r.height / 900);
+    MART.view = { k, ox: (r.width - 1600 * k) / 2, oy: (r.height - 900 * k) / 2 };
+    MART.walkers.concat(MART.extras).forEach(sizeWalker);
+  }
+  function sizeWalker(w) {
+    const k = MART.view.k;
+    w.g.setAttribute('width', (w.vb.w * k).toFixed(1));
+    w.g.setAttribute('height', (w.vb.h * k).toFixed(1));
+    placeWalker(w);
+  }
+  function placeWalker(w) {
+    const { k, ox, oy } = MART.view;
+    w.el.style.transform = `translate3d(${(ox + (w.x + w.vb.x) * k).toFixed(1)}px, ${(oy + (w.y + w.vb.y) * k).toFixed(1)}px, 0)`;
+  }
+  if (window.ResizeObserver) new ResizeObserver(() => { if (current === 'mart') layoutPeople(); }).observe($('room-stage'));
   function pickWander(w) {
     w.tx = 40 + Math.random() * (1460 - w.size);
     w.ty = 720 - w.size * 1.1 + Math.random() * 160;
@@ -1497,31 +1546,34 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   function martTick(t) {
     const dt = MART.last ? Math.min(0.05, (t - MART.last) / 1000) : 0;
     MART.last = t;
-    MART.walkers.forEach((w) => {
-      if (w.mode !== 'stop') {
-        const dx = w.tx - w.x, dy = w.ty - w.y, d = Math.hypot(dx, dy), step = w.v * dt;
-        if (d <= step || reduce) { w.x = w.tx; w.y = w.ty; if (w.mode === 'wander' && !reduce) pickWander(w); }
-        else { w.x += dx / d * step; w.y += dy / d * step; }
-      }
-      w.g.setAttribute('transform', `translate(${w.x.toFixed(1)} ${w.y.toFixed(1)})`);
+    MART.walkers.concat(MART.extras).forEach((w) => {
+      if (w.mode === 'stop') return;
+      const dx = w.tx - w.x, dy = w.ty - w.y, d = Math.hypot(dx, dy), step = w.v * dt;
+      if (d < 0.5 && w.mode !== 'wander') { if (!w.el.classList.contains('stand')) w.el.classList.add('stand'); return; }
+      w.el.classList.remove('stand');
+      if (d <= step || reduce) { w.x = w.tx; w.y = w.ty; if (w.mode === 'wander' && !reduce) pickWander(w); }
+      else { w.x += dx / d * step; w.y += dy / d * step; }
+      placeWalker(w);
     });
     if (current === 'mart' && roomOpen) MART.raf = requestAnimationFrame(martTick);
   }
   function walkersTo(fn, snap) {
     MART.walkers.forEach((w, i) => {
       const p = fn(i, w);
-      if (!p) { w.g.setAttribute('visibility', 'hidden'); w.mode = 'stop'; return; }
-      w.g.setAttribute('visibility', 'visible');
+      if (!p) { w.el.style.visibility = 'hidden'; w.mode = 'stop'; return; }
+      w.el.style.visibility = '';
       w.mode = 'place'; w.tx = p.x; w.ty = p.y;
-      if (snap) { w.x = p.x; w.y = p.y; }
+      if (snap) { w.x = p.x; w.y = p.y; placeWalker(w); }
     });
     if (reduce) martTick(performance.now());
   }
   const showTags = (on) => MART.walkers.forEach((w) => w.g.querySelector('.num').setAttribute('visibility', on ? 'visible' : 'hidden'));
-  const showBags = (on) => MART.walkers.forEach((w) => w.g.querySelector('.bagged').setAttribute('visibility', on ? 'visible' : 'hidden'));
+  const bagOf = (w, on) => w.g.querySelector('.bagged').setAttribute('visibility', on ? 'visible' : 'hidden');
+  const showBags = (on) => MART.walkers.forEach((w) => bagOf(w, on));
   function shoppingSpots(snap) {
     const n = MART.count, size = walkerSize(n), waiting = n - MART.turn;
     const sp = Math.min(100, 700 / Math.max(1, waiting));
+    MART.walkers.forEach((w, i) => bagOf(w, i + 1 < MART.turn || (i + 1 === MART.turn && MART.bagOn)));
     walkersTo((i) => {
       const num = i + 1;
       if (num < MART.turn) return { x: 1800, y: 885 - size * 1.1 };
@@ -1533,10 +1585,21 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     if (MART.stage !== SHOP_STAGE) return '';
     return `<g class="fade-in">${Rp(380, 16, 300, 112, '#fff', 20, 5)}${T(480, 84, 34, '지금 손님')}${C(612, 72, 46, '#FFE07A', 5)}${T(612, 92, 56, MART.turn)}</g>`;
   }
+  const ecoBagSVG = () => thing('ecobag', '시장바구니', `<g class="beckon">${bagSVG(880, 640, 150)}</g>` + Rp(860, 800, 190, 52, '#fff', 14, 4) + T(955, 838, 30, '시장바구니', '#2E8A3A') + glowRect(850, 600, 210, 260));
+  function soldOut(on) {
+    roomSvg.querySelectorAll('.thing[data-k^="i"]').forEach((t) => t.classList.toggle('sold', on));
+    const sign = $('sold-sign');
+    if (on && !sign) $('mart-over').insertAdjacentHTML('beforeend', `<g id="sold-sign" class="cut-in" style="--d:0ms"><g transform="rotate(-4 530 400)">${Rp(200, 320, 660, 160, '#FFF3B0', 22, 6)}${T(530, 420, 72, '다 팔렸어요!', '#B8285A')}</g></g>`);
+    if (!on && sign) sign.remove();
+  }
   function startMart() {
-    roomSvg.insertAdjacentHTML('beforeend', `<g id="mart-fx"><rect id="mart-block" x="-1200" y="-600" width="4000" height="2100" fill="transparent"/><g id="mart-walk" pointer-events="none"></g><g id="mart-over"></g><g id="mart-hud" pointer-events="none"></g></g>`);
-    if (MART.stage >= DONE_STAGE || MART.stage < 0) { MART.stage = 0; MART.turn = 1; }
-    if (MART.stage === 0) MART.count = classCount();
+    martTop.innerHTML = `<rect id="mart-block" x="-1200" y="-600" width="4000" height="2100" fill="transparent"/><g id="mart-over"></g><g id="mart-hud"></g><g id="mart-pop"></g>`;
+    martTop.removeAttribute('hidden');
+    people.hidden = false;
+    if (MART.stage > DONE_STAGE || MART.stage < 0) { MART.stage = 0; MART.turn = 1; }
+    if (MART.stage === 0) { MART.count = classCount(); MART.baskets = {}; }
+    MART.bagOn = false;
+    layoutPeople();
     makeWalkers();
     MART.last = 0;
     MART.raf = requestAnimationFrame(martTick);
@@ -1548,6 +1611,10 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     cancelAnimationFrame(MART.raf);
     MART.raf = 0;
     $('mart-ctl').hidden = true;
+    martTop.setAttribute('hidden', '');
+    martTop.innerHTML = '';
+    people.hidden = true;
+    people.innerHTML = '';
   }
   // `jump`: arriving here from another room visit or the 이전/건너뛰기 buttons, so nothing animates in from scratch
   function martStage(n, jump) {
@@ -1555,38 +1622,39 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     MART.timers = [];
     MART.stage = n;
     saveMart();
-    const over = $('mart-over'), walk = $('mart-walk');
+    const over = $('mart-over');
     over.innerHTML = '';
+    $('mart-pop').innerHTML = '';
     $('mart-hud').innerHTML = hudSVG();
     $('mart-block').style.display = n >= SHOP_STAGE ? 'none' : '';
-    walk.classList.toggle('pulse-tags', n === 4);
-    walk.classList.remove('still');
+    people.classList.toggle('pulse-tags', n === 4);
+    people.classList.remove('still');
+    people.style.visibility = n === 0 ? 'hidden' : '';
+    MART.extras.forEach((w) => w.el.remove());
+    MART.extras = [];
+    soldOut(false);
     showTags(n >= 3);
-    showBags(n >= 8);
+    showBags(false);
     const clerk = clerkEl();
-    const line = (fn) => walkersTo((i, w) => queueSlot(i, MART.count, w.size), jump);
+    const line = () => walkersTo((i, w) => queueSlot(i, MART.count, w.size), jump);
     switch (n) {
       case 0:
-        walk.setAttribute('visibility', 'hidden');
         over.innerHTML = welcomeSVG();
         sfx.on();
         speak(MART_LINES.welcome);
         break;
       case 1:
-        walk.setAttribute('visibility', 'visible');
-        MART.walkers.forEach((w) => { w.g.setAttribute('visibility', 'visible'); w.mode = 'wander'; pickWander(w); });
+        MART.walkers.forEach((w) => { w.el.style.visibility = ''; w.mode = 'wander'; pickWander(w); });
         say(MART_LINES.crowd, clerk);
         break;
       case 2:
-        walk.setAttribute('visibility', 'visible');
-        MART.walkers.forEach((w) => { w.g.setAttribute('visibility', 'visible'); w.mode = 'stop'; });
-        walk.classList.add('still');
+        MART.walkers.forEach((w) => { w.el.style.visibility = ''; w.mode = 'stop'; });
+        people.classList.add('still');
         over.innerHTML = thoughtSVG(false);
         say(MART_LINES.wait, clerk);
         martLater(3600, () => { over.innerHTML = thoughtSVG(true); sfx.on(); say(MART_LINES.aha, clerk); });
         break;
       case 3:
-        walk.setAttribute('visibility', 'visible');
         line();
         over.innerHTML = `<g class="fade-in">${Rp(20, 680, 22, 60, '#B9805A', 4, 4)}${Rp(0, 630, 160, 64, '#fff', 12, 4)}${T(80, 674, 34, '입구')}</g>`;
         showTags(false);
@@ -1599,7 +1667,6 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
         say(MART_LINES.ticket, clerk);
         break;
       case 4:
-        walk.setAttribute('visibility', 'visible');
         line();
         say(MART_LINES.check, clerk);
         break;
@@ -1621,26 +1688,37 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
         say(MART_LINES.answer, $('quiz-anchor'));
         break;
       case 8:
-        walk.setAttribute('visibility', 'visible');
         line();
         say(MART_LINES.rule, clerk);
         break;
       case SHOP_STAGE:
-        walk.setAttribute('visibility', 'visible');
+        MART.bagOn = false;
         shoppingSpots(jump);
+        over.innerHTML = ecoBagSVG();
         sfx.ding();
         say(callLine(MART.turn), $('mart-hud').firstElementChild || clerk);
+        martLater(3200, () => { if (!MART.bagOn) say(MART_LINES.takeBag, martTop.querySelector('[data-k="ecobag"]') || clerk); });
         break;
-      case DONE_STAGE: {
-        walk.setAttribute('visibility', 'visible');
-        walkersTo((i) => queueSlot(i, MART.count, walkerSize(MART.count)), false);
-        let st2 = '';
-        [[200, 200], [1400, 180], [500, 120], [1100, 130], [800, 240]].forEach(([x, y], i) => { st2 += star(x, y, 40, '#FFE07A', i * 200); });
-        over.innerHTML = st2;
+      case DONE_STAGE:
+        // the class has gone home with their shopping; the plush friends queueing behind find the shelves empty
+        walkersTo(() => ({ x: 1800, y: 885 - walkerSize(MART.count) * 1.1 }), jump);
+        if (jump) { soldOut(true); break; }
         sfx.pay();
         say(MART_LINES.done, clerk);
+        [[200, 200], [1400, 180], [500, 120], [1100, 130], [800, 240]].forEach(([x, y], i) => over.insertAdjacentHTML('beforeend', star(x, y, 40, '#FFE07A', i * 200)));
+        martLater(6000, () => {
+          const size = walkerSize(MART.count);
+          ['cinnamoroll', 'kuromi', 'melody', 'purin', 'cinnamoroll', 'kitty', 'pochacco', 'keroppi', 'cinnamoroll', 'bear'].forEach((kind, j) => {
+            const w = makeWalker(j, { plush: kind, size, x: -160 - j * 120, y: 885 - size * 1.1, v: 260 });
+            w.mode = 'place'; w.tx = 40 + j * 112; w.ty = 885 - size * 1.1;
+            MART.extras.push(w);
+          });
+        });
+        martLater(8200, () => { soldOut(true); sfx.crash(); });
+        martLater(9200, () => say(MART_LINES.soldOut, clerk));
+        martLater(17500, () => MART.extras.forEach((w, j) => { w.tx = -260 - j * 40; w.v = 300; }));
+        martLater(21000, () => { openBaskets(); say(MART_LINES.peek, $('bask-title')); });
         break;
-      }
     }
     paintMartControls();
   }
@@ -1652,27 +1730,79 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     $('mc-prev').textContent = n >= SHOP_STAGE ? '◀ 소개 다시 보기' : '◀ 이전';
     $('mc-next').textContent = n === DONE_STAGE ? '처음부터 ▶' : n === SHOP_STAGE ? '다음 손님 ▶' : '다음 ▶';
     $('mc-skip').hidden = n >= SHOP_STAGE;
+    $('mc-bask').hidden = !Object.keys(MART.baskets).length;
+  }
+  // after paying: thank, put the basket aside, wave goodbye, then call the next number
+  function customerPaid() {
+    const w = MART.walkers[MART.turn - 1];
+    martLater(3600, () => {
+      say(MART_LINES.bye, clerkEl());
+      if (w) { w.mode = 'place'; w.tx = 1800; }
+      paintMartControls();
+    });
+    martLater(6400, advanceTurn);
+  }
+  function advanceTurn() {
+    if (MART.turn >= MART.count) { martStage(DONE_STAGE); return; }
+    MART.turn++;
+    saveMart();
+    martStage(SHOP_STAGE);
   }
   function nextCustomer() {
     if (MART.stage !== SHOP_STAGE) return;
     const leaving = MART.walkers[MART.turn - 1];
-    if (leaving) { leaving.mode = 'place'; leaving.tx = 1750; }
-    if (MART.turn >= MART.count) { martLater(600, () => martStage(DONE_STAGE)); return; }
-    MART.turn++;
-    saveMart();
-    martLater(500, () => martStage(SHOP_STAGE));
+    if (leaving) { leaving.mode = 'place'; leaving.tx = 1800; }
+    MART.timers.forEach(clearTimeout);
+    MART.timers = [];
+    martLater(700, advanceTurn);
   }
+  function restartMart() { MART.turn = 1; MART.baskets = {}; saveMart(); }
   $('mc-next').addEventListener('click', () => {
     const n = MART.stage;
-    if (n === DONE_STAGE) { MART.turn = 1; MART.count = classCount(); makeWalkers(); martStage(0); return; }
+    if (n === DONE_STAGE) { restartMart(); MART.count = classCount(); makeWalkers(); martStage(0); return; }
     if (n === SHOP_STAGE) { nextCustomer(); return; }
     martStage(n + 1);
   });
   $('mc-prev').addEventListener('click', () => {
-    if (MART.stage >= SHOP_STAGE) { MART.turn = 1; martStage(0, true); return; }
+    if (MART.stage >= SHOP_STAGE) { restartMart(); martStage(0, true); return; }
     martStage(Math.max(0, MART.stage - 1), true);
   });
-  $('mc-skip').addEventListener('click', () => { MART.turn = 1; martStage(SHOP_STAGE, true); });
+  $('mc-skip').addEventListener('click', () => { restartMart(); martStage(SHOP_STAGE, true); });
+  $('mc-bask').addEventListener('click', () => { sfx.pop(); openBaskets(); });
+
+  /* ---------- everyone's baskets, kept after paying ---------- */
+  const martShop = () => ROOMS.mart.shop;
+  function openBaskets() {
+    const n = MART.count, cols = n <= 12 ? 4 : n <= 20 ? 5 : 6, rows = Math.ceil(n / cols);
+    const gx = 16, gy = 14, cw = (1400 - (cols - 1) * gx) / cols, ch = Math.min(210, (600 - (rows - 1) * gy) / rows);
+    let s = `<g id="bask-panel" class="fade-in"><rect x="-1200" y="-600" width="4000" height="2100" fill="${INK}" opacity=".45"/>` +
+      Rp(60, 150, 1480, 735, '#FFF7EA', 30, 6) + `<g id="bask-title">${T(800, 222, 50, '우리 반 장바구니')}</g>` +
+      thing('bclose', '닫기', Rp(1360, 170, 150, 60, '#fff', 30, 4) + T(1435, 212, 30, '닫기') + glowRect(1354, 164, 162, 72));
+    for (let i = 0; i < n; i++) {
+      const x = 100 + (i % cols) * (cw + gx), y = 262 + Math.floor(i / cols) * (ch + gy);
+      const b = MART.baskets[i + 1];
+      const size = ch * .5;
+      const { fig, foot } = figureSVG(i, size);
+      const figW = ch * .5, per = 4, isz = Math.min(80, (cw - figW - 36) / per);
+      let items = '';
+      (b ? b.items : []).forEach((k, j) => { items += ITEM_AT(k, x + figW + 22 + (j % per) * isz, y + 14 + Math.floor(j / per) * isz, isz * .92); });
+      const tx = x + figW + 22 + (cw - figW - 36) / 2;
+      s += thing('bk' + (i + 1), `${i + 1}번 손님 장바구니`,
+        Rp(x, y, cw, ch, b ? '#fff' : '#F3EEE6', 18, 4) +
+        `<g transform="translate(${x + figW / 2 - size / 2} ${y + ch - foot - 8})">${fig}</g>` +
+        `<g transform="translate(${x + 26} ${y + 26})"><circle r="20" fill="#FFF3B0" ${S(3)}/>${T(0, 8, 22, i + 1)}</g>` + items +
+        T(tx, y + ch - 16, 26, b ? `모두 ${b.total}원` : '아직 안 샀어요', b ? '#B8285A' : '#8A7F96') +
+        glowRect(x - 4, y - 4, cw + 8, ch + 8));
+    }
+    $('mart-pop').innerHTML = s + '</g>';
+  }
+  function basketLine(num) {
+    const b = MART.baskets[num];
+    if (!b || !b.items.length) return `${num}번 손님은 아직 장을 보지 않았어요.`;
+    const o = martShop(), names = b.items.map((k) => o.names[o.items.indexOf(k)]);
+    const last = names[names.length - 1];
+    return `${num}번 손님은 ${names.slice(0, -1).map((x) => x + ', ').join('')}${josa(last, '을', '를')} 샀어요! 모두 ${b.total}원.`;
+  }
 
   function artSVG(i) {
     const arts = [
@@ -1929,6 +2059,25 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   function useShop(el, k, o) {
     const cartEl = roomSvg.querySelector('[data-k="cart"]');
     if (k === 'pclose') { closePay(); sfx.back(); return; }
+    if (k === 'bclose') { $('mart-pop').innerHTML = ''; hideBubble(); sfx.back(); return; }
+    if (k.startsWith('bk')) { sfx.tap(); say(basketLine(+k.slice(2)), el); return; }
+    if (k === 'ecobag') {
+      MART.bagOn = true;
+      el.remove();
+      const w = MART.walkers[MART.turn - 1];
+      if (w) bagOf(w, true);
+      sfx.cart();
+      say(MART_LINES.gotBag, clerkEl());
+      return;
+    }
+    // at 건강한 마트 each customer picks up a 시장바구니 before shopping
+    if (current === 'mart' && MART.stage === SHOP_STAGE && !MART.bagOn && /^(i\d+|cart|pay)$/.test(k)) {
+      sfx.tap();
+      const bag = martTop.querySelector('[data-k="ecobag"]');
+      if (bag) pulse(bag, 'boing', 600);
+      say(MART_LINES.needBag, bag || el);
+      return;
+    }
     if (k[0] === 'm') return payBill(el, o);
     if (k === 'pay') {
       if (!state.n) { sfx.hello(); say(o.money ? '갖고 싶은 물건을 골라 보세요. 가격표를 잘 보세요!' : '무엇을 살까요? 먹고 싶은 것을 골라 보세요.', el); return; }
@@ -1960,13 +2109,13 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   }
   function openPay() {
     state.paid = 0;
-    let s = `<g id="paypanel"><rect x="-1200" y="-600" width="4000" height="2100" fill="${INK}" opacity=".4"/>` +
+    let s = `<g id="paypanel" class="fade-in"><rect x="-1200" y="-600" width="4000" height="2100" fill="${INK}" opacity=".4"/>` +
       Rp(250, 60, 1100, 790, '#fff', 30, 6) + T(800, 140, 56, `모두 ${state.total}원이에요`) +
       Rp(330, 180, 940, 250, '#FFF3B0', 18, 4) + `<g id="tray"></g>` + T(800, 490, 46, '낸 돈: 0원', INK, 't', 'id="paid-n"') +
       T(800, 545, 28, '지갑에서 1000원을 하나씩 눌러 내요', '#5B4D6E');
     for (let i = 0; i < 10; i++) s += thing('m' + i, '1000원', bill(330 + (i % 5) * 190, 580 + Math.floor(i / 5) * 116) + glowRect(324 + (i % 5) * 190, 574 + Math.floor(i / 5) * 116, 182, 98));
     s += thing('pclose', '그만하기', Rp(1166, 80, 160, 56, '#E5DBFD', 28, 4) + T(1246, 118, 28, '그만하기') + glowRect(1160, 74, 172, 68));
-    roomSvg.insertAdjacentHTML('beforeend', s + '</g>');
+    (current === 'mart' ? martTop : roomSvg).insertAdjacentHTML('beforeend', s + '</g>');
   }
   function closePay() { const p = $('paypanel'); if (p) p.remove(); state.paying = false; }
   function payBill(el, o) {
@@ -1980,9 +2129,15 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     if (state.paid < state.total) { say(`${WON[state.paid / 1000]} 원!`, el); return; }
     sfx.pay();
     say(`${WON[state.paid / 1000]} 원! 딱 맞게 냈어요. 고맙습니다!`, $('tray').parentNode.querySelector('#paid-n') || el, [`${WON[state.paid / 1000]} 원!`, '딱 맞게 냈어요. 고맙습니다!']);
+    if (current === 'mart' && MART.stage === SHOP_STAGE) {
+      // keep this customer's shopping, then thank them, see them off and call the next number
+      MART.baskets[MART.turn] = { items: state.picked.slice(), total: state.total };
+      saveMart();
+      martLater(2800, () => { closePay(); state.n = 0; state.total = 0; state.picked = []; renderCart(o); });
+      customerPaid();
+      return;
+    }
     setTimeout(() => { closePay(); state.n = 0; state.total = 0; state.picked = []; renderCart(o); }, 2200);
-    // at 건강한 마트 a finished payment calls the next number
-    if (current === 'mart' && MART.stage === SHOP_STAGE) martLater(2500, nextCustomer);
   }
   function renderCart(o) {
     const pile = $('pile'); if (!pile) return;
@@ -2056,6 +2211,11 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     if (EMERGENCY[el.dataset.type]) { pulse(el, 'flash', 2600); sfx.siren(); } else sfx.honk();
   });
   roomSvg.addEventListener('click', (e) => { const el = e.target.closest('.thing'); if (el) useThing(el); });
+  martTop.addEventListener('click', (e) => { const el = e.target.closest('.thing'); if (el) useThing(el); });
+  martTop.addEventListener('keydown', (e) => {
+    const el = e.target.closest('.thing');
+    if (el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); useThing(el); }
+  });
   roomSvg.addEventListener('keydown', (e) => {
     const el = e.target.closest('.thing');
     if (el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); useThing(el); }

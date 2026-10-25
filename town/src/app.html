@@ -322,31 +322,39 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
 .mart-ctl .go { background: var(--sun); }
 .mart-ctl button[hidden] { display: none; }
 .mc-step { padding: .2em .6em; border-radius: 999px; background: rgba(255, 255, 255, .85); border: 2px solid var(--ink-soft); font-size: clamp(.9rem, 2vmin, 1.3rem); color: var(--ink-soft); }
-#room-svg .cut-in { animation: cut-in .6s var(--ease-spring) both; animation-delay: var(--d); transform-box: fill-box; transform-origin: 50% 100%; }
+#room-svg .cut-in, #mart-top .cut-in { animation: cut-in .6s var(--ease-spring) both; animation-delay: var(--d); transform-box: fill-box; transform-origin: 50% 100%; }
 @keyframes cut-in { from { opacity: 0; transform: translateY(-90px) scale(.5) rotate(-14deg); } }
-#room-svg .sparkle { transform-box: fill-box; transform-origin: center; animation: twinkle 1.8s ease-in-out infinite; animation-delay: var(--d); }
+#room-svg .sparkle, #mart-top .sparkle { transform-box: fill-box; transform-origin: center; animation: twinkle 1.8s ease-in-out infinite; animation-delay: var(--d); }
 @keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(.2) rotate(0); } 50% { opacity: 1; transform: scale(1) rotate(45deg); } }
-#room-svg .wobble { transform-box: fill-box; transform-origin: 50% 100%; animation: wobble 2.4s ease-in-out infinite; animation-delay: var(--d); }
+#room-svg .wobble, #mart-top .wobble { transform-box: fill-box; transform-origin: 50% 100%; animation: wobble 2.4s ease-in-out infinite; animation-delay: var(--d); }
 @keyframes wobble { 0%, 100% { transform: rotate(-3deg) translateY(0); } 50% { transform: rotate(3deg) translateY(-8px); } }
-#room-svg .bob { transform-box: fill-box; animation: bob .45s ease-in-out infinite alternate; }
-@keyframes bob { to { transform: translateY(-7px); } }
-#room-svg .still .bob { animation: none; }
-#room-svg .tag-pop { transform-box: fill-box; transform-origin: 50% 100%; animation: tag-pop .45s var(--ease-spring) both; }
+/* Mart customers live in their own HTML layer and move by CSS transform, so walking never
+   repaints the patterned SVG room underneath (that repaint is what made them stutter). */
+#mart-people { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
+#mart-people .walker { position: absolute; left: 0; top: 0; will-change: transform; }
+#mart-people .bobw { animation: bobw .45s ease-in-out infinite alternate; animation-delay: var(--d, 0ms); }
+#mart-people .walker svg { display: block; overflow: visible; }
+@keyframes bobw { to { transform: translateY(-2.5%); } }
+#mart-people.still .bobw, #mart-people .walker.stand .bobw { animation: none; }
+#mart-top { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+#mart-top .thing, #mart-top #mart-block, #mart-top #paypanel, #mart-top #bask-panel { pointer-events: auto; }
+#room-svg .sold { transition: opacity .6s var(--ease-out); opacity: 0; pointer-events: none; }
+#mart-people .tag-pop { transform-box: fill-box; transform-origin: 50% 100%; animation: tag-pop .45s var(--ease-spring) both; }
 @keyframes tag-pop { from { opacity: 0; transform: scale(.2); } }
-#room-svg .pulse-tags .num { transform-box: fill-box; transform-origin: center; animation: pulse-tag 1s ease-in-out infinite; }
+#mart-people.pulse-tags .num { transform-box: fill-box; transform-origin: center; animation: pulse-tag 1s ease-in-out infinite; }
 @keyframes pulse-tag { 50% { transform: scale(1.22); } }
-#room-svg .shake { transform-box: fill-box; transform-origin: 50% 100%; animation: shake .45s ease-in-out infinite; }
+#room-svg .shake, #mart-top .shake { transform-box: fill-box; transform-origin: 50% 100%; animation: shake .45s ease-in-out infinite; }
 @keyframes shake { 25% { transform: rotate(-7deg); } 75% { transform: rotate(7deg); } }
-#room-svg .bag-in { transform-box: fill-box; transform-origin: 50% 100%; animation: bag-in .75s var(--ease-spring) both; }
+#room-svg .bag-in, #mart-top .bag-in { transform-box: fill-box; transform-origin: 50% 100%; animation: bag-in .75s var(--ease-spring) both; }
 @keyframes bag-in { from { opacity: 0; transform: translateY(90px) scale(.3); } }
-#room-svg .fade-in { animation: fade-in .4s var(--ease-out) both; }
+#room-svg .fade-in, #mart-top .fade-in { animation: fade-in .4s var(--ease-out) both; }
 @keyframes fade-in { from { opacity: 0; } }
 #room-svg .blinking { animation: blink-green .5s steps(1) infinite; }
 @keyframes blink-green { 50% { opacity: .25; } }
 @keyframes hop { 0%, 100% { transform: translateY(0); } 20% { transform: translateY(-50px); } 40% { transform: translateY(0); } 58% { transform: translateY(-26px); } 74% { transform: translateY(0); } 86% { transform: translateY(-8px); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .toast, #room-svg .cut-in, #room-svg .sparkle, #room-svg .wobble, #room-svg .bob, #room-svg .tag-pop, #room-svg .pulse-tags .num, #room-svg .shake, #room-svg .bag-in, #room-svg .fade-in, .bulb, .beckon, .flash .lamp-a, .flash .lamp-b, .spraying .spray circle, .ring .swing, .boing, .bubble, .hopping .hop { animation: none; }
+  .toast, #room-svg .cut-in, #room-svg .sparkle, #room-svg .wobble, #mart-people .bobw, #mart-people .tag-pop, #mart-people.pulse-tags .num, #mart-top .cut-in, #mart-top .sparkle, #mart-top .wobble, #mart-top .shake, #mart-top .bag-in, #mart-top .fade-in, #mart-top .beckon, #room-svg .shake, #room-svg .bag-in, #room-svg .fade-in, .bulb, .beckon, .flash .lamp-a, .flash .lamp-b, .spraying .spray circle, .ring .swing, .boing, .bubble, .hopping .hop { animation: none; }
   .flash .lamp, .spraying .spray circle { opacity: 1; }
   .bld, .pull, .door, .night, .stars { transition: none; }
 }
@@ -404,12 +412,15 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   </div>
   <div class="room-stage" id="room-stage">
     <svg id="room-svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet"></svg>
+    <div id="mart-people" hidden></div>
+    <svg id="mart-top" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" hidden></svg>
     <div class="bubble" id="bubble" hidden></div>
     <div class="mart-ctl" id="mart-ctl" hidden>
       <span class="mc-step" id="mc-step"></span>
       <button type="button" id="mc-prev">◀ 이전</button>
       <button type="button" class="go" id="mc-next">다음 ▶</button>
       <button type="button" id="mc-skip">바로 장보기</button>
+      <button type="button" id="mc-bask" hidden>장바구니 보기</button>
     </div>
   </div>
 </section>
@@ -1377,9 +1388,14 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
      number order · 10 everyone done. Stage and turn survive leaving the room (and a reload, per tab). */
   const SVGNS = 'http://www.w3.org/2000/svg';
   const SHOP_STAGE = 9, DONE_STAGE = 10;
-  const MART = { stage: 0, turn: 1, count: 12, raf: 0, last: 0, walkers: [], timers: [] };
-  try { const m = JSON.parse(sessionStorage.getItem('town-mart') || '{}'); ['stage', 'turn', 'count'].forEach((k) => { if (Number.isInteger(m[k])) MART[k] = m[k]; }); } catch (e) { /* ignore */ }
-  const saveMart = () => { try { sessionStorage.setItem('town-mart', JSON.stringify({ stage: MART.stage, turn: MART.turn, count: MART.count })); } catch (e) { /* ignore */ } };
+  // baskets: what each numbered customer bought, { "3": { items: ['apple', ...], total: 3000 } }
+  const MART = { stage: 0, turn: 1, count: 12, raf: 0, last: 0, walkers: [], extras: [], timers: [], baskets: {}, bagOn: false, view: { k: 1, ox: 0, oy: 0 } };
+  try {
+    const m = JSON.parse(sessionStorage.getItem('town-mart') || '{}');
+    ['stage', 'turn', 'count'].forEach((k) => { if (Number.isInteger(m[k])) MART[k] = m[k]; });
+    if (m.baskets && typeof m.baskets === 'object') MART.baskets = m.baskets;
+  } catch (e) { /* ignore */ }
+  const saveMart = () => { try { sessionStorage.setItem('town-mart', JSON.stringify({ stage: MART.stage, turn: MART.turn, count: MART.count, baskets: MART.baskets })); } catch (e) { /* ignore */ } };
   const martLater = (ms, fn) => MART.timers.push(setTimeout(fn, ms));
   // as many customers as children present in the claw game's class list (same site), else 12
   function classCount() {
@@ -1401,6 +1417,12 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     answer: '정답은 시장바구니! 시장바구니를 쓰면 비닐봉지가 줄어서 지구가 건강해져요.',
     rule: '이제부터 시장바구니를 들고 장을 봐 주세요. 1번부터 나와 주시고, 계산이 끝나면 다음 손님이 장을 봐 주세요.',
     done: '모든 손님이 장을 다 봤어요! 건강한 마트에 와 주셔서 고맙습니다!',
+    bye: '안녕히 가세요!',
+    takeBag: '시장바구니를 눌러 주세요!',
+    gotBag: '시장바구니를 들었어요! 사고 싶은 물건을 눌러 주세요.',
+    needBag: '먼저 시장바구니를 눌러 주세요!',
+    soldOut: '어머나! 오늘 준비한 물건이 다 팔렸어요. 기다려 주신 손님들, 다음에 또 와 주세요. 안녕히 가세요!',
+    peek: '우리 반 친구들은 무엇을 샀을까요? 장바구니를 열어 볼까요?',
   };
   const callLine = (n) => `${n}번 손님, 나와 주세요!`;
   const clerkEl = () => roomSvg.querySelector('[data-k="pay"]');
@@ -1468,28 +1490,55 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   const queueSlot = (i, n, size) => { const sp = Math.min(118, 1380 / n); return { x: 50 + i * sp, y: 885 - size * 1.1 }; };
   // [file, width / height] — 새들1반 children photographed in class; one child is still to come
   const KID_PHOTOS = [['kid01.webp', .38], ['kid02.webp', .561], ['kid03.webp', .343], ['kid04.webp', .377], ['kid05.webp', .282], ['kid06.webp', .243], ['kid07.webp', .348], ['kid08.webp', .325], ['kid09.webp', .35], ['kid10.webp', .327], ['kid11.webp', .373]];
-  function makeWalkers() {
-    const layer = $('mart-walk');
-    layer.innerHTML = '';
-    MART.walkers = [];
-    const n = MART.count, size = walkerSize(n);
-    for (let i = 0; i < n; i++) {
-      const g = document.createElementNS(SVGNS, 'g');
-      // the class's own children (cut-out photos) shop here; anyone without a photo yet is a plush friend
-      const kid = KID_PHOTOS[i];
-      const H = size * 1.75, foot = size * 1.1, top = kid ? foot - H : 0;
-      const figure = kid
-        ? `<ellipse cx="${size / 2}" cy="${foot - 2}" rx="${size * .32}" ry="${size * .06}" fill="${INK}" opacity=".16"/><image href="town/kids/${kid[0]}" x="${size / 2 - H * kid[1] / 2}" y="${top}" width="${H * kid[1]}" height="${H}"/>`
-        : doll(KINDS[i % KINDS.length], 0, 0, size);
-      g.innerHTML = `<g class="bob" style="animation-delay:${-(i * 137) % 450}ms">${figure}</g>` +
-        `<g class="bagged" visibility="hidden">${bagSVG(size * .62, kid ? foot - H * .5 : size * .62, size * .42)}</g>` +
-        `<g class="num" visibility="hidden"><g transform="translate(${size / 2} ${top - 14})"><circle r="${Math.max(18, size * .22)}" fill="#FFF3B0" ${S(4)}/>${T(0, size * .1, Math.max(20, size * .26), i + 1)}</g></g>`;
-      layer.appendChild(g);
-      const fromRight = i % 2 === 0;
-      MART.walkers.push({ g, size, x: fromRight ? 1700 + i * 40 : -200 - i * 40, y: 885 - size * 1.1 - (i % 3) * 40, tx: 0, ty: 0, mode: 'wander', v: 170 + (i % 5) * 30 });
-      pickWander(MART.walkers[i]);
-    }
+  const people = $('mart-people'), martTop = $('mart-top');
+  // drawing of customer i (photo, else a plush friend) in the walker's local units
+  function figureSVG(i, size, plushKind) {
+    const kid = plushKind ? null : KID_PHOTOS[i];
+    const H = size * 1.75, foot = size * 1.1, top = kid ? foot - H : 0;
+    const fig = kid
+      ? `<ellipse cx="${size / 2}" cy="${foot - 2}" rx="${size * .32}" ry="${size * .06}" fill="${INK}" opacity=".16"/><image href="town/kids/${kid[0]}" x="${size / 2 - H * kid[1] / 2}" y="${top}" width="${H * kid[1]}" height="${H}"/>`
+      : doll(plushKind || KINDS[i % KINDS.length], 0, 0, size);
+    return { fig, top, foot, H, kid };
   }
+  function makeWalker(i, opts = {}) {
+    const n = MART.count, size = opts.size || walkerSize(n);
+    const { fig, top, foot, H, kid } = figureSVG(i, size, opts.plush);
+    const vb = { x: -size * .5, y: top - 64, w: size * 2, h: foot - top + 84 };
+    const el = document.createElement('div');
+    el.className = 'walker';
+    el.innerHTML = `<div class="bobw" style="--d:${-(i * 137) % 450}ms"><svg viewBox="${vb.x} ${vb.y} ${vb.w} ${vb.h}">${fig}` +
+      `<g class="bagged" visibility="hidden">${bagSVG(size * .62, kid ? foot - H * .5 : size * .62, size * .42)}</g>` +
+      (opts.plush ? '' : `<g class="num" visibility="hidden"><g transform="translate(${size / 2} ${top - 14})"><circle r="${Math.max(18, size * .22)}" fill="#FFF3B0" ${S(4)}/>${T(0, size * .1, Math.max(20, size * .26), i + 1)}</g></g>`) +
+      `</svg></div>`;
+    people.appendChild(el);
+    const w = { el, g: el.querySelector('svg'), size, vb, x: opts.x != null ? opts.x : (i % 2 === 0 ? 1700 + i * 40 : -200 - i * 40), y: opts.y != null ? opts.y : 885 - size * 1.1 - (i % 3) * 40, tx: 0, ty: 0, mode: 'wander', v: opts.v || 170 + (i % 5) * 30 };
+    sizeWalker(w);
+    return w;
+  }
+  function makeWalkers() {
+    people.innerHTML = '';
+    MART.walkers = [];
+    MART.extras = [];
+    for (let i = 0; i < MART.count; i++) { const w = makeWalker(i); MART.walkers.push(w); pickWander(w); }
+  }
+  // match the SVG's "meet" letterboxing so walkers sit exactly where the room's units say
+  function layoutPeople() {
+    const r = $('room-stage').getBoundingClientRect();
+    const k = Math.min(r.width / 1600, r.height / 900);
+    MART.view = { k, ox: (r.width - 1600 * k) / 2, oy: (r.height - 900 * k) / 2 };
+    MART.walkers.concat(MART.extras).forEach(sizeWalker);
+  }
+  function sizeWalker(w) {
+    const k = MART.view.k;
+    w.g.setAttribute('width', (w.vb.w * k).toFixed(1));
+    w.g.setAttribute('height', (w.vb.h * k).toFixed(1));
+    placeWalker(w);
+  }
+  function placeWalker(w) {
+    const { k, ox, oy } = MART.view;
+    w.el.style.transform = `translate3d(${(ox + (w.x + w.vb.x) * k).toFixed(1)}px, ${(oy + (w.y + w.vb.y) * k).toFixed(1)}px, 0)`;
+  }
+  if (window.ResizeObserver) new ResizeObserver(() => { if (current === 'mart') layoutPeople(); }).observe($('room-stage'));
   function pickWander(w) {
     w.tx = 40 + Math.random() * (1460 - w.size);
     w.ty = 720 - w.size * 1.1 + Math.random() * 160;
@@ -1497,31 +1546,34 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   function martTick(t) {
     const dt = MART.last ? Math.min(0.05, (t - MART.last) / 1000) : 0;
     MART.last = t;
-    MART.walkers.forEach((w) => {
-      if (w.mode !== 'stop') {
-        const dx = w.tx - w.x, dy = w.ty - w.y, d = Math.hypot(dx, dy), step = w.v * dt;
-        if (d <= step || reduce) { w.x = w.tx; w.y = w.ty; if (w.mode === 'wander' && !reduce) pickWander(w); }
-        else { w.x += dx / d * step; w.y += dy / d * step; }
-      }
-      w.g.setAttribute('transform', `translate(${w.x.toFixed(1)} ${w.y.toFixed(1)})`);
+    MART.walkers.concat(MART.extras).forEach((w) => {
+      if (w.mode === 'stop') return;
+      const dx = w.tx - w.x, dy = w.ty - w.y, d = Math.hypot(dx, dy), step = w.v * dt;
+      if (d < 0.5 && w.mode !== 'wander') { if (!w.el.classList.contains('stand')) w.el.classList.add('stand'); return; }
+      w.el.classList.remove('stand');
+      if (d <= step || reduce) { w.x = w.tx; w.y = w.ty; if (w.mode === 'wander' && !reduce) pickWander(w); }
+      else { w.x += dx / d * step; w.y += dy / d * step; }
+      placeWalker(w);
     });
     if (current === 'mart' && roomOpen) MART.raf = requestAnimationFrame(martTick);
   }
   function walkersTo(fn, snap) {
     MART.walkers.forEach((w, i) => {
       const p = fn(i, w);
-      if (!p) { w.g.setAttribute('visibility', 'hidden'); w.mode = 'stop'; return; }
-      w.g.setAttribute('visibility', 'visible');
+      if (!p) { w.el.style.visibility = 'hidden'; w.mode = 'stop'; return; }
+      w.el.style.visibility = '';
       w.mode = 'place'; w.tx = p.x; w.ty = p.y;
-      if (snap) { w.x = p.x; w.y = p.y; }
+      if (snap) { w.x = p.x; w.y = p.y; placeWalker(w); }
     });
     if (reduce) martTick(performance.now());
   }
   const showTags = (on) => MART.walkers.forEach((w) => w.g.querySelector('.num').setAttribute('visibility', on ? 'visible' : 'hidden'));
-  const showBags = (on) => MART.walkers.forEach((w) => w.g.querySelector('.bagged').setAttribute('visibility', on ? 'visible' : 'hidden'));
+  const bagOf = (w, on) => w.g.querySelector('.bagged').setAttribute('visibility', on ? 'visible' : 'hidden');
+  const showBags = (on) => MART.walkers.forEach((w) => bagOf(w, on));
   function shoppingSpots(snap) {
     const n = MART.count, size = walkerSize(n), waiting = n - MART.turn;
     const sp = Math.min(100, 700 / Math.max(1, waiting));
+    MART.walkers.forEach((w, i) => bagOf(w, i + 1 < MART.turn || (i + 1 === MART.turn && MART.bagOn)));
     walkersTo((i) => {
       const num = i + 1;
       if (num < MART.turn) return { x: 1800, y: 885 - size * 1.1 };
@@ -1533,10 +1585,21 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     if (MART.stage !== SHOP_STAGE) return '';
     return `<g class="fade-in">${Rp(380, 16, 300, 112, '#fff', 20, 5)}${T(480, 84, 34, '지금 손님')}${C(612, 72, 46, '#FFE07A', 5)}${T(612, 92, 56, MART.turn)}</g>`;
   }
+  const ecoBagSVG = () => thing('ecobag', '시장바구니', `<g class="beckon">${bagSVG(880, 640, 150)}</g>` + Rp(860, 800, 190, 52, '#fff', 14, 4) + T(955, 838, 30, '시장바구니', '#2E8A3A') + glowRect(850, 600, 210, 260));
+  function soldOut(on) {
+    roomSvg.querySelectorAll('.thing[data-k^="i"]').forEach((t) => t.classList.toggle('sold', on));
+    const sign = $('sold-sign');
+    if (on && !sign) $('mart-over').insertAdjacentHTML('beforeend', `<g id="sold-sign" class="cut-in" style="--d:0ms"><g transform="rotate(-4 530 400)">${Rp(200, 320, 660, 160, '#FFF3B0', 22, 6)}${T(530, 420, 72, '다 팔렸어요!', '#B8285A')}</g></g>`);
+    if (!on && sign) sign.remove();
+  }
   function startMart() {
-    roomSvg.insertAdjacentHTML('beforeend', `<g id="mart-fx"><rect id="mart-block" x="-1200" y="-600" width="4000" height="2100" fill="transparent"/><g id="mart-walk" pointer-events="none"></g><g id="mart-over"></g><g id="mart-hud" pointer-events="none"></g></g>`);
-    if (MART.stage >= DONE_STAGE || MART.stage < 0) { MART.stage = 0; MART.turn = 1; }
-    if (MART.stage === 0) MART.count = classCount();
+    martTop.innerHTML = `<rect id="mart-block" x="-1200" y="-600" width="4000" height="2100" fill="transparent"/><g id="mart-over"></g><g id="mart-hud"></g><g id="mart-pop"></g>`;
+    martTop.removeAttribute('hidden');
+    people.hidden = false;
+    if (MART.stage > DONE_STAGE || MART.stage < 0) { MART.stage = 0; MART.turn = 1; }
+    if (MART.stage === 0) { MART.count = classCount(); MART.baskets = {}; }
+    MART.bagOn = false;
+    layoutPeople();
     makeWalkers();
     MART.last = 0;
     MART.raf = requestAnimationFrame(martTick);
@@ -1548,6 +1611,10 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     cancelAnimationFrame(MART.raf);
     MART.raf = 0;
     $('mart-ctl').hidden = true;
+    martTop.setAttribute('hidden', '');
+    martTop.innerHTML = '';
+    people.hidden = true;
+    people.innerHTML = '';
   }
   // `jump`: arriving here from another room visit or the 이전/건너뛰기 buttons, so nothing animates in from scratch
   function martStage(n, jump) {
@@ -1555,38 +1622,39 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     MART.timers = [];
     MART.stage = n;
     saveMart();
-    const over = $('mart-over'), walk = $('mart-walk');
+    const over = $('mart-over');
     over.innerHTML = '';
+    $('mart-pop').innerHTML = '';
     $('mart-hud').innerHTML = hudSVG();
     $('mart-block').style.display = n >= SHOP_STAGE ? 'none' : '';
-    walk.classList.toggle('pulse-tags', n === 4);
-    walk.classList.remove('still');
+    people.classList.toggle('pulse-tags', n === 4);
+    people.classList.remove('still');
+    people.style.visibility = n === 0 ? 'hidden' : '';
+    MART.extras.forEach((w) => w.el.remove());
+    MART.extras = [];
+    soldOut(false);
     showTags(n >= 3);
-    showBags(n >= 8);
+    showBags(false);
     const clerk = clerkEl();
-    const line = (fn) => walkersTo((i, w) => queueSlot(i, MART.count, w.size), jump);
+    const line = () => walkersTo((i, w) => queueSlot(i, MART.count, w.size), jump);
     switch (n) {
       case 0:
-        walk.setAttribute('visibility', 'hidden');
         over.innerHTML = welcomeSVG();
         sfx.on();
         speak(MART_LINES.welcome);
         break;
       case 1:
-        walk.setAttribute('visibility', 'visible');
-        MART.walkers.forEach((w) => { w.g.setAttribute('visibility', 'visible'); w.mode = 'wander'; pickWander(w); });
+        MART.walkers.forEach((w) => { w.el.style.visibility = ''; w.mode = 'wander'; pickWander(w); });
         say(MART_LINES.crowd, clerk);
         break;
       case 2:
-        walk.setAttribute('visibility', 'visible');
-        MART.walkers.forEach((w) => { w.g.setAttribute('visibility', 'visible'); w.mode = 'stop'; });
-        walk.classList.add('still');
+        MART.walkers.forEach((w) => { w.el.style.visibility = ''; w.mode = 'stop'; });
+        people.classList.add('still');
         over.innerHTML = thoughtSVG(false);
         say(MART_LINES.wait, clerk);
         martLater(3600, () => { over.innerHTML = thoughtSVG(true); sfx.on(); say(MART_LINES.aha, clerk); });
         break;
       case 3:
-        walk.setAttribute('visibility', 'visible');
         line();
         over.innerHTML = `<g class="fade-in">${Rp(20, 680, 22, 60, '#B9805A', 4, 4)}${Rp(0, 630, 160, 64, '#fff', 12, 4)}${T(80, 674, 34, '입구')}</g>`;
         showTags(false);
@@ -1599,7 +1667,6 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
         say(MART_LINES.ticket, clerk);
         break;
       case 4:
-        walk.setAttribute('visibility', 'visible');
         line();
         say(MART_LINES.check, clerk);
         break;
@@ -1621,26 +1688,37 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
         say(MART_LINES.answer, $('quiz-anchor'));
         break;
       case 8:
-        walk.setAttribute('visibility', 'visible');
         line();
         say(MART_LINES.rule, clerk);
         break;
       case SHOP_STAGE:
-        walk.setAttribute('visibility', 'visible');
+        MART.bagOn = false;
         shoppingSpots(jump);
+        over.innerHTML = ecoBagSVG();
         sfx.ding();
         say(callLine(MART.turn), $('mart-hud').firstElementChild || clerk);
+        martLater(3200, () => { if (!MART.bagOn) say(MART_LINES.takeBag, martTop.querySelector('[data-k="ecobag"]') || clerk); });
         break;
-      case DONE_STAGE: {
-        walk.setAttribute('visibility', 'visible');
-        walkersTo((i) => queueSlot(i, MART.count, walkerSize(MART.count)), false);
-        let st2 = '';
-        [[200, 200], [1400, 180], [500, 120], [1100, 130], [800, 240]].forEach(([x, y], i) => { st2 += star(x, y, 40, '#FFE07A', i * 200); });
-        over.innerHTML = st2;
+      case DONE_STAGE:
+        // the class has gone home with their shopping; the plush friends queueing behind find the shelves empty
+        walkersTo(() => ({ x: 1800, y: 885 - walkerSize(MART.count) * 1.1 }), jump);
+        if (jump) { soldOut(true); break; }
         sfx.pay();
         say(MART_LINES.done, clerk);
+        [[200, 200], [1400, 180], [500, 120], [1100, 130], [800, 240]].forEach(([x, y], i) => over.insertAdjacentHTML('beforeend', star(x, y, 40, '#FFE07A', i * 200)));
+        martLater(6000, () => {
+          const size = walkerSize(MART.count);
+          ['cinnamoroll', 'kuromi', 'melody', 'purin', 'cinnamoroll', 'kitty', 'pochacco', 'keroppi', 'cinnamoroll', 'bear'].forEach((kind, j) => {
+            const w = makeWalker(j, { plush: kind, size, x: -160 - j * 120, y: 885 - size * 1.1, v: 260 });
+            w.mode = 'place'; w.tx = 40 + j * 112; w.ty = 885 - size * 1.1;
+            MART.extras.push(w);
+          });
+        });
+        martLater(8200, () => { soldOut(true); sfx.crash(); });
+        martLater(9200, () => say(MART_LINES.soldOut, clerk));
+        martLater(17500, () => MART.extras.forEach((w, j) => { w.tx = -260 - j * 40; w.v = 300; }));
+        martLater(21000, () => { openBaskets(); say(MART_LINES.peek, $('bask-title')); });
         break;
-      }
     }
     paintMartControls();
   }
@@ -1652,27 +1730,79 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     $('mc-prev').textContent = n >= SHOP_STAGE ? '◀ 소개 다시 보기' : '◀ 이전';
     $('mc-next').textContent = n === DONE_STAGE ? '처음부터 ▶' : n === SHOP_STAGE ? '다음 손님 ▶' : '다음 ▶';
     $('mc-skip').hidden = n >= SHOP_STAGE;
+    $('mc-bask').hidden = !Object.keys(MART.baskets).length;
+  }
+  // after paying: thank, put the basket aside, wave goodbye, then call the next number
+  function customerPaid() {
+    const w = MART.walkers[MART.turn - 1];
+    martLater(3600, () => {
+      say(MART_LINES.bye, clerkEl());
+      if (w) { w.mode = 'place'; w.tx = 1800; }
+      paintMartControls();
+    });
+    martLater(6400, advanceTurn);
+  }
+  function advanceTurn() {
+    if (MART.turn >= MART.count) { martStage(DONE_STAGE); return; }
+    MART.turn++;
+    saveMart();
+    martStage(SHOP_STAGE);
   }
   function nextCustomer() {
     if (MART.stage !== SHOP_STAGE) return;
     const leaving = MART.walkers[MART.turn - 1];
-    if (leaving) { leaving.mode = 'place'; leaving.tx = 1750; }
-    if (MART.turn >= MART.count) { martLater(600, () => martStage(DONE_STAGE)); return; }
-    MART.turn++;
-    saveMart();
-    martLater(500, () => martStage(SHOP_STAGE));
+    if (leaving) { leaving.mode = 'place'; leaving.tx = 1800; }
+    MART.timers.forEach(clearTimeout);
+    MART.timers = [];
+    martLater(700, advanceTurn);
   }
+  function restartMart() { MART.turn = 1; MART.baskets = {}; saveMart(); }
   $('mc-next').addEventListener('click', () => {
     const n = MART.stage;
-    if (n === DONE_STAGE) { MART.turn = 1; MART.count = classCount(); makeWalkers(); martStage(0); return; }
+    if (n === DONE_STAGE) { restartMart(); MART.count = classCount(); makeWalkers(); martStage(0); return; }
     if (n === SHOP_STAGE) { nextCustomer(); return; }
     martStage(n + 1);
   });
   $('mc-prev').addEventListener('click', () => {
-    if (MART.stage >= SHOP_STAGE) { MART.turn = 1; martStage(0, true); return; }
+    if (MART.stage >= SHOP_STAGE) { restartMart(); martStage(0, true); return; }
     martStage(Math.max(0, MART.stage - 1), true);
   });
-  $('mc-skip').addEventListener('click', () => { MART.turn = 1; martStage(SHOP_STAGE, true); });
+  $('mc-skip').addEventListener('click', () => { restartMart(); martStage(SHOP_STAGE, true); });
+  $('mc-bask').addEventListener('click', () => { sfx.pop(); openBaskets(); });
+
+  /* ---------- everyone's baskets, kept after paying ---------- */
+  const martShop = () => ROOMS.mart.shop;
+  function openBaskets() {
+    const n = MART.count, cols = n <= 12 ? 4 : n <= 20 ? 5 : 6, rows = Math.ceil(n / cols);
+    const gx = 16, gy = 14, cw = (1400 - (cols - 1) * gx) / cols, ch = Math.min(210, (600 - (rows - 1) * gy) / rows);
+    let s = `<g id="bask-panel" class="fade-in"><rect x="-1200" y="-600" width="4000" height="2100" fill="${INK}" opacity=".45"/>` +
+      Rp(60, 150, 1480, 735, '#FFF7EA', 30, 6) + `<g id="bask-title">${T(800, 222, 50, '우리 반 장바구니')}</g>` +
+      thing('bclose', '닫기', Rp(1360, 170, 150, 60, '#fff', 30, 4) + T(1435, 212, 30, '닫기') + glowRect(1354, 164, 162, 72));
+    for (let i = 0; i < n; i++) {
+      const x = 100 + (i % cols) * (cw + gx), y = 262 + Math.floor(i / cols) * (ch + gy);
+      const b = MART.baskets[i + 1];
+      const size = ch * .5;
+      const { fig, foot } = figureSVG(i, size);
+      const figW = ch * .5, per = 4, isz = Math.min(80, (cw - figW - 36) / per);
+      let items = '';
+      (b ? b.items : []).forEach((k, j) => { items += ITEM_AT(k, x + figW + 22 + (j % per) * isz, y + 14 + Math.floor(j / per) * isz, isz * .92); });
+      const tx = x + figW + 22 + (cw - figW - 36) / 2;
+      s += thing('bk' + (i + 1), `${i + 1}번 손님 장바구니`,
+        Rp(x, y, cw, ch, b ? '#fff' : '#F3EEE6', 18, 4) +
+        `<g transform="translate(${x + figW / 2 - size / 2} ${y + ch - foot - 8})">${fig}</g>` +
+        `<g transform="translate(${x + 26} ${y + 26})"><circle r="20" fill="#FFF3B0" ${S(3)}/>${T(0, 8, 22, i + 1)}</g>` + items +
+        T(tx, y + ch - 16, 26, b ? `모두 ${b.total}원` : '아직 안 샀어요', b ? '#B8285A' : '#8A7F96') +
+        glowRect(x - 4, y - 4, cw + 8, ch + 8));
+    }
+    $('mart-pop').innerHTML = s + '</g>';
+  }
+  function basketLine(num) {
+    const b = MART.baskets[num];
+    if (!b || !b.items.length) return `${num}번 손님은 아직 장을 보지 않았어요.`;
+    const o = martShop(), names = b.items.map((k) => o.names[o.items.indexOf(k)]);
+    const last = names[names.length - 1];
+    return `${num}번 손님은 ${names.slice(0, -1).map((x) => x + ', ').join('')}${josa(last, '을', '를')} 샀어요! 모두 ${b.total}원.`;
+  }
 
   function artSVG(i) {
     const arts = [
@@ -1929,6 +2059,25 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   function useShop(el, k, o) {
     const cartEl = roomSvg.querySelector('[data-k="cart"]');
     if (k === 'pclose') { closePay(); sfx.back(); return; }
+    if (k === 'bclose') { $('mart-pop').innerHTML = ''; hideBubble(); sfx.back(); return; }
+    if (k.startsWith('bk')) { sfx.tap(); say(basketLine(+k.slice(2)), el); return; }
+    if (k === 'ecobag') {
+      MART.bagOn = true;
+      el.remove();
+      const w = MART.walkers[MART.turn - 1];
+      if (w) bagOf(w, true);
+      sfx.cart();
+      say(MART_LINES.gotBag, clerkEl());
+      return;
+    }
+    // at 건강한 마트 each customer picks up a 시장바구니 before shopping
+    if (current === 'mart' && MART.stage === SHOP_STAGE && !MART.bagOn && /^(i\d+|cart|pay)$/.test(k)) {
+      sfx.tap();
+      const bag = martTop.querySelector('[data-k="ecobag"]');
+      if (bag) pulse(bag, 'boing', 600);
+      say(MART_LINES.needBag, bag || el);
+      return;
+    }
     if (k[0] === 'm') return payBill(el, o);
     if (k === 'pay') {
       if (!state.n) { sfx.hello(); say(o.money ? '갖고 싶은 물건을 골라 보세요. 가격표를 잘 보세요!' : '무엇을 살까요? 먹고 싶은 것을 골라 보세요.', el); return; }
@@ -1960,13 +2109,13 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   }
   function openPay() {
     state.paid = 0;
-    let s = `<g id="paypanel"><rect x="-1200" y="-600" width="4000" height="2100" fill="${INK}" opacity=".4"/>` +
+    let s = `<g id="paypanel" class="fade-in"><rect x="-1200" y="-600" width="4000" height="2100" fill="${INK}" opacity=".4"/>` +
       Rp(250, 60, 1100, 790, '#fff', 30, 6) + T(800, 140, 56, `모두 ${state.total}원이에요`) +
       Rp(330, 180, 940, 250, '#FFF3B0', 18, 4) + `<g id="tray"></g>` + T(800, 490, 46, '낸 돈: 0원', INK, 't', 'id="paid-n"') +
       T(800, 545, 28, '지갑에서 1000원을 하나씩 눌러 내요', '#5B4D6E');
     for (let i = 0; i < 10; i++) s += thing('m' + i, '1000원', bill(330 + (i % 5) * 190, 580 + Math.floor(i / 5) * 116) + glowRect(324 + (i % 5) * 190, 574 + Math.floor(i / 5) * 116, 182, 98));
     s += thing('pclose', '그만하기', Rp(1166, 80, 160, 56, '#E5DBFD', 28, 4) + T(1246, 118, 28, '그만하기') + glowRect(1160, 74, 172, 68));
-    roomSvg.insertAdjacentHTML('beforeend', s + '</g>');
+    (current === 'mart' ? martTop : roomSvg).insertAdjacentHTML('beforeend', s + '</g>');
   }
   function closePay() { const p = $('paypanel'); if (p) p.remove(); state.paying = false; }
   function payBill(el, o) {
@@ -1980,9 +2129,15 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     if (state.paid < state.total) { say(`${WON[state.paid / 1000]} 원!`, el); return; }
     sfx.pay();
     say(`${WON[state.paid / 1000]} 원! 딱 맞게 냈어요. 고맙습니다!`, $('tray').parentNode.querySelector('#paid-n') || el, [`${WON[state.paid / 1000]} 원!`, '딱 맞게 냈어요. 고맙습니다!']);
+    if (current === 'mart' && MART.stage === SHOP_STAGE) {
+      // keep this customer's shopping, then thank them, see them off and call the next number
+      MART.baskets[MART.turn] = { items: state.picked.slice(), total: state.total };
+      saveMart();
+      martLater(2800, () => { closePay(); state.n = 0; state.total = 0; state.picked = []; renderCart(o); });
+      customerPaid();
+      return;
+    }
     setTimeout(() => { closePay(); state.n = 0; state.total = 0; state.picked = []; renderCart(o); }, 2200);
-    // at 건강한 마트 a finished payment calls the next number
-    if (current === 'mart' && MART.stage === SHOP_STAGE) martLater(2500, nextCustomer);
   }
   function renderCart(o) {
     const pile = $('pile'); if (!pile) return;
@@ -2056,6 +2211,11 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     if (EMERGENCY[el.dataset.type]) { pulse(el, 'flash', 2600); sfx.siren(); } else sfx.honk();
   });
   roomSvg.addEventListener('click', (e) => { const el = e.target.closest('.thing'); if (el) useThing(el); });
+  martTop.addEventListener('click', (e) => { const el = e.target.closest('.thing'); if (el) useThing(el); });
+  martTop.addEventListener('keydown', (e) => {
+    const el = e.target.closest('.thing');
+    if (el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); useThing(el); }
+  });
   roomSvg.addEventListener('keydown', (e) => {
     const el = e.target.closest('.thing');
     if (el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); useThing(el); }
