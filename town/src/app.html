@@ -1466,6 +1466,8 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   }
   const walkerSize = (n) => (n <= 12 ? 118 : Math.max(70, Math.round(118 * 12 / n)));
   const queueSlot = (i, n, size) => { const sp = Math.min(118, 1380 / n); return { x: 50 + i * sp, y: 885 - size * 1.1 }; };
+  // [file, width / height] — 새들1반 children photographed in class; one child is still to come
+  const KID_PHOTOS = [['kid01.webp', .38], ['kid02.webp', .541], ['kid03.webp', .343], ['kid04.webp', .377], ['kid05.webp', .282], ['kid06.webp', .243], ['kid07.webp', .348], ['kid08.webp', .325], ['kid09.webp', .35], ['kid10.webp', .327], ['kid11.webp', .373]];
   function makeWalkers() {
     const layer = $('mart-walk');
     layer.innerHTML = '';
@@ -1473,9 +1475,15 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     const n = MART.count, size = walkerSize(n);
     for (let i = 0; i < n; i++) {
       const g = document.createElementNS(SVGNS, 'g');
-      g.innerHTML = `<g class="bob" style="animation-delay:${-(i * 137) % 450}ms">${doll(KINDS[i % KINDS.length], 0, 0, size)}</g>` +
-        `<g class="bagged" visibility="hidden">${bagSVG(size * .62, size * .62, size * .42)}</g>` +
-        `<g class="num" visibility="hidden"><g transform="translate(${size / 2} -14)"><circle r="${Math.max(18, size * .22)}" fill="#FFF3B0" ${S(4)}/>${T(0, size * .1, Math.max(20, size * .26), i + 1)}</g></g>`;
+      // the class's own children (cut-out photos) shop here; anyone without a photo yet is a plush friend
+      const kid = KID_PHOTOS[i];
+      const H = size * 1.75, foot = size * 1.1, top = kid ? foot - H : 0;
+      const figure = kid
+        ? `<ellipse cx="${size / 2}" cy="${foot - 2}" rx="${size * .32}" ry="${size * .06}" fill="${INK}" opacity=".16"/><image href="town/kids/${kid[0]}" x="${size / 2 - H * kid[1] / 2}" y="${top}" width="${H * kid[1]}" height="${H}"/>`
+        : doll(KINDS[i % KINDS.length], 0, 0, size);
+      g.innerHTML = `<g class="bob" style="animation-delay:${-(i * 137) % 450}ms">${figure}</g>` +
+        `<g class="bagged" visibility="hidden">${bagSVG(size * .62, kid ? foot - H * .5 : size * .62, size * .42)}</g>` +
+        `<g class="num" visibility="hidden"><g transform="translate(${size / 2} ${top - 14})"><circle r="${Math.max(18, size * .22)}" fill="#FFF3B0" ${S(4)}/>${T(0, size * .1, Math.max(20, size * .26), i + 1)}</g></g>`;
       layer.appendChild(g);
       const fromRight = i % 2 === 0;
       MART.walkers.push({ g, size, x: fromRight ? 1700 + i * 40 : -200 - i * 40, y: 885 - size * 1.1 - (i % 3) * 40, tx: 0, ty: 0, mode: 'wander', v: 170 + (i % 5) * 30 });
