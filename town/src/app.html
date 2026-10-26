@@ -1507,8 +1507,8 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   }
   const walkerSize = (n) => (n <= 12 ? 118 : Math.max(70, Math.round(118 * 12 / n)));
   const queueSlot = (i, n, size) => { const sp = Math.min(118, 1380 / n); return { x: 50 + i * sp, y: 885 - size * 1.1 }; };
-  // [file, width / height] — 새들1반 children photographed in class; one child is still to come
-  const KID_PHOTOS = [['kid01.webp', .38], ['kid02.webp', .561], ['kid03.webp', .343], ['kid04.webp', .377], ['kid05.webp', .282], ['kid06.webp', .243], ['kid07.webp', .348], ['kid08.webp', .325], ['kid09.webp', .35], ['kid10.webp', .327], ['kid11.webp', .373]];
+  // [file, width / height] — the 12 새들1반 children photographed in class; any extra friends are plush
+  const KID_PHOTOS = [['kid01.webp', .38], ['kid02.webp', .561], ['kid03.webp', .343], ['kid04.webp', .377], ['kid05.webp', .282], ['kid06.webp', .243], ['kid07.webp', .348], ['kid08.webp', .325], ['kid09.webp', .35], ['kid10.webp', .327], ['kid11.webp', .373], ['kid12.webp', .375]];
   const people = $('mart-people'), martTop = $('mart-top');
   // drawing of customer i (photo, else a plush friend) in the walker's local units
   // ticket numbers are drawn at random: number i+1 belongs to child MART.order[i]

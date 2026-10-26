@@ -39,7 +39,7 @@ delegated: static single-file HTML/CSS/JS with no build step, so the teacher can
 - Every speech bubble is also read aloud in the device's own Korean voice at natural pitch, slightly slower; a header button turns the voice off.
 - A pedestrian light by the slanted road opens a 횡단보도 game: cars drive past on red; on green they stop at the line and the child crosses with a raised hand.
 - 마트, 과일가게 and 다이소 all price their goods (1000–5000원) and the child pays at the counter with 1000원 bills.
-- 마트 (박상현 선생님 at the counter) opens as 건강한 마트, a teacher-paced routine (다음 ▶): the children's own sign sparkling (town/art), customers (cut-out photos of the 새들1반 children in town/kids, plush friends for anyone without a photo) wandering in, 잠깐!/아하!, number tickets and one line at the door, a 시장바구니 quiz, then shopping in number order: each child taps a 시장바구니 first, pays, is thanked and waved off, and their basket is kept (장바구니 보기). After the last child the shelves sell out on a queue of plush friends.
+- 마트 (박상현 선생님 at the counter) opens as 건강한 마트, a teacher-paced routine (다음 ▶): the children's own sign sparkling (town/art), customers (cut-out photos of the 새들1반 children in town/kids, plush friends only for extra names beyond the 12) wandering in, 잠깐!/아하!, number tickets and one line at the door, a 시장바구니 quiz, then shopping in number order: each child taps a 시장바구니 first, pays, is thanked and waved off, and their basket is kept (장바구니 보기). After the last child the shelves sell out on a queue of plush friends.
 - The 인형뽑기 가게 opens the claw game. The game shows a 우리동네 button only when it was opened from the map.
 
 ## Positioning
