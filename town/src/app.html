@@ -495,7 +495,9 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   // Recorded lines (town/voices/lines.csv → NNN.mp3), filled in by build.py: { "대사": "town/voices/001.mp3" }.
   // A line with a recording plays it; every other line falls back to the device voice.
   const VOICES = /*@@VOICES@@*/{};
-  let clip = null;
+  // One shared player: tablets only let an audio element keep playing from timers after a tap has started it.
+  const clip = new Audio();
+  clip.preload = 'auto';
   let speechVersion = 0;
   let voiceBusy = false; // true from the moment a line starts until its last piece has finished
   const synth = window.speechSynthesis || null;
@@ -525,9 +527,9 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       if (version !== speechVersion) return;
       if (i >= list.length) { done(); return; }
       try {
-        clip = new Audio(VOICES[list[i]]);
-        clip.addEventListener('ended', () => playFrom(i + 1));
-        clip.addEventListener('error', done);
+        clip.onended = () => playFrom(i + 1);
+        clip.onerror = done;
+        clip.src = VOICES[list[i]];
         clip.play().catch(() => {
           // A canceled recording must not start speaking after a newer tap or mute.
           if (version === speechVersion && st.voiceOn) deviceVoice(list.slice(i).join(' '), done); else done();
@@ -553,7 +555,8 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   function hush() {
     speechVersion++;
     voiceBusy = false;
-    if (clip) { try { clip.pause(); } catch (e) { /* ignore */ } clip = null; }
+    clip.onended = null;
+    try { clip.pause(); } catch (e) { /* ignore */ }
     try { if (synth) synth.cancel(); } catch (e) { /* ignore */ }
   }
 
@@ -1407,7 +1410,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   const saveMart = () => { try { sessionStorage.setItem('town-mart', JSON.stringify({ stage: MART.stage, turn: MART.turn, count: MART.count, baskets: MART.baskets, order: MART.order })); } catch (e) { /* ignore */ } };
   const martLater = (ms, fn) => MART.timers.push(setTimeout(fn, ms));
   // run fn once the current line (recording or device voice) has finished, plus a short breath
-  const speaking = () => voiceBusy || (clip && !clip.paused && !clip.ended) || (synth && synth.speaking);
+  const speaking = () => voiceBusy || (!clip.paused && !clip.ended) || (synth && synth.speaking);
   // `ready` (optional) must also be true, e.g. the checkout panel has closed
   function afterSpeech(fn, gap = 600, minMs = 400, ready) {
     const t0 = performance.now();
@@ -1509,7 +1512,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   const walkerSize = (n) => (n <= 12 ? 118 : Math.max(70, Math.round(118 * 12 / n)));
   const queueSlot = (i, n, size) => { const sp = Math.min(118, 1380 / n); return { x: 50 + i * sp, y: 885 - size * 1.1 }; };
   // [file, width / height] — the 12 새들1반 children photographed in class; any extra friends are plush
-  const KID_PHOTOS = [['kid01.webp', .38], ['kid02.webp', .561], ['kid03.webp', .343], ['kid04.webp', .377], ['kid05.webp', .282], ['kid06.webp', .243], ['kid07.webp', .348], ['kid08.webp', .325], ['kid09.webp', .35], ['kid10.webp', .327], ['kid11.webp', .373], ['kid12.webp', .375]];
+  const KID_PHOTOS = [['kid01.webp', .38], ['kid02.webp', .561], ['kid03.webp', .343], ['kid04.webp', .489], ['kid05.webp', .282], ['kid06.webp', .243], ['kid07.webp', .348], ['kid08.webp', .325], ['kid09.webp', .35], ['kid10.webp', .327], ['kid11.webp', .373], ['kid12.webp', .375]];
   const people = $('mart-people'), martTop = $('mart-top');
   // drawing of customer i (photo, else a plush friend) in the walker's local units
   // ticket numbers are drawn at random: number i+1 belongs to child MART.order[i]
