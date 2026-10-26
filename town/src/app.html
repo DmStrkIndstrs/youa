@@ -333,8 +333,9 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
 #mart-people { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
 #mart-people .walker { position: absolute; left: 0; top: 0; will-change: transform; }
 #mart-people .bobw { animation: bobw .45s ease-in-out infinite alternate; animation-delay: var(--d, 0ms); }
+#mart-people .walker:not(.stand) .bobw { animation-duration: .3s; }
 #mart-people .walker svg { display: block; overflow: visible; }
-@keyframes bobw { to { transform: translateY(-2.5%); } }
+@keyframes bobw { to { transform: translateY(-4%) rotate(1.5deg); } }
 #mart-people.still .bobw, #mart-people .walker.stand .bobw { animation: none; }
 #mart-top { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
 #mart-top .thing, #mart-top #mart-block, #mart-top #paypanel, #mart-top #bask-panel { pointer-events: auto; }
@@ -1284,7 +1285,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       },
     },
     cross: { wall: '#CDEAFB', cross: true },
-    mart: { wall: '#FFF0DC', title: '건강한 마트', intro: true, shop: { items: ['apple', 'banana', 'carrot', 'milk', 'bread', 'grape', 'melon', 'egg'], names: ['사과', '바나나', '당근', '우유', '빵', '포도', '수박', '달걀'], clerk: 'purin', money: true, teacher: '박상현 선생님', prices: [1000, 2000, 1000, 2000, 3000, 3000, 5000, 3000] } },
+    mart: { wall: '#FFF0DC', title: '건강한 마트', intro: true, shop: { items: ['apple', 'banana', 'carrot', 'milk', 'bread', 'grape', 'melon', 'egg'], names: ['사과', '바나나', '당근', '우유', '빵', '포도', '수박', '달걀'], clerk: 'purin', money: true, teacher: '사장님', prices: [1000, 2000, 1000, 2000, 3000, 3000, 5000, 3000] } },
     fruit: { wall: '#EEF7DF', shop: { items: ['apple', 'banana', 'grape', 'melon', 'berry', 'orange'], names: ['사과', '바나나', '포도', '수박', '딸기', '귤'], clerk: 'keroppi', money: true, prices: [1000, 2000, 3000, 5000, 3000, 1000], crates: true } },
     daiso: { wall: '#FDE8E8', shop: { items: ['pencil', 'note', 'balloon', 'pin', 'cup', 'ball'], names: ['연필', '공책', '풍선', '머리핀', '컵', '공'], clerk: 'pochacco', money: true, basket: true, prices: [1000, 2000, 1000, 2000, 3000, 5000] } },
     hansung: { wall: '#CDEAFB', apt: { body: '#BBA3F5', walls: ['#FFF1D6', '#E5DBFD', '#FFE0EC'], kinds: ['purin', 'cinnamoroll', 'pochacco'], blanket: '#FF94B8', floor: 5 } },
@@ -1578,7 +1579,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
       const dx = w.tx - w.x, dy = w.ty - w.y, d = Math.hypot(dx, dy), step = w.v * dt;
       if (d < 0.5 && w.mode !== 'wander') { if (!w.el.classList.contains('stand')) w.el.classList.add('stand'); return; }
       w.el.classList.remove('stand');
-      if (d <= step || reduce) { w.x = w.tx; w.y = w.ty; if (w.mode === 'wander' && !reduce) pickWander(w); }
+      if (d <= step) { w.x = w.tx; w.y = w.ty; if (w.mode === 'wander') pickWander(w); }
       else { w.x += dx / d * step; w.y += dy / d * step; }
       placeWalker(w);
     });
@@ -1650,6 +1651,24 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     people.innerHTML = '';
   }
   // `jump`: arriving here from another room visit or the 이전/건너뛰기 buttons, so nothing animates in from scratch
+  const MINGLE = ['cinnamoroll', 'kuromi', 'melody', 'cinnamoroll', 'purin'];
+  function mingle(walk) {
+    if (!MART.mingling) {
+      MART.extras.forEach((w) => w.el.remove()); MART.extras = [];
+      const size = walkerSize(MART.count);
+      MINGLE.forEach((kind, j) => {
+        const w = makeWalker(j, { plush: kind, size, x: j % 2 ? -220 - j * 60 : 1750 + j * 60, y: 885 - size * 1.1 - (j % 3) * 40, v: 190 + j * 15 });
+        pickWander(w); MART.extras.push(w);
+      });
+      MART.mingling = true;
+    }
+    MART.extras.forEach((w) => { w.el.style.visibility = ''; w.mode = walk ? 'wander' : 'stop'; if (walk) pickWander(w); });
+  }
+  function leaveMingle() {
+    MART.mingling = false;
+    MART.extras.forEach((w, j) => { w.mode = 'place'; w.tx = 1800 + j * 50; w.v = 300; });
+    martLater(2800, () => { MART.extras.forEach((w) => w.el.remove()); MART.extras = []; });
+  }
   function martStage(n, jump) {
     MART.timers.forEach(clearTimeout);
     MART.timers = [];
@@ -1664,8 +1683,10 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     people.classList.toggle('pulse-tags', n === 4);
     people.classList.remove('still');
     people.style.visibility = n === 0 ? 'hidden' : '';
-    MART.extras.forEach((w) => w.el.remove());
-    MART.extras = [];
+    // plush friends mingle with the children before the number tickets, then walk out
+    if (n === 1 || n === 2) mingle(n === 1);
+    else if (MART.extras.length && n === 3 && MART.mingling) leaveMingle();
+    else { MART.extras.forEach((w) => w.el.remove()); MART.extras = []; MART.mingling = false; }
     soldOut(false);
     showTags(n >= 3);
     showBags(false);
@@ -2178,7 +2199,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     }
     if (k[0] === 'm') return payBill(el, o);
     if (k === 'pay') {
-      if (o.teacher && !state.hi && !state.n) { state.hi = true; sfx.hello(); teacherWave(); say('안녕하세요! 저는 박상현 선생님이에요.', el); return; }
+      if (o.teacher && !state.hi && !state.n) { state.hi = true; sfx.hello(); teacherWave(); say('어서 오세요! 저는 건강한 마트 사장님이에요.', el); return; }
       if (!state.n) { sfx.hello(); say(o.money ? '갖고 싶은 물건을 골라 보세요. 가격표를 잘 보세요!' : '무엇을 살까요? 먹고 싶은 것을 골라 보세요.', el); return; }
       if (o.money) { sfx.hello(); openPay(); say(`모두 ${state.total}원이에요. 돈을 내 주세요!`, el, `모두 ${wonWord(state.total)}이에요. 돈을 내 주세요!`); return; }
       sfx.pay();
