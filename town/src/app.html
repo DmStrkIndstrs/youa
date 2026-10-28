@@ -1448,6 +1448,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     peek: '우리 반 친구들은 무엇을 샀을까요? 장바구니를 열어 볼까요?',
   };
   const callLine = (n) => `${n}번 손님, 나와 주세요!`;
+  const waitLine = (n) => `다음은 ${n}번 손님, 기다려 주세요!`;
   const clerkEl = () => roomSvg.querySelector('[data-k="pay"]');
   const star = (x, y, r, c, d) => `<path class="sparkle" style="--d:${d}ms" d="M${x} ${y - r}Q${x + r * .18} ${y - r * .18} ${x + r} ${y}Q${x + r * .18} ${y + r * .18} ${x} ${y + r}Q${x - r * .18} ${y + r * .18} ${x - r} ${y}Q${x - r * .18} ${y - r * .18} ${x} ${y - r}Z" fill="${c}" stroke="${INK}" stroke-width="2.4"/>`;
   // The welcome uses the class's own cardboard signs (town/art), swaying and sparkling,
@@ -1754,7 +1755,12 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
         shoppingSpots(jump);
         over.innerHTML = ecoBagSVG();
         sfx.ding();
-        say(callLine(MART.turn), $('mart-hud').firstElementChild || clerk);
+        {
+          // the shopkeeper also tells who is waiting next
+          const nextNo = !MART.retry && !MART.ending && MART.turn < MART.count ? MART.turn + 1 : 0;
+          const parts = nextNo ? [callLine(MART.turn), waitLine(nextNo)] : [callLine(MART.turn)];
+          say(parts.join(' '), $('mart-hud').firstElementChild || clerk, parts);
+        }
         break;
       case DONE_STAGE:
         // the class has gone home with their shopping; the plush friends queueing behind find the shelves empty
