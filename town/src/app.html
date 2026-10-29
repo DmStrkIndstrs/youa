@@ -671,69 +671,12 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
   };
 
   /* ---------- things to buy ---------- */
-  // Realistic-looking food: gradients, soft shading and specular highlights instead of outlines.
-  const REAL = {
-    shadow: '<ellipse cx="50" cy="94" rx="32" ry="5" fill="#000" opacity=".16"/>',
-    defs(id, list) {
-      return '<defs>' + list.map((d) => {
-        if (d[0] === 'rg') { const [, n, cx, cy, r, st] = d; return `<radialGradient id="${id}-${n}" gradientUnits="userSpaceOnUse" cx="${cx}" cy="${cy}" r="${r}">${st.map(([o, c]) => `<stop offset="${o}" stop-color="${c}"/>`).join('')}</radialGradient>`; }
-        const [, n, st] = d; return `<linearGradient id="${id}-${n}" x1="0" y1="0" x2="1" y2="1">${st.map(([o, c]) => `<stop offset="${o}" stop-color="${c}"/>`).join('')}</linearGradient>`;
-      }).join('') + '</defs>';
-    },
-  };
+  // Real food photos (cut out, town/art/food) for the shop shelves; other things stay drawn.
+  const FOODS = ['apple', 'banana', 'carrot', 'milk', 'bread', 'grape', 'melon', 'egg', 'berry', 'orange'];
+  const foodImg = (k) => `<ellipse cx="50" cy="93" rx="32" ry="4.5" fill="#000" opacity=".15"/><image href="town/art/food/${k}.webp" x="4" y="4" width="92" height="88" preserveAspectRatio="xMidYMax meet"/>`;
   function item(k) {
+    if (FOODS.includes(k)) return foodImg(k);
     switch (k) {
-      case 'apple': return REAL.shadow + REAL.defs('ap', [['rg', 'b', 35, 30, 78, [[0, '#FF9A8C'], [.35, '#E8332E'], [1, '#8F1212']]], ['lg', 'l', [[0, '#7FBF3A'], [1, '#3C7D1E']]], ['lg', 's', [[0, '#7A4A22'], [1, '#4A2A10']]]]) +
-        `<path d="M50 35C38 22 14 30 15 58C16 82 34 95 50 90C66 95 84 82 85 58C86 30 62 22 50 35Z" fill="url(#ap-b)"/>` +
-        `<path d="M50 35C44 50 44 72 50 90C40 80 34 60 38 40Z" fill="#8F1212" opacity=".16"/>` +
-        `<path d="M62 36C76 40 84 56 80 72" fill="none" stroke="#FFD0A8" stroke-width="3" opacity=".22" stroke-linecap="round"/>` +
-        `<ellipse cx="33" cy="48" rx="7" ry="12" fill="#fff" opacity=".5" transform="rotate(18 33 48)"/><ellipse cx="30" cy="40" rx="2.4" ry="3.4" fill="#fff" opacity=".85"/>` +
-        `<path d="M49 34C50 24 54 17 59 12" fill="none" stroke="url(#ap-s)" stroke-width="4.5" stroke-linecap="round"/>` +
-        `<path d="M54 24C60 10 78 10 84 20C76 32 62 34 54 24Z" fill="url(#ap-l)"/><path d="M56 24C64 20 72 18 80 20" fill="none" stroke="#2F6A18" stroke-width="1.4" opacity=".7"/>`;
-      case 'banana': return REAL.shadow + REAL.defs('bn', [['lg', 'b', [[0, '#FFF08A'], [.5, '#FFD92E'], [1, '#E0A100']]], ['lg', 't', [[0, '#6B4A1E'], [1, '#3C2810']]]]) +
-        `<path d="M14 26C14 62 36 88 74 86C86 85 92 78 88 72C58 74 36 56 30 24C26 16 14 18 14 26Z" fill="url(#bn-b)"/>` +
-        `<path d="M22 30C26 56 42 74 70 80" fill="none" stroke="#B88400" stroke-width="1.6" opacity=".5"/><path d="M28 30C34 52 48 66 74 74" fill="none" stroke="#FFF6B0" stroke-width="2" opacity=".55"/>` +
-        `<path d="M14 26C14 62 36 88 74 86C80 86 84 84 86 82C60 84 28 66 20 28Z" fill="#B07A00" opacity=".28"/>` +
-        `<path d="M13 22L19 8L28 12L24 26Z" fill="url(#bn-t)"/><path d="M80 80C86 78 91 78 90 72C88 71 84 72 80 73Z" fill="#4A3010"/>`;
-      case 'carrot': return REAL.shadow + REAL.defs('ca', [['lg', 'b', [[0, '#FFB45A'], [.5, '#FF7F1E'], [1, '#D9560A']]], ['lg', 'g', [[0, '#7DD35A'], [1, '#2F8A2A']]]]) +
-        `<path d="M26 30Q50 22 74 30Q70 50 56 90Q50 99 44 90Q30 50 26 30Z" fill="url(#ca-b)"/>` +
-        `<path d="M34 42Q44 45 52 42M40 58Q49 61 55 58M45 73Q50 75 54 73" fill="none" stroke="#B84A08" stroke-width="2" opacity=".6" stroke-linecap="round"/>` +
-        `<path d="M32 34Q40 70 48 90" fill="none" stroke="#FFD9A0" stroke-width="3" opacity=".45" stroke-linecap="round"/>` +
-        `<path d="M50 30Q36 18 30 4Q44 8 50 24Z M50 30Q50 14 52 0Q58 12 52 30Z M50 30Q64 18 72 6Q58 8 50 28Z" fill="url(#ca-g)"/>`;
-      case 'milk': return `<g transform="translate(-7 -9) scale(1.14)">` + REAL.shadow + REAL.defs('mk', [['lg', 'f', [[0, '#FFFFFF'], [1, '#E6EEF5']]], ['lg', 'sd', [[0, '#C9D6E2'], [1, '#A9BACB']]], ['lg', 'bl', [[0, '#5BB5F0'], [1, '#2F86D0']]]]) +
-        `<path d="M26 36L50 12L62 18L62 92L26 92Z" fill="url(#mk-f)"/><path d="M62 18L78 34L78 90L62 92Z" fill="url(#mk-sd)"/><path d="M26 36L62 36L62 18L50 12Z" fill="#fff"/><path d="M62 36L78 34L62 18Z" fill="#D5E0EA"/>` +
-        `<path d="M26 36H62V92H26Z" fill="none" stroke="#B7C5D3" stroke-width="1.2"/><path d="M26 36H62M62 36L78 34" stroke="#B7C5D3" stroke-width="1.4"/>` +
-        `<rect x="30" y="46" width="28" height="32" rx="4" fill="url(#mk-bl)"/><path d="M44 50C40 56 38 59 38 62A6 6 0 0 0 50 62C50 59 48 56 44 50Z" fill="#fff" opacity=".9"/>` +
-        `<text x="44" y="76" font-size="9" font-weight="700" text-anchor="middle" fill="#fff" style="font-family:'Jua Local','Jua',sans-serif">우유</text><path d="M32 40V90" stroke="#fff" stroke-width="3" opacity=".6"/></g>`;
-      case 'bread': return REAL.shadow + REAL.defs('br', [['rg', 'b', 38, 28, 80, [[0, '#F4C57A'], [.45, '#D58B3A'], [1, '#8E4D17']]], ['lg', 'c', [[0, '#FFE6B0'], [1, '#F2C27A']]]]) +
-        `<path d="M10 66C8 42 28 28 50 28C72 28 92 42 90 66C90 82 80 90 50 90C20 90 10 82 10 66Z" fill="url(#br-b)"/>` +
-        `<path d="M10 70C12 84 24 90 50 90C76 90 88 84 90 70C80 82 20 82 10 70Z" fill="#6B3410" opacity=".3"/>` +
-        `<path d="M28 46C32 40 38 38 42 38L38 62C34 62 30 58 28 46Z M46 36C52 34 56 34 60 36L56 62C52 64 48 63 44 62Z M64 38C70 40 74 44 76 48C74 58 70 62 62 62Z" fill="url(#br-c)" opacity=".95"/>` +
-        `<ellipse cx="34" cy="42" rx="12" ry="5" fill="#fff" opacity=".28" transform="rotate(-18 34 42)"/>` +
-        [[26, 64], [44, 74], [60, 70], [74, 62], [36, 78], [54, 80], [82, 72]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.1" fill="#FFF3D6" opacity=".7"/>`).join('');
-      case 'grape': return REAL.shadow + REAL.defs('gp', [['rg', 'b', 35, 30, 70, [[0, '#C7A0F0'], [.5, '#7A3FB8'], [1, '#3F1A70']]], ['lg', 'l', [[0, '#7FBF3A'], [1, '#2F7A1E']]]]) +
-        `<path d="M50 22C52 12 58 8 66 8" fill="none" stroke="#6B4A22" stroke-width="4.5" stroke-linecap="round"/><path d="M58 18C66 4 86 6 90 18C80 28 66 28 58 18Z" fill="url(#gp-l)"/><path d="M60 17C70 15 80 15 88 18" fill="none" stroke="#2F6A18" stroke-width="1.2" opacity=".6"/>` +
-        [[34, 34], [54, 32], [74, 36], [26, 54], [46, 52], [66, 54], [84, 54], [36, 72], [56, 72], [75, 72], [46, 88], [64, 89]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="11.5" fill="url(#gp-b)"/><ellipse cx="${x - 4}" cy="${y - 5}" rx="3.2" ry="2.2" fill="#fff" opacity=".7" transform="rotate(-30 ${x - 4} ${y - 5})"/>`).join('');
-      case 'melon': return REAL.shadow + REAL.defs('ml', [['lg', 'r', [[0, '#5DBB4A'], [1, '#1F6B2A']]], ['rg', 'f', 50, 30, 70, [[0, '#FF7B7B'], [.7, '#F0434F'], [1, '#D42A3C']]]]) +
-        `<path d="M6 44A44 44 0 0 0 94 44Z" fill="url(#ml-r)"/>` +
-        `<clipPath id="ml-c"><path d="M6 44A44 44 0 0 0 94 44Z"/></clipPath><g clip-path="url(#ml-c)"><path d="M14 52Q24 78 34 94M30 56Q36 80 42 96M50 60V98M70 56Q64 80 58 96M86 52Q76 78 66 94" fill="none" stroke="#1B5A22" stroke-width="3.4" opacity=".55"/></g>` +
-        `<path d="M6 44H94" stroke="#fff" stroke-width="1" opacity=".0"/><path d="M12 44A38 38 0 0 0 88 44Z" fill="#F4F8E6"/><path d="M16 44A34 34 0 0 0 84 44Z" fill="url(#ml-f)"/>` +
-        `<path d="M20 44H80" stroke="#FF9AA0" stroke-width="2.4" opacity=".6"/>` +
-        [[32, 56], [48, 62], [64, 56], [40, 50], [58, 50], [74, 50], [26, 50], [50, 72]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="2.4" ry="4" fill="#2A1A1A" transform="rotate(${x > 50 ? -14 : 14} ${x} ${y})"/><ellipse cx="${x - .8}" cy="${y - 1.2}" rx=".7" ry="1.2" fill="#fff" opacity=".6"/>`).join('') +
-        `<path d="M10 44H90" stroke="#fff" stroke-width="2" opacity=".35"/>`;
-      case 'egg': return REAL.shadow + REAL.defs('eg', [['rg', 'b', 34, 30, 80, [[0, '#FFFFFF'], [.45, '#F6E7CC'], [1, '#D9B98A']]], ['rg', 'c', 34, 30, 80, [[0, '#FFF6E8'], [.5, '#EFD3A8'], [1, '#C79A62']]]]) +
-        `<path d="M36 90C14 90 8 68 14 50C19 36 28 28 36 28C44 28 53 36 58 50C64 68 58 90 36 90Z" fill="url(#eg-b)"/><ellipse cx="28" cy="48" rx="4" ry="9" fill="#fff" opacity=".7" transform="rotate(14 28 48)"/>` +
-        `<path d="M66 92C46 92 40 74 45 58C49 46 57 38 66 38C75 38 83 46 87 58C92 74 86 92 66 92Z" fill="url(#eg-c)"/><ellipse cx="59" cy="58" rx="3.4" ry="8" fill="#fff" opacity=".6" transform="rotate(14 59 58)"/>`;
-      case 'berry': return REAL.shadow + REAL.defs('sb', [['rg', 'b', 36, 32, 72, [[0, '#FF8A8A'], [.4, '#E8283A'], [1, '#9E1022']]], ['lg', 'l', [[0, '#7FCF4A'], [1, '#2F8A2A']]]]) +
-        `<path d="M50 94C28 84 12 62 14 42C16 28 30 24 50 30C70 24 84 28 86 42C88 62 72 84 50 94Z" fill="url(#sb-b)"/>` +
-        `<ellipse cx="32" cy="42" rx="5" ry="9" fill="#fff" opacity=".4" transform="rotate(20 32 42)"/>` +
-        [[30, 46], [44, 42], [58, 42], [72, 46], [36, 58], [50, 56], [64, 58], [42, 72], [58, 72], [50, 84], [26, 56], [76, 58]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="1.8" ry="2.8" fill="#FFE59A"/><ellipse cx="${x}" cy="${y + 1.4}" rx="2.2" ry="2.4" fill="#7A0F1E" opacity=".35"/><ellipse cx="${x}" cy="${y}" rx="1.6" ry="2.5" fill="#FFE59A"/>`).join('') +
-        `<path d="M28 30Q36 20 44 28Q46 14 50 12Q54 14 56 28Q64 20 72 30Q62 40 50 36Q38 40 28 30Z" fill="url(#sb-l)"/><path d="M50 34V8" stroke="#2F7A24" stroke-width="3.4" stroke-linecap="round"/>`;
-      case 'orange': return REAL.shadow + REAL.defs('or', [['rg', 'b', 36, 32, 74, [[0, '#FFC66B'], [.45, '#FF9420'], [1, '#C85A05']]], ['lg', 'l', [[0, '#7FCF4A'], [1, '#2F8A2A']]]]) +
-        `<circle cx="50" cy="58" r="34" fill="url(#or-b)"/>` +
-        Array.from({ length: 26 }, (_, i) => { const a = i * 2.4, r = 6 + (i * 7) % 26; return `<circle cx="${(50 + Math.cos(a) * r).toFixed(1)}" cy="${(58 + Math.sin(a) * r).toFixed(1)}" r=".9" fill="#C85A05" opacity=".45"/>`; }).join('') +
-        `<ellipse cx="36" cy="44" rx="7" ry="11" fill="#fff" opacity=".4" transform="rotate(24 36 44)"/>` +
-        `<path d="M50 26Q56 12 72 14Q66 30 50 26Z" fill="url(#or-l)"/><circle cx="50" cy="26" r="3.4" fill="#5A3A1A"/>`;
       case 'peach': return C(50, 58, 32, '#FFB3A7') + P('M50 28 Q40 58 50 88', 'none', 3) + P('M50 28 Q62 12 76 20 Q66 32 50 28Z', '#5DB85A', 3) + `<ellipse cx="36" cy="50" rx="7" ry="10" fill="#fff" opacity=".45"/>`;
       case 'pencil': return `<g transform="rotate(-35 50 50)">${P('M14 40 H74 L92 50 L74 60 H14Z', '#FFC83D')}${P('M74 40 L92 50 L74 60Z', '#F5DDB3', 3)}${P('M86 47 L92 50 L86 53Z', INK, 0)}${Rp(6, 40, 12, 20, '#FF94B8', 3, 3)}</g>`;
       case 'note': return R(22, 14, 58, 76, '#74C4F2', 6) + Rp(32, 30, 38, 12, '#fff', 3, 0) + [26, 42, 58, 74].map((y) => `<circle cx="22" cy="${y}" r="5" fill="#fff" ${S(2.5)}/>`).join('');
