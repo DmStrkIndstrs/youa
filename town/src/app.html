@@ -1415,13 +1415,15 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     martLater(150, check);
   }
   // as many customers as children present in the claw game's class list (same site), else 12
-  function classCount() {
+  // roster positions (0-based) of the children who are in class today; an absent child is skipped, photo and all
+  function presentSlots() {
     try {
       const c = JSON.parse(localStorage.getItem('claw-shop-v3') || 'null');
-      if (c && Array.isArray(c.names)) { const n = c.names.filter((_, i) => !(c.absent && c.absent[i])).length; if (n >= 1) return Math.min(30, n); }
+      if (c && Array.isArray(c.names)) { const a = c.names.map((_, i) => i).filter((i) => !(c.absent && c.absent[i])); if (a.length) return a.slice(0, 30); }
     } catch (e) { /* ignore */ }
-    return 12;
+    return Array.from({ length: 12 }, (_, i) => i);
   }
+  const classCount = () => presentSlots().length;
   const MART_LINES = {
     welcome: '건강한 마트에 오신 걸 환영합니다!',
     crowd: '우와, 오늘 많은 손님이 장 보러 오셨네요.',
@@ -1518,7 +1520,7 @@ button, a.knob { font: inherit; color: inherit; cursor: pointer; touch-action: m
     MART.order = a;
   }
   function figureSVG(i, size, plushKind) {
-    const kid = plushKind ? null : KID_PHOTOS[childOf(i)];
+    const kid = plushKind ? null : KID_PHOTOS[presentSlots()[childOf(i)]];
     const H = size * 1.75, foot = size * 1.1, top = kid ? foot - H : 0;
     const fig = kid
       ? `<ellipse cx="${size / 2}" cy="${foot - 2}" rx="${size * .32}" ry="${size * .06}" fill="${INK}" opacity=".16"/><image href="town/kids/${kid[0]}" x="${size / 2 - H * kid[1] / 2}" y="${top}" width="${H * kid[1]}" height="${H}"/>`
